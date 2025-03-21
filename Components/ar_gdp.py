@@ -1,11 +1,6 @@
-from fredapi import Fred
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from statsmodels.tsa.stattools import adfuller
-from statsmodels.tsa.ar_model import AutoReg
+from package_imports import *
 
-fred = Fred(api_key = '084a38e9d6fd82146cf89b8c30eba224')
+fred = Fred(api_key = os.getenv("API_KEY"))
 
 
 def get_prediction(series_key, end_date, n):
