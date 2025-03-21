@@ -23,3 +23,4 @@ def get_prediction(series_key, end_date, n, fred):
     return prediction
 
 print(get_prediction("GDP", "2020-01-01", 2, fred))
+
