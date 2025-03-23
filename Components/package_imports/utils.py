@@ -56,3 +56,11 @@ def pct_chg(df, col = 0):
         df["pct_chg"] = np.log(df.iloc[:, col]).diff()*100
         df= df.dropna()
         return df
+    
+# Function to plot ACF and PACF
+#takes in a time series then plots the acf and pacf
+def plot_acf_pacf(timeseries):
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 7))
+    plot_acf(timeseries, ax=ax1, lags=75)
+    plot_pacf(timeseries, ax=ax2, lags=75)
+    plt.show()
