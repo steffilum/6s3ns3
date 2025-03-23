@@ -93,7 +93,7 @@ app.layout = html.Div(
         html.Div(
             id="main-content",
             className="main-content",
-            style={"position": "absolute", "top": "150px", "left": "350px", "width": "300px"},
+            style={"position": "absolute", "top": "150px", "left": "150px", "width": "300px"},
             children=[
                 html.P("This is a placeholder for the main content of the page", style={"textAlign": "center"}),
             ]
