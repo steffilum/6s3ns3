@@ -37,5 +37,5 @@ new_dates = pd.date_range(start = last_quart , periods = 2, freq='MS')
 new_df = pd.Series(pred, index=new_dates)
 pct_chg_pred_ne = pd.concat([pct_chg_ne['pct_chg'], new_df])
 
-def quart_pct_chg_ne():
+def quart_pct_chg_ne(date = "2020-01-01"):
     return pct_chg_pred_ne
