@@ -3,33 +3,18 @@ from package_imports import *
 fred = Fred(api_key = os.getenv("API_KEY"))
 
 
-def get_prediction(series_key, end_date, n):
-    df = fred.get_series_as_of_date(series_key, end_date).drop_duplicates(subset = ["date"], keep = "last")
-    df = pd.Series(df["value"].to_list(), index = df["date"].to_list())
-    df = df.dropna()
-    df = df.astype("float")
+def get_prediction(series_key, end_date, n, fred):
+    df = get_most_recent_df_of_date(series_key, end_date, fred)
     df = np.log(df)
     
-    df = df.to_frame()
-    df = df.rename(columns = {0: "Value"})
-    df["Lagged Value"] = df["Value"].diff()
-    lagged_value = df["Lagged Value"].dropna()
+    lagged_value = difference_df(df)
     
-    df.plot(y = "Lagged Value")
+    lagged_value.plot(y = "Lagged Value")
     plt.show()
     
     print("ADF Test Result: ", adfuller(lagged_value))
     
-    best_aic = float("inf")
-    best_lag = None
-
-    for lag in range(1, 11):  # Try lags from 1 to 11
-        model = AutoReg(lagged_value, lags=lag).fit()
-        aic = model.aic
-    
-        if aic < best_aic:
-            best_aic = aic
-            best_lag = lag
+    best_lag = best_aic(lagged_value, 11)
             
     print("Optimal Lag Value: ", best_lag)
             
@@ -37,4 +22,4 @@ def get_prediction(series_key, end_date, n):
     prediction = model.predict(start = len(lagged_value), end = len(lagged_value) + n)
     return prediction
 
-print(get_prediction("GDP", "2020-01-01", 2))
+print(get_prediction("GDP", "2020-01-01", 2, fred))

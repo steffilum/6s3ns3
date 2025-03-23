@@ -1,3 +1,4 @@
+#put all import statments here
 from fredapi import Fred
 import pandas as pd
 import numpy as np
