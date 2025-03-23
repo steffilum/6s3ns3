@@ -11,18 +11,31 @@ pct_chg_ne = df.pct_change()*100
 
 #showing a large spike in the data during 1973 due to the oapec making us goods very expensive thus may choose to cut off the data from 1974 and 1980s due to latin 
 #debt crises
-filtered = pct_chg_ne[pct_chg_ne.index>'1983-01-01']
+filtered = pct_chg_ne[pct_chg_ne.index>'1984-01-01']
+# filtered.plot()
+# plt.show()
+
+
+#check if stationary for after 1983
+print("ADF Test Result: ", adfuller(filtered))
+
+#testing for garch model
 filtered.plot()
+(filtered**2).plot()
 plt.show()
 
-#check if stationary
+model = arch_model(filtered, vol='Garch', p=1, q=1)
+fit = model.fit()
+print(fit.summary())
 
-# last_month = pct_chg_pce.index[-1]+ pd.offsets.MonthBegin(1)
-# new_dates = pd.date_range(start = last_month , periods = 4-int(last_month.month)%4, freq='MS')
-# new_df = pd.Series([pred]*(4-last_month.month%4), index=new_dates)
-# pct_chg_pred = pd.concat([pct_chg_pce['pct_chg'], new_df])
+last_quart = filtered.index[-1]+ pd.offsets.QuarterBegin(1)
 
-# quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
+#prediction
+pred = fit.forecast(horizon=2).mean.iloc[-1].values
 
-# def quart_pct_chg_pce():
-#     return quarterly_pct_chage
+new_dates = pd.date_range(start = last_quart , periods = 2, freq='MS')
+new_df = pd.Series(pred, index=new_dates)
+pct_chg_pred_ne = pd.concat([pct_chg_ne['pct_chg'], new_df])
+
+def quart_pct_chg_ne():
+    return pct_chg_pred_ne

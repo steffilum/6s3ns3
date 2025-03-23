@@ -9,3 +9,4 @@ from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from dotenv import load_dotenv
 import os
+from arch import arch_model

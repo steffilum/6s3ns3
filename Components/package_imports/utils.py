@@ -32,7 +32,7 @@ def best_aic(df, max_lag_to_try):
     best_aic = float("inf")
     best_lag = None
 
-    for lag in range(1, max_lag_to_try):  
+    for lag in range(0, max_lag_to_try+1):  
         model = AutoReg(df, lags=lag).fit()
         aic = model.aic
     

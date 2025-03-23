@@ -9,19 +9,25 @@ pct_chg_pce = pct_chg(df)
 #demean
 pct_chg_pce['demean_pct_chg'] = pct_chg_pce.pct_chg-pct_chg_pce.pct_chg.mean()
 # plot_acf_pacf(pct_chg_pce['demean_pct_chg'] )
+# plot_acf_pacf(pct_chg_pce['demean_pct_chg']**2)
 # plt.show()
 
-#After demeaning looks like whit noise that centers around the mean
-
-#prediction would be the mean
-pred = pct_chg_pce.pct_chg.mean()
+#looks like a garch(1, 1) is suitable
+model = arch_model(pct_chg_pce['pct_chg'], vol='Garch', p=1, q=1)
+fit = model.fit()
+print(fit.summary())
 
 last_month = pct_chg_pce.index[-1]+ pd.offsets.MonthBegin(1)
+
+#prediction
+pred = fit.forecast(horizon=4-int(last_month.month)%4).mean.iloc[-1].values
+
 new_dates = pd.date_range(start = last_month , periods = 4-int(last_month.month)%4, freq='MS')
-new_df = pd.Series([pred]*(4-last_month.month%4), index=new_dates)
+new_df = pd.Series(pred, index=new_dates)
 pct_chg_pred = pd.concat([pct_chg_pce['pct_chg'], new_df])
 
 quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
 
-def quart_pct_chg_pce():
+def quart_pct_chg_pce(date = "2020-01-01"):
+    df = get_most_recent_df_of_date("PCE", "2020-01-01", fred)
     return quarterly_pct_chage
