@@ -5,6 +5,12 @@ html, body {
     overflow: hidden; /* optional: removes scrollbars */
   }      
   
+  .blur-content {
+    filter: blur(12px);
+    pointer-events: none;
+  }
+
+
   .fade-dropdown .dropdown-menu {
     opacity: 0;
     transform: translateY(10px);
@@ -36,15 +42,30 @@ html, body {
 }
 
 .mega-dropdown .dropdown-menu {
-    width: 2000px;
-    background-color: #1f1f1f;
-    border: none;
-    border-radius: 0;
-    padding: 30px 60px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    margin-top: 0.75rem;
-    z-index: 1000;
-  }
+  width: 2000px;
+  background-color: rgba(30, 30, 30); 
+  border: none;
+  border-radius: 0;
+  padding: 30px 60px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  margin-top: 0.75rem;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 300ms ease, transform 300ms ease, backdrop-filter 0.3s ease, background-color 0.3s ease;
+  display: block !important;
+  pointer-events: none;
+
+  /* Optional: smooth transition */
+  
+}
+
+.mega-dropdown .dropdown-menu.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
   
   /* ============ Dropdown Items ============ */
   .mega-dropdown .dropdown-header {
@@ -58,11 +79,10 @@ html, body {
   .dropdown-item-bold {
     font-weight: 600;
     font-size: 24px;
-    padding: 8px 0;
+    padding: 7px 0;
     color: white;
-    
-    margin-top: 30px;
-    font-family: "Montserrat, sans-serif";
+    margin-top: 0px;
+    font-family: "Montserrat", sans-serif;
     transition: color 0.3s ease;
   }
   
@@ -76,9 +96,9 @@ html, body {
     font-size: 16px;
     padding: 8px 0;
     color: rgba(206, 203, 203, 0.8);
-    font-family: "Montserrat, sans-serif";
+    font-family: "Montserrat", sans-serif;
     pointer-events: none;  
     cursor: default;  
-    margin-top: 0px;
+    margin-bottom: 20px;
   }
   
