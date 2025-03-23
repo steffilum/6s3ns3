@@ -1,7 +1,6 @@
 import dash 
-from dash import html, dcc, Input, Output, State
+from dash import html, Input, Output, State
 import dash_bootstrap_components as dbc
-from animation import get_fade_component
 import os
 
 # Set working directory to current file location
@@ -9,7 +8,6 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Initialize Dash app with Bootstrap theme
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
-
 
 # App layout
 app.layout = html.Div(
@@ -23,7 +21,7 @@ app.layout = html.Div(
         "overflow": "hidden"
     },
     children=[
-        html.Nav(                                           # Navigation bar
+        html.Nav(
             style={
                 "display": "flex",
                 "justifyContent": "space-between",
@@ -45,7 +43,6 @@ app.layout = html.Div(
                     "top": "35px"
                 }),
 
-                # Navigation items + dropdown
                 html.Div([
                     html.Span("About", style={
                         "cursor": "default", 
@@ -61,37 +58,42 @@ app.layout = html.Div(
                         "top": "42px"
                     }),
 
-                    # Dropdown for Indicators
-                    dbc.DropdownMenu(
-                        label="Indicators",
-                        nav=True,
-                        in_navbar=True,
-                        direction="down",
-                        className="mega-dropdown", 
-                        style={
-                            "position": "absolute",
-                            "left": "856px",
-                            "top": "42px",
-                            "backgroundColor": "transparent",
-                            "border": "none"
-                        },
-                        children=[
-                            dbc.DropdownMenuItem("Explore Indicators", className="dropdown-item-normal"),
-                            dbc.DropdownMenuItem("CPI", className="dropdown-item-bold"),
-                            dbc.DropdownMenuItem("Housing Starts", className="dropdown-item-bold"),
-                            dbc.DropdownMenuItem("PMI", className="dropdown-item-bold")
-                        ]
-                    )
+                    html.Button("Indicators", id="fade-button", n_clicks=0, style={
+                        "position": "absolute",
+                        "left": "856px",
+                        "top": "42px",
+                        "backgroundColor": "transparent",
+                        "border": "none",
+                        "color": "rgba(206, 203, 203, 0.8)",
+                        "fontFamily": "Montserrat, sans-serif",
+                        "fontSize": "22px",
+                        "cursor": "pointer"
+                    })
                 ])
             ]
-        ), 
-        html.Div(id="fade-section-container"), 
-       
-        # Add in random text to fill up space
+        ),
+
+        # Fade Dropdown
+        dbc.Fade(
+            id="fade",
+            is_in=False,
+            appear=True,
+            children=html.Div(
+                className="mega-dropdown",
+                children=[
+                    html.Div("Explore Indicators", className="dropdown-item-normal"),
+                    html.Div("CPI", className="dropdown-item-bold"),
+                    html.Div("Housing Starts", className="dropdown-item-bold"),
+                    html.Div("PMI", className="dropdown-item-bold")
+                ]
+            )
+        ),
+
+        # Main content (blurs when dropdown is open)
         html.Div(
             id="main-content",
-            className="",
-            style={"position": "absolute", "top": "150px", "left": "350px", "width": "300px", "color": "white", "fontSize": "60px"},
+            className="main-content",
+            style={"position": "absolute", "top": "150px", "left": "350px", "width": "300px"},
             children=[
                 html.P("This is a placeholder for the main content of the page", style={"textAlign": "center"}),
             ]
@@ -99,18 +101,18 @@ app.layout = html.Div(
     ]
 )
 
-
-# Fade callback
+# Callback to toggle dropdown visibility and blur content
 @app.callback(
     Output("fade", "is_in"),
+    Output("main-content", "className"),
     Input("fade-button", "n_clicks"),
     State("fade", "is_in")
 )
 def toggle_fade(n, is_in):
     if not n:
-        return False
-    return not is_in
-
+        return False, "main-content"
+    show = not is_in
+    return show, "main-content blur-content" if show else "main-content"
 
 
 if __name__ == "__main__":
