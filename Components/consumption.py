@@ -5,6 +5,8 @@ fred = Fred(api_key = os.getenv("API_KEY"))
 df = get_most_recent_df_of_date("PCE", "2020-01-01", fred)
 
 pct_chg_pce = pct_chg(df)
+# pct_chg_pce.plot()
+# plt.show()
 
 #demean
 pct_chg_pce['demean_pct_chg'] = pct_chg_pce.pct_chg-pct_chg_pce.pct_chg.mean()
