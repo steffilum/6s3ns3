@@ -61,7 +61,7 @@ app.layout = html.Div(
                         "top": "42px"
                     }),
 
-                    # Dropdown menu
+                    # Dropdown for Indicators
                     dbc.DropdownMenu(
                         label="Indicators",
                         nav=True,
@@ -85,7 +85,17 @@ app.layout = html.Div(
                 ])
             ]
         ), 
-        html.Div(id="fade-section-container")
+        html.Div(id="fade-section-container"), 
+       
+        # Add in random text to fill up space
+        html.Div(
+            id="main-content",
+            className="",
+            style={"position": "absolute", "top": "150px", "left": "350px", "width": "300px", "color": "white", "fontSize": "60px"},
+            children=[
+                html.P("This is a placeholder for the main content of the page", style={"textAlign": "center"}),
+            ]
+        )
     ]
 )
 
