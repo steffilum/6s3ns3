@@ -29,5 +29,4 @@ pct_chg_pred = pd.concat([pct_chg_pce['pct_chg'], new_df])
 quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
 
 def quart_pct_chg_pce(date = "2020-01-01"):
-    df = get_most_recent_df_of_date("PCE", "2020-01-01", fred)
     return quarterly_pct_chage
