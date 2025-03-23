@@ -17,25 +17,25 @@ filtered = pct_chg_ne[pct_chg_ne.index>'1984-01-01']
 
 
 #check if stationary for after 1983
-print("ADF Test Result: ", adfuller(filtered))
+# print("ADF Test Result: ", adfuller(filtered))
 
 #testing for garch model
-filtered.plot()
-(filtered**2).plot()
-plt.show()
+# filtered.plot()
+# (filtered**2).plot()
+# plt.show()
 
-model = arch_model(filtered, vol='Garch', p=1, q=1)
+model = arch_model(filtered, mean = 'AR', lags = 1, vol='Garch', p=1, q=1)
 fit = model.fit()
-print(fit.summary())
+# print(fit.summary())
 
 last_quart = filtered.index[-1]+ pd.offsets.QuarterBegin(1)
 
 #prediction
 pred = fit.forecast(horizon=2).mean.iloc[-1].values
 
-new_dates = pd.date_range(start = last_quart , periods = 2, freq='MS')
+new_dates = pd.date_range(start = last_quart, periods = 2, freq='QS')
 new_df = pd.Series(pred, index=new_dates)
-pct_chg_pred_ne = pd.concat([pct_chg_ne['pct_chg'], new_df])
+pct_chg_pred_ne = pd.concat([pct_chg_ne, new_df])
 
 def quart_pct_chg_ne(date = "2020-01-01"):
     return pct_chg_pred_ne

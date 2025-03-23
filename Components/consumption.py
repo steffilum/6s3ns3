@@ -13,9 +13,9 @@ pct_chg_pce['demean_pct_chg'] = pct_chg_pce.pct_chg-pct_chg_pce.pct_chg.mean()
 # plt.show()
 
 #looks like a garch(1, 1) is suitable
-model = arch_model(pct_chg_pce['pct_chg'], vol='Garch', p=1, q=1)
+model = arch_model(pct_chg_pce['pct_chg'], mean = 'AR', lags = 1, vol='Garch', p=1, q=1)
 fit = model.fit()
-print(fit.summary())
+# print(fit.summary())
 
 last_month = pct_chg_pce.index[-1]+ pd.offsets.MonthBegin(1)
 
