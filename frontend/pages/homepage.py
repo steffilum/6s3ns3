@@ -1,16 +1,16 @@
 import dash 
-from dash import html, Input, Output, State
+from dash import html, dcc, Input, Output, State
 import dash_bootstrap_components as dbc
 import os
 
 # Set working directory to current file location
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-# Initialize Dash app with Bootstrap theme
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
 
-# App layout
-app.layout = html.Div(
+dash.register_page(__name__, path="/", name="Home") # Register the homepage
+
+# Homepage layout
+layout = html.Div(
     style={
         "height": "100vh",
         "background": "radial-gradient(circle at top left, #3e1f47 0%, #000000 25%)",
@@ -82,7 +82,7 @@ app.layout = html.Div(
                 className="mega-dropdown",
                 children=[
                     html.Div("Explore Indicators", className="dropdown-item-normal"),
-                    html.Div("CPI", className="dropdown-item-bold"),
+                    dcc.Link("CPI", href="/cpi", className="dropdown-item-bold"),
                     html.Div("Housing Starts", className="dropdown-item-bold"),
                     html.Div("PMI", className="dropdown-item-bold")
                 ]
@@ -102,7 +102,7 @@ app.layout = html.Div(
 )
 
 # Callback to toggle dropdown visibility and blur content
-@app.callback(
+@dash.callback(
     Output("fade", "is_in"),
     Output("main-content", "className"),
     Input("fade-button", "n_clicks"),
