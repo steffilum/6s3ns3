@@ -8,7 +8,7 @@ df.plot(y = "pct_chg")
 plt.show()
 
 
-#prediction using mean = 
+#prediction using mean = 1.55%
 print(df.pct_chg.mean())
 
 #Prediction of new values for the model
