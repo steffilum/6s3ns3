@@ -33,15 +33,17 @@ layout = html.Div(
                 "fontSize": "22px"
             },
             children=[
-                # Logo
-                html.Div("6SENS3", style={                     
+                # Logo that clicks to return to homepage
+                dcc.Link("6SENS3", href='/', style={                     
                     "fontWeight": "800",
                     "color": "white",
                     "fontSize": "32px", 
                     "position": "absolute",
                     "left": "75px",
-                    "top": "35px"
-                }),
+                    "top": "35px",
+                    "textDecoration": "none"},
+                    className="fade-button-dropdown"
+                ),
 
                 html.Div([
                     # About button as a link
@@ -111,8 +113,8 @@ layout = html.Div(
                 children=[
                     html.Div("Explore Indicators", className="dropdown-item-normal"),
                     dcc.Link("CPI", href="/cpi", className="dropdown-item-bold"),
-                    dcc.Link("Housing Starts", href="/housingstarts", className="dropdown-item-bold"),
-                    dcc.Link("PMI", href="/pmi", className="dropdown-item-bold")
+                    dcc.Link("Housing Starts", href="/cpi", className="dropdown-item-bold"),
+                    dcc.Link("PMI", href="/cpi", className="dropdown-item-bold")
                 
                 ]
             )
