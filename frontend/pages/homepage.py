@@ -36,13 +36,12 @@ layout = html.Div(
                 # Logo that clicks to return to homepage
                 dcc.Link("6SENS3", href='/', style={                     
                     "fontWeight": "800",
-                    "color": "white",
                     "fontSize": "32px", 
                     "position": "absolute",
                     "left": "75px",
                     "top": "35px",
                     "textDecoration": "none"},
-                    className="fade-button-dropdown"
+                    className="logo-clickable"
                 ),
 
                 html.Div([
