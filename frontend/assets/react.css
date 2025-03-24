@@ -48,6 +48,15 @@ body, html {
   color: #ff9900;
 }
 
+.fade-button-dropdown.selected{
+  color: #fdfdfd;
+}
+
+.fade-button-dropdown:hover {
+  color: #fdfdfd;
+}
+
+
 .dropdown-item-normal {
   font-weight: 400;
   font-size: 16px;
@@ -57,4 +66,18 @@ body, html {
   pointer-events: none;
   cursor: default;
   margin-top: -20px;
+}
+
+.dropdown-item-comparemodels {
+  font-weight: 400;
+  font-size: 16px;
+  padding: 2px 0; 
+  color: rgba(206, 203, 203, 0.8);
+  cursor: default;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.dropdown-item-comparemodels:hover {
+  color: white;
 }
