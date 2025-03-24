@@ -21,6 +21,18 @@ body, html {
   pointer-events: none;
 }
 
+.logo-clickable {
+  transition: color 0.3s ease;
+  color: white;
+  text-decoration: none;
+}
+
+.logo-clickable:hover {
+  color: white;
+  text-shadow: 0 0 10px #959595, 0 0 20px #abaaa9, 0 0 30px #858482;
+}
+
+
 /* Dropdown Styling */
 .mega-dropdown {
   position: absolute;
