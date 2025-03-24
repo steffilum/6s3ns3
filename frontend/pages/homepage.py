@@ -2,6 +2,9 @@ import dash
 from dash import html, dcc, Input, Output, State
 import dash_bootstrap_components as dbc
 import os
+from pages.news import df_articles, generate_card_scroll
+
+
 
 # Set working directory to current file location
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -125,17 +128,9 @@ layout = html.Div(
             style={
                 "position": "absolute",
                 "top": "120px",
-                "left": "55px",
+                "left": "65px",
                 "width": "300px",
                 "height": "600px",
-                "overflowY": "auto",
-                "padding": "20px",
-                "borderRadius": "16px",
-                "backdropFilter": "blur(10px)",
-                "backgroundColor": "rgba(255, 255, 255, 0.05)",  
-                "border": "1px solid rgba(255, 255, 255, 0.2)",
-                "color": "white",
-                "boxShadow": "0 4px 30px rgba(0, 0, 0, 0.1)", 
                 "zindex": "1"
     },
             children=[
@@ -145,7 +140,19 @@ layout = html.Div(
                     "fontSize": "22px",
                     "marginBottom": "20px",
                     "fontFamily": "Montserrat, sans-serif"}),
-            ]
+                html.Div(
+                    children=[
+                        generate_card_scroll(df_articles)],
+                        style={
+                            "position": "absolute",
+                            "left": "-55px",
+                            "display": "block",
+                            "overflowY": "auto",
+                            "overflowX": "hidden",
+                            
+                        }
+                )]
+                
         )
     ]
 )
