@@ -44,12 +44,19 @@ layout = html.Div(
                 }),
 
                 html.Div([
-                    html.Span("About", style={
-                        "cursor": "default", 
-                        "position": "absolute", 
-                        "left": "482px", 
-                        "top": "42px"
-                    }),
+                    # About button as a link
+                    dcc.Link("About", href="/about", style={
+                        "position": "absolute",
+                        "left": "482px",
+                        "top": "42px",
+                        "backgroundColor": "transparent",
+                        "border": "none",
+                        "color": "rgba(206, 203, 203, 0.8)",
+                        "fontFamily": "Montserrat, sans-serif",
+                        "fontSize": "22px",
+                        "cursor": "pointer",
+                        "textDecoration": "none" 
+                    }, className="fade-button-dropdown"),
 
                     html.Button("Models", id="model-fade-button", className= 'fade-button-dropdown', n_clicks=0, style={
                         "cursor": "pointer", 
@@ -77,6 +84,7 @@ layout = html.Div(
                 ])
             ]
         ),
+        
         # Fade Dropdown for models
         dbc.Fade(
             id="model-fade",
@@ -87,10 +95,10 @@ layout = html.Div(
                 children=[
                     html.Div("Explore Models", className="dropdown-item-normal"),
                     dcc.Link("Model 1", href="/model1", className="dropdown-item-bold"),  # Link to model1 page
-                    html.Div("Model 2", className="dropdown-item-bold"),
-                    html.Div("Model 3", className="dropdown-item-bold"), 
-                    html.Div("Model 4", className="dropdown-item-bold"), 
-                    html.Div("Compare Models", className="dropdown-item-comparemodels")
+                    dcc.Link("Model 2", href="/model2", className="dropdown-item-bold"),  # Link to model2 page
+                    dcc.Link("Model 3", href="/model3", className="dropdown-item-bold"),  # Link to model3 page
+                    dcc.Link("Model 4", href="/model4", className="dropdown-item-bold"),  # Link to model4 page
+                    dcc.Link("Compare Models", href="/comparemodels", className="dropdown-item-comparemodels") # Link to comparemodels page
                 ]
             )
         ),
@@ -104,8 +112,9 @@ layout = html.Div(
                 children=[
                     html.Div("Explore Indicators", className="dropdown-item-normal"),
                     dcc.Link("CPI", href="/cpi", className="dropdown-item-bold"),
-                    html.Div("Housing Starts", className="dropdown-item-bold"),
-                    html.Div("PMI", className="dropdown-item-bold")
+                    dcc.Link("Housing Starts", href="/housingstarts", className="dropdown-item-bold"),
+                    dcc.Link("PMI", href="/pmi", className="dropdown-item-bold")
+                
                 ]
             )
         ),
