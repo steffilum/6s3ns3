@@ -42,11 +42,25 @@ body, html {
   color: white;
   transition: color 0.3s ease;
   text-decoration: none;
+  display: block;
 }
 
 .dropdown-item-bold:hover {
   color: #ff9900;
 }
+
+.fade-button-dropdown {
+  color: rgba(187, 186, 186, 0.8);
+}
+
+.fade-button-dropdown.selected{
+  color: #fdfdfd;
+}
+
+.fade-button-dropdown:hover {
+  color: #fdfdfd;
+}
+
 
 .dropdown-item-normal {
   font-weight: 400;
@@ -57,4 +71,20 @@ body, html {
   pointer-events: none;
   cursor: default;
   margin-top: -20px;
+}
+
+.dropdown-item-comparemodels {
+  font-weight: 400;
+  font-size: 16px;
+  padding: 2px 0; 
+  color: rgba(206, 203, 203, 0.8);
+  cursor: default;
+  margin-top: 20px;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+}
+
+.dropdown-item-comparemodels:hover {
+  color: #ff9900;
 }
