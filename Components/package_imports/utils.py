@@ -5,7 +5,7 @@ from .imports import *
 def difference_df(df, col = 0):
     if isinstance(df, pd.Series):
         df = df.to_frame()
-        df = df.rename(columns = {0: "Value"})
+        df = df.rename(columns = {df.columns[0]: "Value"})
         df["Lagged_Value"] = df["Value"].diff()
         df = df.dropna()
         return df
