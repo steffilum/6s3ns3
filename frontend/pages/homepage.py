@@ -122,10 +122,29 @@ layout = html.Div(
         # Main content (blurs when dropdown is open)
         html.Div(
             id="main-content",
-            className="main-content",
-            style={"position": "absolute", "top": "150px", "left": "150px", "width": "300px"},
+            style={
+                "position": "absolute",
+                "top": "120px",
+                "left": "55px",
+                "width": "300px",
+                "height": "600px",
+                "overflowY": "auto",
+                "padding": "20px",
+                "borderRadius": "16px",
+                "backdropFilter": "blur(10px)",
+                "backgroundColor": "rgba(255, 255, 255, 0.05)",  
+                "border": "1px solid rgba(255, 255, 255, 0.2)",
+                "color": "white",
+                "boxShadow": "0 4px 30px rgba(0, 0, 0, 0.1)", 
+                "zindex": "1"
+    },
             children=[
-                html.P("This is a placeholder for the main content of the page", style={"textAlign": "center"}),
+                html.H3("Top Stories this Week", style={
+                    "color": "white",
+                    "fontWeight": "600",
+                    "fontSize": "22px",
+                    "marginBottom": "20px",
+                    "fontFamily": "Montserrat, sans-serif"}),
             ]
         )
     ]
