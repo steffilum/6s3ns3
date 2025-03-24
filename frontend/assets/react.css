@@ -34,10 +34,6 @@ body, html {
   min-height: 100px;
 }
 
-.fade-button-dropdown:hover{
-  color: #ff9900;
-}
-
 /* Items */
 .dropdown-item-bold {
   font-weight: 600;
@@ -51,6 +47,10 @@ body, html {
 
 .dropdown-item-bold:hover {
   color: #ff9900;
+}
+
+.fade-button-dropdown {
+  color: rgba(187, 186, 186, 0.8);
 }
 
 .fade-button-dropdown.selected{

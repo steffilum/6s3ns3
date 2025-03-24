@@ -51,7 +51,6 @@ layout = html.Div(
                         "top": "42px",
                         "backgroundColor": "transparent",
                         "border": "none",
-                        "color": "rgba(206, 203, 203, 0.8)",
                         "fontFamily": "Montserrat, sans-serif",
                         "fontSize": "22px",
                         "cursor": "pointer",
@@ -65,7 +64,7 @@ layout = html.Div(
                         "top": "42px",
                         "backgroundColor": "transparent",
                         "border": "none",
-                        "color": "rgba(206, 203, 203, 0.8)",
+                        
                         "fontFamily": "Montserrat, sans-serif",
                         "fontSize": "22px"
                     }),
@@ -76,7 +75,7 @@ layout = html.Div(
                         "top": "42px",
                         "backgroundColor": "transparent",
                         "border": "none",
-                        "color": "rgba(206, 203, 203, 0.8)",
+                        
                         "fontFamily": "Montserrat, sans-serif",
                         "fontSize": "22px",
                         "cursor": "pointer"
