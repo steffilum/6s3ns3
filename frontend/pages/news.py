@@ -25,6 +25,8 @@ for article in articles:
         article["source"] = article["source"].get("name")
 
 df_articles = pd.DataFrame(articles)
+df_articles["title"] = df_articles["title"].str.split(" - ").str[0]
+
 #print(df_articles[["title", "source", "url", "urlToImage"]])
 
 def generate_card_scroll(df):
