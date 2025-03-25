@@ -64,3 +64,15 @@ def plot_acf_pacf(timeseries):
     plot_acf(timeseries, ax=ax1, lags=75)
     plot_pacf(timeseries, ax=ax2, lags=75)
     plt.show()
+
+# prints various eval metrics
+#takes in test and pred, does not return, prints out required metrics
+def eval(test, pred):
+    rmse = mean_squared_error(test, pred, squared=False)
+    print(f'Root Mean Squared Error: {rmse}')
+
+    mae = mean_absolute_error(test, pred)
+    print(f'Mean Absolute Error: {mae}')
+
+    directional_pred = ((pred * test)>0).sum()/test.size
+    print(f'Directional Accuracy: {directional_pred}')

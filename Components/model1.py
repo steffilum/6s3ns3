@@ -1,6 +1,6 @@
 from data_load import *
 
-X, y = load_data()
+X_train, X_test, y_train, y_test = load_data()
 
 X = compiled.iloc[:, :-1]
 X = sm.add_constant(X)
@@ -23,14 +23,7 @@ y_test = y.iloc[-50:]
 pred = pd.Series(pred, index = y_test.index)
 
 #evaluation
-rmse = mean_squared_error(y_test, pred, squared=False)
-print(f'Root Mean Squared Error: {rmse}')
-
-mae = mean_absolute_error(y_test, pred)
-print(f'Mean Absolute Error: {mae}')
-
-directional_pred = ((pred * y_test)>0).sum()/y_test.size
-print(f'Directional Accuracy: {directional_pred}')
+eval(pred, y_test)
 
 new_X = np.array([1, ne.values[-1], pce.values[-1], df.lag_GDP[-1]])
 

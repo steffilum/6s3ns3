@@ -19,5 +19,7 @@ compiled.columns = ['Nett_Exports', 'PCE','lag_GDP' ,'GDP']
 X = compiled.iloc[:, :3]
 y = compiled.GDP
 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=50)
+
 def load_data():
-    return X, y
+    return X_train, X_test, y_train, y_test
