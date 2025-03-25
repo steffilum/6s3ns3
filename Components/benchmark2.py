@@ -25,7 +25,7 @@ array = np.zeros(6)
 #     train = train.iloc[:239-index]
 #     for p in [1, 2]:
 #         for q in [0, 1, 2]:
-#             model = arch_model(train, vol='Garch', p=p, q=q).fit(disp = False)
+#             model = arch_model(train, vol='Garch', p=p, q=q, mean = 'AR', lags = 2).fit(disp = False)
 #             array[q*2+p-1] += (model.forecast(horizon=1).mean.iloc[-1].values[0]-validation)**2
 
 # print(array)
