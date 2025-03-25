@@ -15,7 +15,6 @@ from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
 from arch import arch_model
 from sklearn.linear_model import LinearRegression
-from sktime.regression.interval_based import TimeSeriesForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 
