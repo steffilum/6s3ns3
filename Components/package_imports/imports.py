@@ -9,7 +9,7 @@ from statsmodels.tsa.stattools import adfuller
 
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, TimeSeriesSplit
 
 from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
@@ -20,7 +20,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 import statsmodels.api as sm
 
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 
 from dotenv import load_dotenv
 import os
