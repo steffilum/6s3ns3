@@ -13,7 +13,7 @@ print(train.size)
 #prediction using mean = 1.5418%
 print(train.mean())
 pred = pd.Series(1.5418, index = test.index)
-print(pred)
+# print(pred)
 
 #evaluation
 rmse = mean_squared_error(test, pred, squared=False)
