@@ -18,15 +18,16 @@ train, test = train_test_split(df.pct_chg, test_size=50, shuffle=False)
 # 240 obs for train and validation
 
 # CV for p and q where p = [0, 1, 2] and q = [0, 1, 2]
-array = np.zeros(6)
+# array = np.zeros(30)
 
 # for index in range(1, 51):
 #     validation = train.iloc[-index]
 #     train = train.iloc[:239-index]
 #     for p in [1, 2]:
 #         for q in [0, 1, 2]:
-#             model = arch_model(train, vol='Garch', p=p, q=q, mean = 'AR', lags = 2).fit(disp = False)
-#             array[q*2+p-1] += (model.forecast(horizon=1).mean.iloc[-1].values[0]-validation)**2
+#             for lags in range(5):
+#                 model = arch_model(train, vol='Garch', p=p, q=q, mean = 'AR', lags = lags).fit(disp = False)
+#                 array[lags*6+q*2+p-1] += (model.forecast(horizon=1).mean.iloc[-1].values[0]-validation)**2
 
 # print(array)
 # Garch (1, 1) looks the best
@@ -35,7 +36,7 @@ for index in range(1, 51):
     test_obs = df.pct_chg.iloc[-index]
     train = df.pct_chg.iloc[:290-1-index]
     train_lag = train.shift(1)
-    model = arch_model(train, vol='Garch', p=1, q=1, mean = 'AR', lags = 2).fit(disp = False)
+    model = arch_model(train, vol='Garch', p=1, q=1, mean = 'AR', lags = 0).fit(disp = False)
     pred.append(model.forecast(horizon=1).mean.iloc[-1].values[0])
 
 pred.reverse()
