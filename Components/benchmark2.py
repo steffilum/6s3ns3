@@ -4,14 +4,29 @@ fred = Fred(api_key = os.getenv("API_KEY"))
 
 df = get_most_recent_df_of_date("GDP", "2020-01-01", fred)
 df = pct_chg(df)
+
 # df.plot()
-# (df**2).plot()
+# plt.show()
+#looks like white noise but need to demean
+# df = df.pct_chg-df.pct_chg.mean()
+# df.plot()
 # plt.show()
 
 # Plotting ACF and PACF of the closing value time series
-# plot_acf_pacf(df.pct_chg)
-# plot_acf_pacf(df.pct_chg**2)
+# plot_acf_pacf(df)
+# plot_acf_pacf(df**2)
 # Suggesting that a GARCH model might be suitable
+
+# testing for stationarity may be stationary as power is low
+# print("ADF Test Result: ", adfuller(df))
+diff_df = difference_df(df, 1)
+print("ADF Test Result: ", adfuller(diff_df['Diff_Value']))
+# Taking second diff
+diff_df = difference_df(df, 1)
+print(diff_df)
+print("ADF Test Result: ", adfuller(diff_df['Diff_Value']))
+# No significant improvement when taking diff suggesting that 
+
 
 train, test = train_test_split(df.pct_chg, test_size=50, shuffle=False)
 # print(train.size)

@@ -6,11 +6,11 @@ def difference_df(df, col = 0):
     if isinstance(df, pd.Series):
         df = df.to_frame()
         df = df.rename(columns = {df.columns[0]: "Value"})
-        df["Lagged_Value"] = df["Value"].diff()
+        df["Diff_Value"] = df["Value"].diff()
         df = df.dropna()
         return df
     else:
-        df["Lagged_Value"] = df.iloc[:, col].diff()
+        df["Diff_Value"] = df.iloc[:, col].diff()
         df = df.dropna()
         return df
 

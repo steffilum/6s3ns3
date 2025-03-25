@@ -10,7 +10,7 @@ pct_chg_pce = pct_chg(df)
 
 #demean and checking for stationarity
 pct_chg_pce['demean_pct_chg'] = pct_chg_pce.pct_chg-pct_chg_pce.pct_chg.mean()
-# print("ADF Test Result: ", adfuller(difference_df(pct_chg_pce['demean_pct_chg'])['Lagged_Value']))
+# print("ADF Test Result: ", adfuller(difference_df(pct_chg_pce['demean_pct_chg'])['Diff_Value']))
 # plot_acf_pacf(pct_chg_pce['demean_pct_chg'] )
 # plot_acf_pacf(pct_chg_pce['demean_pct_chg']**2)
 # plt.show()
