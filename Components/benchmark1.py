@@ -8,12 +8,12 @@ df = pct_chg(df)
 # plt.show()
 
 train, test = train_test_split(df.pct_chg, test_size=50, shuffle=False)
-print(train.size)
+# print(train.size)
 
-#prediction using mean = 1.5418%
-print(train.mean())
-pred = pd.Series(1.5418, index = test.index)
+#prediction using mean = 1.69494%
+# print(train.mean())
+pred = pd.Series(1.69494, index = test.index)
 # print(pred)
 
 #evaluation
-eval(pred, test)
+eval(pred, test, False)

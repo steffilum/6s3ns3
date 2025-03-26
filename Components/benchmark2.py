@@ -21,27 +21,27 @@ train, test = train_test_split(diff_df, test_size=50, shuffle=False)
 # 239 obs for train and validation
 
 # CV for p and q where p = [1, 2, 3, 4] and q = [0, 1, 2] and lags up to 1
-# array = np.zeros(24)
+array = np.zeros(24)
 
-# rmse_cv = []
+rmse_cv = []
 
-# for p in [1, 2, 3, 4]:
-#     for q in [0, 1, 2]:
-#         for lags in [0, 1]:
-#             pred = []
-#             for index in range(1, 51):
-#                 train = train.iloc[:239-index-1]   
-#                 model = arch_model(train, vol='Garch', p=p, q=q, mean = 'AR', lags = lags).fit(disp = False)  
-#                 pred.append(model.forecast(horizon=1).mean.iloc[-1].values[0])  
-#             pred.reverse() 
-#             test_recon = train.iloc[-50:].cumsum()
-#             pred = pd.Series(pred, index= test_recon.index)  
-#             pred_recon = pred.cumsum()
-#             rmse_cv.append(mean_squared_error(pred_recon, test_recon, squared=False))
+for p in [1, 2, 3, 4]:
+    for q in [0, 1, 2]:
+        for lags in [0, 1]:
+            pred = []
+            for index in range(1, 51):
+                train = train.iloc[:239-index-1]   
+                model = arch_model(train, vol='Garch', p=p, q=q, mean = 'AR', lags = lags).fit(disp = False)  
+                pred.append(model.forecast(horizon=1).mean.iloc[-1].values[0])  
+            pred.reverse() 
+            test_recon = train.iloc[-50:].cumsum() + diff_df.iloc[-101]
+            pred = pred + diff_df.iloc[-101:-51].values
+            pred_recon = pd.Series(pred, index= test_recon.index)  
+            rmse_cv.append(mean_squared_error(pred_recon, test_recon, squared=False))
 
 
 #RMSE of CV
-# print(rmse_cv)
+print(rmse_cv)
 # no lag looks superior, would produce the same results as prevailing mean
 
 #Eval on test set

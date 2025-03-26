@@ -66,13 +66,20 @@ def plot_acf_pacf(timeseries):
     plt.show()
 
 # prints various eval metrics
-#takes in test and pred, does not return, prints out required metrics
-def eval(test, pred):
+#takes in test and pred as series, does not return, prints out required metrics
+def eval(test, pred, plot = True):
+    # #plotting of resid
+    if plot:
+        fig, ax = plt.subplots()
+        ax.plot(test)
+        ax.plot(pred)
+        plt.show()
     rmse = mean_squared_error(test, pred, squared=False)
     print(f'Root Mean Squared Error: {rmse}')
 
     mae = mean_absolute_error(test, pred)
     print(f'Mean Absolute Error: {mae}')
+    
+    directional_pred = (pred.apply(lambda x: 1 if x > 0 else -1) == test.apply(lambda x: 1 if x > 0 else -1)).sum() / len(test)
 
-    directional_pred = ((pred * test)>0).sum()/test.size
     print(f'Directional Accuracy: {directional_pred}')
