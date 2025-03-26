@@ -15,6 +15,7 @@ from dash import html, dcc, Input, Output, State
     prevent_initial_call=True  # Avoid errors on page load
 )
 def toggle_fades(model_clicks, indicator_clicks, model_is_in, indicator_is_in, style):
+    print("Callback triggered!")  
 
     ctx = dash.callback_context
 
