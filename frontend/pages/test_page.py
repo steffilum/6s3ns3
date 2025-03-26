@@ -1,12 +1,12 @@
 import dash
 from dash import html, dcc
-from shared.default_pagelayout import get_default_layout  # or wherever it's located
+from shared.default_pagelayout import get_default_layout 
 
 
 dash.register_page(__name__, path="/test_page", name="Housing Starts")
 
 # Define the custom content you want in the main area
-cpi_content = html.Div(
+test_content = html.Div(
     id="main-content",
     style={
         "position": "absolute",
@@ -22,4 +22,4 @@ cpi_content = html.Div(
 )
 
 # Plug that content into your default layout
-layout = get_default_layout(main_content=cpi_content)
+layout = get_default_layout(main_content=test_content)
