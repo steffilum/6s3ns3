@@ -5,19 +5,7 @@ fred = Fred(api_key = os.getenv("API_KEY"))
 df = get_most_recent_df_of_date("GDP", "2020-01-01", fred)
 df = pct_chg(df)
 
-# df.plot()
-# plt.show()
-
-#looks like white noise but need to demean
-# df = df.pct_chg-df.pct_chg.mean()
-# df.plot()
-# plt.show()
-
-# testing for stationarity may be stationary as power is low
-# print("ADF Test Result: ", adfuller(df))
-# First diff shows significant improvement thus can conclude that first diff is stationary
 df = difference_df(df, 1)
-# print("ADF Test Result: ", adfuller(df['Diff_Value']))
 diff_df = df['Diff_Value']
 
 # Plotting ACF and PACF of the first diff in pct chg in GDP
