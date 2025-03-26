@@ -115,7 +115,7 @@ layout = html.Div(
                 children=[
                     html.Div("Explore Indicators", className="dropdown-item-normal"),
                     dcc.Link("CPI", href="/cpi", className="dropdown-item-bold"),
-                    dcc.Link("Housing Starts", href="/cpi", className="dropdown-item-bold"),
+                    dcc.Link("Housing Starts", href="/test_page", className="dropdown-item-bold"),
                     dcc.Link("PMI", href="/cpi", className="dropdown-item-bold")
                 
                 ]
