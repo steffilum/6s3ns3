@@ -100,3 +100,20 @@ body, html {
 .dropdown-item-comparemodels:hover {
   color: #ff9900;
 }
+
+/* News Styling */
+.card-title {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+}
+
+.card-title:hover {
+  color: white;
+  text-shadow: 0 0 10px #959595, 0 0 20px #abaaa9, 0 0 30px #858482;
+}
+

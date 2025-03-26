@@ -52,6 +52,7 @@ def generate_card_scroll(df):
                     "overflowY": "auto",
                     "overflowX": "hidden",
                     "marginBottom": "20px",
+                    "marginRight": "40px",
                     "backgroundColor": "#1a1a1a",
                     "border": "1px solid #444",
                     "borderRadius": "10px",
