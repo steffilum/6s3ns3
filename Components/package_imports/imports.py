@@ -17,7 +17,8 @@ from arch import arch_model
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
-
+from midaspy.iolib import *
+from midaspy.model import MIDASRegressor
 
 import statsmodels.api as sm
 
