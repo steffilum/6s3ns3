@@ -16,10 +16,8 @@ pce = quart_pct_chg_pce()
 compiled = pd.concat([ne, pce, df.lag_GDP, df.pct_chg], axis = 1).dropna()
 compiled.columns = ['Nett_Exports', 'PCE','lag_GDP' ,'GDP']
 
-X = compiled.iloc[:, :3]
+X = compiled.iloc[:, :-1]
 y = compiled.GDP
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=50)
-
 def load_data():
-    return X_train, X_test, y_train, y_test
+    return X, y

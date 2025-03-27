@@ -1,16 +1,13 @@
 from data_load import *
 
-X_train, X_test, y_train, y_test = load_data()
+X, y = load_data()
 
-X = compiled.iloc[:, :-1]
 X = sm.add_constant(X)
-y = compiled.GDP
 # print(X.shape)
 
 # Evaluation on test set
 pred = []
 for index in range(1, 51):
-    y_test = y.iloc[-index]
     X_train = X.iloc[:-index, :]
     y_train = y.iloc[:-index]
     X_test = X.iloc[-index, :]
@@ -25,8 +22,8 @@ pred = pd.Series(pred, index = y_test.index)
 #evaluation
 eval(pred, y_test)
 
-new_X = np.array([1, ne.values[-1], pce.values[-1], df.lag_GDP[-1]])
+# new_X = np.array([1, ne.values[-1], pce.values[-1], df.lag_GDP[-1]])
 
-predictions = model.predict(new_X)
+# predictions = model.predict(new_X)
 
-print("Predicted values:", predictions)
+# print("Predicted values:", predictions)
