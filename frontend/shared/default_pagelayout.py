@@ -10,7 +10,7 @@ import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
-dash.register_page(__name__, path="/", name="Home") # Register the page
+dash.register_page(__name__, path="/default_pagelayout", name="Home") # Register the page
 
 # Default layout
 def get_default_layout(main_content= None): 
