@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 from scipy.stats import norm
-#from shared.default_pagelayout import get_default_layout
+from shared.default_pagelayout import get_default_layout
 
 #link page to homepage
 dash.register_page(__name__, path="/comparemodels", name="Compare Models")
@@ -146,7 +146,7 @@ figures = [
 
 
 # LAYOUT
-layout = html.Div([
+comparemodels_content = html.Div([
    html.H1("Compare NowCast Models", style={'text-align': 'center'}),
 
 
@@ -230,6 +230,8 @@ style={
        'overflowY': 'scroll'  # Enable scrolling
    })
 
+# Plug that content into your default layout
+layout = get_default_layout(main_content= comparemodels_content)
 
 ##CALLBACKS
 # Callback for Model 1: Update graph and forecast with date filtering
