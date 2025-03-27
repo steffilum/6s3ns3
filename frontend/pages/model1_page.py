@@ -37,7 +37,7 @@ model1_content = html.Div(
                     style={"width": "150px", "height": "40px", "padding": "5px", "fontSize": "16px"}
                 ),
 
-                html.Br(), html.Br(), # Adds apcing between inputs
+                html.Br(), html.Br(), # Adds spacing between inputs
 
                 html.Label("End year", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
                 dcc.Input(
