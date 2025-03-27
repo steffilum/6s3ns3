@@ -28,7 +28,7 @@ gdp_growth_df['Quarter'] = (
 )
 
 # Optional: Display first few rows
-print(gdp_growth_df.head())
+#print(gdp_growth_df.head())
 
 
 
