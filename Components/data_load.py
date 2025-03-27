@@ -4,7 +4,7 @@ from nett_exports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
-df = get_most_recent_df_of_date("GDP", "2020-01-01", fred)
+df = get_most_recent_series_of_date("GDP", "2020-01-01", fred)
 df = pct_chg(df)
 df['lag_GDP'] = df.pct_chg.shift()
 # df.plot()

@@ -17,7 +17,7 @@ def difference_df(df, col = 0):
 #gets the most recent df of a series
 # takes in the series key and end date
 #returns a series whos index is date and value
-def get_most_recent_df_of_date(series_key, end_date, fred):
+def get_most_recent_series_of_date(series_key, end_date, fred):
     df = fred.get_series_as_of_date(series_key, end_date).drop_duplicates(subset = ["date"], keep = "last")
     df = pd.Series(df["value"].to_list(), index = df["date"].to_list())
     df.index = pd.to_datetime(df.index)

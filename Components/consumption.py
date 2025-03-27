@@ -2,7 +2,7 @@ from package_imports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
-df = get_most_recent_df_of_date("PCE", "2020-01-01", fred)
+df = get_most_recent_series_of_date("PCE", "2020-01-01", fred)
 
 pct_chg_pce = pct_chg(df)
 # pct_chg_pce.plot()

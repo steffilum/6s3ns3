@@ -2,7 +2,7 @@ from package_imports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
-df = get_most_recent_df_of_date("MTSO133FMS", "2020-01-01", fred)
+df = get_most_recent_series_of_date("MTSO133FMS", "2020-01-01", fred)
 
 govt_chg_pce = pct_chg(df)
 

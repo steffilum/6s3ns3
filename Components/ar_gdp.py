@@ -4,7 +4,7 @@ fred = Fred(api_key = os.getenv("API_KEY"))
 
 
 def get_prediction(series_key, end_date, n, fred):
-    df = get_most_recent_df_of_date(series_key, end_date, fred)
+    df = get_most_recent_series_of_date(series_key, end_date, fred)
     df = np.log(df)
     
     lagged_value = difference_df(df)
