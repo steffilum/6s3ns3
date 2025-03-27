@@ -59,7 +59,8 @@ homepage_content = html.Div(
                 "marginBottom": "20px",
                 "fontFamily": "Montserrat, sans-serif", 
                 "position": "absolute",
-                "left": "600px"
+                "left": "600px", 
+                "width": "500px"
             }
         ),
         # Range input
@@ -68,7 +69,7 @@ homepage_content = html.Div(
             type = 'text',
             placeholder='Enter Quarter (e.g. 1950Q1)',
             value='1950Q1',  # Default value
-            style={"width": "150px", "height": "40px", "position": "absolute", "left": "800px"}
+            style={"width": "150px", "height": "40px", "position": "absolute", "left": "800px", 'top': '350px'}
         ),
        
         # Container for Forecast label and value
@@ -110,14 +111,27 @@ layout = get_default_layout(main_content=homepage_content)
 # Callback to update the GDP forecast value
 @dash.callback(
     Output('gdp-forecast', 'children'),
+    Output('gdp-forecast', 'style'),
     Input('quarter-picker', 'value')
 )
 
 def update_gdp_forecast(selected_quater):
+    base_style = {
+        "color": "grey",
+        "fontWeight": "600",
+        "fontSize": "28px",
+        "fontFamily": "Montserrat, sans-serif"
+    }
     if selected_quater not in gdp_growth_df['Quarter'].values:
-        return "No data found"
+        return "No data found", base_style
+    
     value = get_gdp_growth_rate(selected_quater)
-    return f"{value:.2f}%"
+    if value < 0:
+        return f"{value:.2f}%", {**base_style, "color": "red"}
+    if value > 0:
+        return f"{value:.2f}%", {**base_style, "color": "rgb(0, 200, 83)"}
+    else: 
+        return f"{value:.2f}%", {**base_style, "color": "white"}
 
 
 
