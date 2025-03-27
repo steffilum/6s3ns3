@@ -16,6 +16,7 @@ df = pd.DataFrame({"Year": years, "Real GDP": values})
 
 # Content for Model 1 page
 model1_content = html.Div(
+    id="main-content",
     children=[
         html.Br(), 
         # Header "Model 1"
