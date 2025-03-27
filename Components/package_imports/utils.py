@@ -83,3 +83,34 @@ def eval(test, pred, plot = True):
     directional_pred = (pred.apply(lambda x: 1 if x > 0 else -1) == test.apply(lambda x: 1 if x > 0 else -1)).sum() / len(test)
 
     print(f'Directional Accuracy: {directional_pred}')
+
+# obtained from https://fg-research.com/blog/general/posts/fred-md-overview.html
+def transform_series(x, tcode):
+    '''
+    Transform the time series.
+
+    Parameters:
+    ______________________________
+    x: pandas.Series
+        Time series.
+
+    tcode: int.
+        Transformation code.
+    '''
+
+    if tcode == 1:
+        return x
+    elif tcode == 2:
+        return x.diff()
+    elif tcode == 3:
+        return x.diff().diff()
+    elif tcode == 4:
+        return np.log(x)
+    elif tcode == 5:
+        return np.log(x).diff()
+    elif tcode == 6:
+        return np.log(x).diff().diff()
+    elif tcode == 7:
+        return x.pct_change()
+    else:
+        raise ValueError(f"unknown `tcode` {tcode}")
