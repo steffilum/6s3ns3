@@ -23,7 +23,8 @@ homepage_content = html.Div(
         "left": "65px",
         "width": "300px",
         "height": "600px",
-        "zIndex": "1"
+        "zIndex": "1", 
+        "paddingBottom": "100px"
     },
     children=[
         # Header "Top Stories this Week"
@@ -139,8 +140,36 @@ homepage_content = html.Div(
             )
             ]
 
+        ),
+
+        # Container for displaying economic indicators
+        html.Div(
+            id = 'economic-indicators',
+            style = {
+                "position": "absolute",
+                "left": "316px",
+                "top": "390px",
+                "width": "720px",
+                "height": "250px",
+                "border": "1px solid #444", 
+                "borderRadius": "20px",
+                "overflowY": "auto"
+            },
+            children = [
+                html.H1(
+                    "Key Economic Indicators", 
+                    style ={
+                        "color": "white",
+                        "fontWeight": "400",
+                        "fontSize": "20px",
+                        "fontFamily": "Montserrat, sans-serif", 
+                        "width": "300px",
+                        "marginTop": "10px", 
+                        "marginLeft": "10px"
+                    }
+                )
+            ]
         )
-        
         
     ]
 )
