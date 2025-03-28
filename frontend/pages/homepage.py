@@ -129,6 +129,7 @@ homepage_content = html.Div(
             dcc.Graph(
                 id = 'gdp-forecast-graph',
                 figure = get_forecast_graph("1950Q1", "2023Q4"),
+                config = {"displayModeBar": False},
                 style={
                     "position": "absolute",
                     "left": "316px",
