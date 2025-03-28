@@ -21,3 +21,16 @@ plt.show()
 
 model = ARIMA(pct_chg_imports_bop, order=(3, 0, 4), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(3+4+1+1, .01))
+
+plt.plot(model.resid)
+plt.show()
+
+start_date_pred = pct_chg_imports_bop.index[-1]+ pd.offsets.MonthBegin(1)
+end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
+
+#prediction
+pred = model.predict(start = start_date_pred, end = end_date_pred)
+
+pct_chg_pred = pd.concat([pct_chg_imports_bop, pred])
+
+quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
