@@ -32,9 +32,6 @@ plot_acf_pacf(model.resid)
 plt.plot(model.resid)
 plt.show()
 
-plt.plot(model.resid)
-plt.show()
-
 start_date_pred = pct_chg_exports_bop.index[-1]+ pd.offsets.MonthBegin(1)
 end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
 
