@@ -34,3 +34,19 @@ pred = model.predict(start = start_date_pred, end = end_date_pred)
 pct_chg_pred = pd.concat([pct_chg_imports_bop, pred])
 
 quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
+
+def quart_pct_chg_imports(given_date = "2020-01-01", period = 'Q'):
+    fred = Fred(api_key = os.getenv("API_KEY"))
+    df = get_most_recent_series_of_date("BOPTIMP", given_date, fred)
+    pct_chg_imports = transform_series(df, 5).dropna()*100
+    model = ARIMA(pct_chg_imports, order=(3, 0, 4), trend = 'c', freq = 'MS').fit(start_params = np.full(3+4+1+1, .01))
+    start_date_pred = pct_chg_imports.index[-1]+ pd.offsets.MonthBegin(1)
+    end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
+    pred = model.predict(start = start_date_pred, end = end_date_pred)
+    pct_chg_pred = pd.concat([pct_chg_imports, pred])
+    if period == 'M':
+        return pct_chg_pred
+    elif period == 'Q':
+
+        quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
+        return quarterly_pct_chage
