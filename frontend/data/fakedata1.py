@@ -66,5 +66,12 @@ def get_forecast_graph(start_quarter, end_quarter):
     # Add a vertical line at the selected quarters
     fig.add_vline(x=end_date, line_dash="dash", line_color="red")
     
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',  # Transparent outer background
+        plot_bgcolor='rgba(0,0,0,0)',   # Transparent plotting area
+        margin=dict(l=0, r=0, t=50, b=50)
+    )
+
+    
     return fig 
 
