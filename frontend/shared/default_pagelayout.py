@@ -4,11 +4,11 @@ import dash_bootstrap_components as dbc
 import os
 
 
+
+
 # Set working directory to current file location
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-
-#dash.register_page(__name__, path="/default_pagelayout", name="Home") # Register the page
 
 # Default layout
 def get_default_layout(main_content= None): 
@@ -113,7 +113,7 @@ def get_default_layout(main_content= None):
                     children=[
                         html.Div("Explore Indicators", className="dropdown-item-normal"),
                         dcc.Link("CPI", href="/cpi", className="dropdown-item-bold"),
-                        dcc.Link("Housing Starts", href="/cpi", className="dropdown-item-bold"),
+                        dcc.Link("Housing Starts", href="/test_page", className="dropdown-item-bold"),
                         dcc.Link("PMI", href="/cpi", className="dropdown-item-bold")
                     ]
                 )

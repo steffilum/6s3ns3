@@ -58,8 +58,7 @@ model1_content = html.Div(
         html.P("This model represents a sample visualization of economic trends over time. The graph above updates dynamically based on the selected year range.",
                style={"color": "white", "textAlign": "left", "maxWidth": "800px"}
         )
-    ],
-    style={"padding": "20px"}
+    ]
 )
 
 # Plug that content into your default layout
