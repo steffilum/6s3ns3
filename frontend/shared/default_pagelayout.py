@@ -17,12 +17,13 @@ def get_default_layout(main_content= None):
     return html.Div(
         style={
             "height": "100vh",
+            "overFlowY": "auto",
+            "overFLowX": "hidden",
             "background": "radial-gradient(circle at top left, #3e1f47 0%, #000000 25%)",
             "boxShadow": "0 0 100px #ff6a00",
             "margin": "0px",
             "padding": "0px",
-            "position": "relative",
-            "overflow": "hidden"
+            "position": "relative"
         },
         children=[
             html.Nav(
