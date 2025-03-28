@@ -22,6 +22,12 @@ plt.show()
 model = ARIMA(pct_chg_imports_bop, order=(3, 0, 4), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(3+4+1+1, .01))
 
+fig, ax = plt.subplots()
+ax.plot(model.fittedvalues)
+ax.plot(pct_chg_imports_bop)
+plt.show()
+
+plot_acf_pacf(model.resid)
 plt.plot(model.resid)
 plt.show()
 

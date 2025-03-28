@@ -22,12 +22,12 @@ plt.show()
 model = ARIMA(pct_chg_govt_construction, order=(1, 0, 1), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(1+1+1+1, .01))
 
-# fig, ax = plt.subplots()
-# ax.plot(model.fittedvalues)
-# ax.plot(pct_chg_govt_construction)
-# plt.show()
+#fig, ax = plt.subplots()
+#ax.plot(model.fittedvalues)
+#ax.plot(pct_chg_govt_construction)
+#plt.show()
 
-#plot_acf_pacf(model.resid)
+plot_acf_pacf(model.resid)
 plt.plot(model.resid)
 plt.show()
 

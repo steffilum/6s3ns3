@@ -28,8 +28,8 @@ model = model.fit(start_params = np.full(6+2, .01))
 # plt.show()
 
 # plot_acf_pacf(model.resid)
-# plt.plot(model.resid)
-# plt.show()
+plt.plot(model.resid)
+plt.show()
 
 start_date_pred = pct_chg_nondefense_capital_goods.index[-1]+ pd.offsets.MonthBegin(1)
 end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
