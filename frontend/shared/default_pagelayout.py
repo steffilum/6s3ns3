@@ -4,13 +4,11 @@ import dash_bootstrap_components as dbc
 import os
 
 
-
-
 # Set working directory to current file location
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
-dash.register_page(__name__, path="/default_pagelayout", name="Home") # Register the page
+#dash.register_page(__name__, path="/default_pagelayout", name="Home") # Register the page
 
 # Default layout
 def get_default_layout(main_content= None): 
