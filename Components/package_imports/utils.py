@@ -50,7 +50,7 @@ def best_arma(df, start_p = 0, start_q = 0, max_p = 5, max_q = 5, test_size = 50
     p_range = range(start_p, max_p+1) 
     q_range = range(start_q, max_q+1)  
 
-    results = np.full((max_p-start_p, max_q-start_q),np.inf)
+    results = np.full((max_p-start_p+1, max_q-start_q+1),np.inf)
 
     for index in range(1, test_size+1):
         train = df.iloc[:-index-1]
@@ -58,8 +58,13 @@ def best_arma(df, start_p = 0, start_q = 0, max_p = 5, max_q = 5, test_size = 50
         for p in p_range:
             for q in q_range:
                 try:
+<<<<<<< Updated upstream
                     model = ARIMA(train, order=(p, 0, q), trend = trend, freq=freq, exog = exog)
                     model = model.fit(method_kwargs={'maxiter':100},method='statespace')
+=======
+                    model = ARIMA(train, order=(p, 0, q), trend = trend, freq=freq, enforce_stationarity=False, enforce_invertibility=False)
+                    model = model.fit(method_kwargs={'maxiter':100})
+>>>>>>> Stashed changes
                     pred = model.get_forecast(steps = 1).predicted_mean
                     if results[p-start_p-1][q-start_q-1] == np.inf:
                         results[p-start_p-1][q-start_q-1] = 0
