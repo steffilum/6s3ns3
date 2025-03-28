@@ -52,7 +52,7 @@ def quart_pct_chg_defence(date = "2020-01-01"):
     given_date = "2020-01-01"
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("FDEFX", given_date, fred)
-    df = df[df.index<=pd.to_datetime("2006-06-01")]
+    df = df[df.index<pd.Timestamp(given_date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
     pct_chg_fed_defence = transform_series(df, 5).dropna()*100
     model = ARIMA(pct_chg_fed_defence, order=(2, 0, 3), trend = 'c', freq = 'QS').fit(start_params = np.full(2+3+1+1, .01))
     start_date_pred = pct_chg_fed_defence.index[-1]+ pd.offsets.QuarterBegin(1)

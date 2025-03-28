@@ -10,6 +10,7 @@ from statsmodels.tsa.stattools import adfuller
 
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.stats.diagnostic import het_arch
+from statsmodels.stats.diagnostic import acorr_ljungbox
 
 from sklearn.model_selection import train_test_split, TimeSeriesSplit
 

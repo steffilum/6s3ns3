@@ -16,7 +16,7 @@ pct_chg_pce = transform_series(df, 5).dropna()*100
 # plot_acf_pacf(pct_chg_pce)
 # plt.show()
 
-#gridsearch chosen base on pcf and acf
+# gridsearch chosen base on pcf and acf
 #seasonal order based on acf
 # best_arma(pct_chg_pce, trend='c', test_size=10, start_p= 0, start_q=0, max_p=5, max_q=5, seasonal_order = (0, 0, 0, 6))
 model = ARIMA(pct_chg_pce, order=(4, 0, 3), trend = 'c', freq = 'MS', seasonal_order=(0, 0, 0, 6))
@@ -30,7 +30,6 @@ model = model.fit(start_params = np.full(4+3+6+1, .01))
 # plot_acf_pacf(model.resid)
 plt.plot(model.resid)
 plt.show()
-
 
 start_date_pred = pct_chg_pce.index[-1]+ pd.offsets.MonthBegin(1)
 end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
