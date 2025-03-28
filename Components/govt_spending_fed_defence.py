@@ -26,6 +26,7 @@ pct_chg_fed_defence = pct_chg_fed_defence[pct_chg_fed_defence.index >= pd.to_dat
 
 
 # best_arma(pct_chg_fed_defence, trend='c', test_size=10, start_p= 0, start_q=0, max_p=5, max_q=5, freq="QS")
+# best arma: p=2, q=3
 model = ARIMA(pct_chg_fed_defence, order=(2, 0, 3), trend = 'c', freq = 'QS')
 model = model.fit(start_params = np.full(2+3+1+1, .01))
 
