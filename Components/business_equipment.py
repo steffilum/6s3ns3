@@ -7,12 +7,12 @@ df = get_most_recent_series_of_date("IPBUSEQ", given_date, fred)
 df = df[df.index<=pd.to_datetime("2006-06-01")]
 
 pct_chg_business_equipment = transform_series(df, 5).dropna()
-# pct_chg_business_equipment.plot()
-# plt.show()
+pct_chg_business_equipment.plot()
+plt.show()
 
 pct_chg_business_equipment = pct_chg_business_equipment.diff().dropna()
-# pct_chg_business_equipment.plot()
-# plt.show()
+pct_chg_business_equipment.plot()
+plt.show()
 
 # print("ADF Test Result: ", adfuller(pct_chg_business_equipment)) # small p-value, stationary 
 
