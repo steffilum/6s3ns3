@@ -7,13 +7,16 @@ df = pct_chg(df)
 # df.plot(y = "pct_chg")
 # plt.show()
 
-train, test = train_test_split(df.pct_chg, test_size=50, shuffle=False)
-# print(train.size)
+df = df.pct_chg
+_, test = train_test_split(df, test_size=50, shuffle=False)
 
-#prediction using mean = 1.69494%
-# print(train.mean())
-pred = pd.Series(1.69494, index = test.index)
-# print(pred)
+pred = []
+
+for index in range(1, 51):
+    pred.append(df.iloc[:-index].mean())
+
+pred.reverse()
+pred = pd.Series(pred, index = test.index)
 
 #evaluation
-eval(pred, test, False)
+eval(pred, test, plot=True)

@@ -26,5 +26,5 @@ pred.reverse()
 pred = pd.concat(pred)
 pred.index = pred.index.to_timestamp()
 
-eval(test, pred, False)
+eval(test, pred, plot=True)
 
