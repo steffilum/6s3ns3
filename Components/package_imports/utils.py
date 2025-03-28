@@ -41,6 +41,39 @@ def best_aic(df, max_lag_to_try):
             best_lag = lag
     return best_lag
 
+#chooses the best arma model by using oos forecasting
+#inputs df a time series stationary, max p and q to test and test size
+def best_arma(df, start_p = 0, start_q = 0, max_p = 5, max_q = 5, test_size = 50, trend = None, freq = 'MS'):
+
+    df = df.asfreq(freq)
+
+    p_range = range(start_p, max_p+1) 
+    q_range = range(start_q, max_q+1)  
+
+    results = np.full((max_p-start_p, max_q-start_q),np.inf)
+
+    for index in range(1, test_size+1):
+        train = df.iloc[:-index-1]
+        test = df.iloc[-index]
+        for p in p_range:
+            for q in q_range:
+                try:
+                    model = ARIMA(train, order=(p, 0, q), trend = trend, freq=freq)
+                    model = model.fit(method_kwargs={'maxiter':100},method='statespace')
+                    pred = model.get_forecast(steps = 1).predicted_mean
+                    if results[p-start_p-1][q-start_q-1] == np.inf:
+                        results[p-start_p-1][q-start_q-1] = 0
+                    results[p-start_p-1][q-start_q-1] += (pred-test)**2                
+                except TypeError:
+                    print(f'Try other params for{(p, 0, q)}')
+    print(results)
+    flat_index = np.argmin(results)
+    p, q = np.unravel_index(flat_index, results.shape)
+
+    print(f'Best ARIMA model order: p={p+start_p} and q={q+start_q}')
+    return p, q
+
+
 # takes the rough percent change in a df
 # takes in a df with a time index and value
 # returns a series with time index, value and lag value but w 1 less obs

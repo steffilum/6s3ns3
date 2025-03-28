@@ -4,20 +4,25 @@ fred = Fred(api_key = os.getenv("API_KEY"))
 
 df = get_most_recent_series_of_date("PCE", "2020-01-01", fred)
 
-pct_chg_pce = pct_chg(df)
-# pct_chg_pce.plot()
-# plt.show()
+pct_chg_pce = transform_series(df, 5).dropna()*100
+pct_chg_pce.plot()
+plt.show()
 
-#demean and checking for stationarity
-pct_chg_pce['demean_pct_chg'] = pct_chg_pce.pct_chg-pct_chg_pce.pct_chg.mean()
-# print("ADF Test Result: ", adfuller(difference_df(pct_chg_pce['demean_pct_chg'])['Diff_Value']))
-# plot_acf_pacf(pct_chg_pce['demean_pct_chg'] )
-# plot_acf_pacf(pct_chg_pce['demean_pct_chg']**2)
-# plt.show()
+# checking for stationarity
+print("ADF Test Result: ", adfuller(pct_chg_pce, regression='c'))
+print("ADF Test Result: ", adfuller(transform_series(pct_chg_pce, 5).dropna(), regression='c'))
+plot_acf_pacf(pct_chg_pce)
+plt.show()
 
-#looks like a garch(1, 1) is suitable
-model = arch_model(pct_chg_pce['pct_chg'], mean = 'AR', lags = 1, vol='Garch', p=1, q=1)
-fit = model.fit()
+best_arma(pct_chg_pce, trend='ct', test_size=1, start_p= 8, start_q=8, max_p=10, max_q=10)
+# model = ARIMA(pct_chg_pce, order=(11, 0, 23), trend = 'ct', freq = 'MS').fit()
+# pred = model.get_forecast(steps = 1).predicted_mean
+# print(pred)
+
+
+#looks like a garch(3, 9) is suitable with 8 lags from the acf and pacf
+# model = arch_model(pct_chg_pce, mean = 'AR', lags = lags, vol='Garch', p=3, q=9)
+# fit = model.fit()
 # print(fit.summary())
 
 last_month = pct_chg_pce.index[-1]+ pd.offsets.MonthBegin(1)
