@@ -43,7 +43,7 @@ def best_aic(df, max_lag_to_try):
 
 #chooses the best arma model by using oos forecasting
 #inputs df a time series stationary, max p and q to test and test size
-def best_arma(df, start_p = 0, start_q = 0, max_p = 5, max_q = 5, test_size = 50, trend = None, freq = 'MS', exog = None, seasonal_order = None):
+def best_arma(df, start_p = 0, start_q = 0, max_p = 5, max_q = 5, test_size = 50, trend = None, freq = 'MS', exog = None, seasonal_order = (0, 0, 0, 0)):
 
     df = df.asfreq(freq)
 
@@ -57,8 +57,12 @@ def best_arma(df, start_p = 0, start_q = 0, max_p = 5, max_q = 5, test_size = 50
         test = df.iloc[-index]
         for p in p_range:
             for q in q_range:
+                model = ARIMA(train, order=(p, 0, q), trend = trend, freq=freq, enforce_stationarity=False, enforce_invertibility=False, seasonal_order=seasonal_order)
                 try:
-                    model = ARIMA(train, order=(p, 0, q), trend = trend, freq=freq, enforce_stationarity=False, enforce_invertibility=False, seasonal_order=seasonal_order)
+
+                    
+                    
+                    print(1)
                     model = model.fit(method_kwargs={'maxiter':100})
                     pred = model.get_forecast(steps = 1).predicted_mean
                     if results[p-start_p-1][q-start_q-1] == np.inf:
