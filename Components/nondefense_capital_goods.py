@@ -18,7 +18,7 @@ pct_chg_nondefense_capital_goods = transform_series(df, 5).dropna()
 
 # gridsearch chosen base on pcf and acf
 #seasonal order based on acf
-# best_arma(pct_chg_nondefense_capital_goods, trend='c', test_size=20, start_p= 0, start_q=0, max_p=6, max_q=6)
+best_arma(pct_chg_nondefense_capital_goods, trend='c', test_size=20, start_p= 0, start_q=0, max_p=6, max_q=6)
 model = ARIMA(pct_chg_nondefense_capital_goods, order=(0, 0, 6), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(6+2, .01))
 

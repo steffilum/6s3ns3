@@ -18,10 +18,10 @@ pct_chg_pce = transform_series(df, 5).dropna()*100
 
 # gridsearch chosen base on pcf and acf
 #seasonal order based on acf
-# best_arma(pct_chg_pce, trend='c', test_size=10, start_p= 0, start_q=0, max_p=5, max_q=5, seasonal_order = (0, 0, 0, 6))
+best_arma(pct_chg_pce, trend='c', test_size=10, start_p= 0, start_q=0, max_p=5, max_q=5, seasonal_order = (1, 0, 0, 6))
 model = ARIMA(pct_chg_pce, order=(4, 0, 3), trend = 'c', freq = 'MS', seasonal_order=(0, 0, 0, 6))
 model = model.fit(start_params = np.full(4+3+6+1, .01))
-
+ 
 # fig, ax = plt.subplots()
 # ax.plot(model.fittedvalues)
 # ax.plot(pct_chg_pce)
