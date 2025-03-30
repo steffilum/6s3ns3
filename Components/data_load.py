@@ -20,4 +20,4 @@ X = compiled.iloc[:, :-1]
 y = compiled.GDP
 
 def load_data():
-    return X, y
+    return X, y 
