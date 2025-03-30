@@ -1,24 +1,31 @@
-import dash 
-from dash import html, dcc, Input, Output, State
+import dash
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 import os
-
-
-
 
 # Set working directory to current file location
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+# Reusable style for nav links and buttons (without inline color)
+_nav_link_style = {
+    "backgroundColor": "transparent",
+    "border": "none",
+    "fontFamily": "Montserrat, sans-serif",
+    "fontSize": "22px",
+    "cursor": "pointer",
+    "textDecoration": "none"
+}
 
-# Default layout
-def get_default_layout(main_content= None): 
-    if main_content is None: 
-         main_content = html.Div(id="main-content")
+# Default layout function
+def get_default_layout(main_content=None):
+    if main_content is None:
+        main_content = html.Div(id="main-content")
+
     return html.Div(
         style={
-            "height": "100vh",
-            "overFlowY": "auto",
-            "overFLowX": "hidden",
+            "minHeight": "100vh",
+            "overflowY": "auto",
+            "overflowX": "hidden",
             "background": "radial-gradient(circle at top left, #3e1f47 0%, #000000 25%)",
             "boxShadow": "0 0 100px #ff6a00",
             "margin": "0px",
@@ -26,69 +33,43 @@ def get_default_layout(main_content= None):
             "position": "relative"
         },
         children=[
+            # NAVBAR
             html.Nav(
                 style={
                     "display": "flex",
-                    "justifyContent": "space-between",
                     "alignItems": "center",
-                    "padding": "20px 40px",
-                    "color": "rgba(206, 203, 203, 0.8)",
+                    "padding": "30px 60px",
                     "fontFamily": "Montserrat, sans-serif",
                     "fontWeight": "400",
-                    "fontSize": "22px"
+                    "fontSize": "22px",
+                    "width": "100%"
                 },
                 children=[
-                    # Logo that clicks to return to homepage
-                    dcc.Link("6SENS3", href='/', style={                     
-                        "fontWeight": "800",
-                        "fontSize": "32px", 
-                        "position": "absolute",
-                        "left": "75px",
-                        "top": "35px",
-                        "textDecoration": "none"},
-                        className="logo-clickable"
-                    ),
                     html.Div([
-                        # About button as a link
-                        dcc.Link("About", href="/about", style={
-                            "position": "absolute",
-                            "left": "482px",
-                            "top": "42px",
-                            "backgroundColor": "transparent",
-                            "border": "none",
-                            "fontFamily": "Montserrat, sans-serif",
-                            "fontSize": "22px",
-                            "cursor": "pointer",
-                            "textDecoration": "none" 
-                        }, className="fade-button-dropdown"),
-
-                        # Models button as a tab
-                        html.Button("Models", id="model-fade-button", className= 'fade-button-dropdown', n_clicks=0, style={
-                            "cursor": "pointer", 
-                            "position": "absolute", 
-                            "left": "669px", 
-                            "top": "42px",
-                            "backgroundColor": "transparent",
-                            "border": "none",
-                            "fontFamily": "Montserrat, sans-serif",
-                            "fontSize": "22px"
+                        dcc.Link("6SENS3", href='/', className="logo-clickable", style={
+                            "fontWeight": "800",
+                            "fontSize": "32px",
+                            "textDecoration": "none",
+                            "marginRight": "20px", 
+                            'marginLeft': '6px'
                         }),
-
-                        # Indicators button as a tab
-                        html.Button("Indicators", id="indicator-fade-button", className= 'fade-button-dropdown', n_clicks=0, style={
-                            "position": "absolute",
-                            "left": "856px",
-                            "top": "42px",
-                            "backgroundColor": "transparent",
-                            "border": "none",
-                            "fontFamily": "Montserrat, sans-serif",
-                            "fontSize": "22px",
-                            "cursor": "pointer"
-                        })
-                    ])
+                        dcc.Link("About", href="/about", className="fade-button-dropdown", style={
+                            **_nav_link_style,
+                            "marginLeft": "180px"
+                        }),
+                        html.Button("Models", id="model-fade-button", n_clicks=0,
+                                    className="fade-button-dropdown", style=_nav_link_style),
+                        html.Button("Latest US Economic Data", id="indicator-fade-button", n_clicks=0,
+                                    className="fade-button-dropdown", style=_nav_link_style),
+                    ], style={
+                        "display": "flex",
+                        "gap": "100px",
+                        "alignItems": "center"
+                    })
                 ]
             ),
 
+            # DROPDOWNS
             dbc.Fade(
                 id="model-fade",
                 is_in=False,
@@ -119,6 +100,7 @@ def get_default_layout(main_content= None):
                     ]
                 )
             ),
+
             main_content
         ]
     )
