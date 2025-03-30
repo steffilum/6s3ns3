@@ -4,7 +4,8 @@ import dash_bootstrap_components as dbc
 import os
 from pages.news import df_articles, generate_card_scroll
 from shared.default_pagelayout import get_default_layout 
-from data.fakedata1 import get_gdp_growth_rate, gdp_growth_df
+from data.fakedata1 import get_gdp_growth_rate, get_forecast_graph, gdp_growth_df
+from data.cpi_data import cpi_card, get_cpi_graph
 
 
 
@@ -23,7 +24,8 @@ homepage_content = html.Div(
         "left": "65px",
         "width": "300px",
         "height": "600px",
-        "zIndex": "1"
+        "zIndex": "1", 
+        "paddingBottom": "100px"
     },
     children=[
         # Header "Top Stories this Week"
@@ -51,25 +53,35 @@ homepage_content = html.Div(
             }
         ),
         html.Label(
-            "Select a Quarter to Forecast GDP Growth Rate",
+            "Select a Quarter to Forecast GDP Growth Rate:",
             style={
                 "color": "white",
                 "fontWeight": "600",
-                "fontSize": "22px",
+                "fontSize": "18px",
                 "marginBottom": "20px",
                 "fontFamily": "Montserrat, sans-serif", 
                 "position": "absolute",
-                "left": "600px", 
-                "width": "500px"
+                "left": "350px", 
+                "top": "400px",
+                "width": "450px"
             }
         ),
+        
+
         # Range input
         dcc.Input(
-            id = 'quarter-picker',
+            id = 'start-quarter-picker',
             type = 'text',
             placeholder='Enter Quarter (e.g. 1950Q1)',
             value='1950Q1',  # Default value
-            style={"width": "150px", "height": "40px", "position": "absolute", "left": "800px", 'top': '350px'}
+            style={"width": "150px", "height": "40px", "position": "absolute", "left": "1050px", 'top': '200px'}
+        ),
+        dcc.Input(
+            id = 'end-quarter-picker',
+            type = 'text',
+            placeholder='Enter Quarter (e.g. 2025Q1)',
+            value = '2023Q4',
+            style={"width": "150px", "height": "40px", "position": "absolute", "left": "1050px", 'top': '250px'}
         ),
        
         # Container for Forecast label and value
@@ -99,8 +111,26 @@ homepage_content = html.Div(
                         "width": "500px", 
                         "left": "350px",
                         "top": "-2px"}
+        ), 
+        # Container for displaying forecast graph
+        html.Div( 
+            children =[
+            dcc.Graph(
+                id = 'gdp-forecast-graph',
+                figure = get_forecast_graph("1950Q1", "2023Q4"),
+                config = {"displayModeBar": False},
+                style={
+                    "position": "absolute",
+                    "left": "316px",
+                    "top": "70px",
+                    "width": "700px",
+                    "height": "320px",
+                    "backgroundColor": 'transparent'
+                }
+            )
+            ]
+
         )
-        
         
     ]
 )
@@ -108,11 +138,12 @@ homepage_content = html.Div(
 # Plug that content into your default layout
 layout = get_default_layout(main_content=homepage_content)
 
+
 # Callback to update the GDP forecast value
 @dash.callback(
     Output('gdp-forecast', 'children'),
     Output('gdp-forecast', 'style'),
-    Input('quarter-picker', 'value')
+    Input('end-quarter-picker', 'value')
 )
 
 def update_gdp_forecast(selected_quater):
@@ -134,4 +165,16 @@ def update_gdp_forecast(selected_quater):
         return f"{value:.2f}%", {**base_style, "color": "white"}
 
 
+
+@dash.callback(
+    Output('gdp-forecast-graph', 'figure'),
+    Input('start-quarter-picker', 'value'), 
+    Input('end-quarter-picker', 'value')
+)
+
+def update_gdp_forecast_graph(selected_start, selected_end):
+    if selected_start not in gdp_growth_df['Quarter'].values or selected_end not in gdp_growth_df['Quarter'].values:
+        return get_forecast_graph("1950Q1", "2023Q4")
+    else: 
+        return get_forecast_graph(selected_start, selected_end)
 

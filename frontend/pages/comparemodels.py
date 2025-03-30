@@ -133,9 +133,6 @@ def diebold_mariano_test(errors1, errors2):
   
    return dm_statistic, p_value
 
-
-
-
 # List of figures for each model
 figures = [
    px.line(model1, x='Year', y='GDP', title='Model 1: GDP Forecast'),
@@ -144,11 +141,25 @@ figures = [
    px.line(model4, x='Year', y='GDP', title='Model 4: GDP Forecast'),
 ]
 
+# Helper functions for styling
+def get_dropdown_style():
+    return {
+        "backgroundColor": "transparent",  # clear background
+        "fontWeight": "bold",                # bold text inside the input
+        "color": "white",                   # white text color
+        "padding": "5px"
+    }
+
+def get_dropdown_menu_style():
+    return {
+        "backgroundColor": "transparent",  # clear background for the dropdown list
+        "fontWeight": "bold",               # bold text for options
+        "color": "white",                   # white text color for options
+    }
 
 # LAYOUT
-comparemodels_content = html.Div([
-   html.H1("Compare NowCast Models", style={'text-align': 'center'}),
-
+comparemodels_content = html.Div(id="main-content",children=[
+   html.H1("Compare NowCast Models", style={'text-align': 'center', 'color':'white'}),
 
    # Start and end date inputs
    html.Div([
@@ -156,15 +167,15 @@ comparemodels_content = html.Div([
        dcc.Input(id="end_date", type="number", placeholder="Enter End Date"),
    ], style={'text-align': 'center', 'margin-bottom': '20px'}),
 
-
    # Dropdown and Graph for Model 1
    html.Div([
        dcc.Dropdown(
            id="model_title1",
            options=[{'label': f'Model {i}', 'value': f'Model {i}'} for i in range(1, 5)],
-           placeholder="Select Model 1"
+           placeholder="Select Model 1",
+           style=get_dropdown_style()
        ),
-       html.H4("GDP Forecast Next Quarter:"),
+       html.H4("GDP Forecast Next Quarter:", style={'color':'white'}),
        html.Div(id='forecast_output_1', style={"fontWeight": "bold", "fontSize": "24px"}),
        dcc.Graph(id='graph_1'),
    ], style={'display': 'inline-block', 'width': '48%'}),
@@ -175,17 +186,18 @@ comparemodels_content = html.Div([
        dcc.Dropdown(
            id="model_title2",
            options=[{'label': f'Model {i}', 'value': f'Model {i}'} for i in range(1, 5)],
-           placeholder="Select Model 2"
+           placeholder="Select Model 2",
+           style=get_dropdown_style()
        ),
-       html.H4("GDP Forecast Next Quarter:"),
+       html.H4("GDP Forecast Next Quarter:", style={'color':'white'}),
        html.Div(id='forecast_output_2', style={"fontWeight": "bold", "fontSize": "24px"}),
        dcc.Graph(id='graph_2'),
    ], style={'display': 'inline-block', 'width': '48%', 'marginLeft': '2%'}),
 
 
    # Evaluation Section
-   html.H1("Evaluation"),
-   html.Div(style={'borderTop': '2px solid black', 'margin': '20px 0'}),
+   html.H1("Evaluation", style={'color':'white'}),
+   html.Div(style={'borderTop': '2px solid black', 'margin': '20px 0', 'color':'white'}),
   
    # Dropdown for Evaluation Metric
    html.Div([
@@ -196,16 +208,16 @@ comparemodels_content = html.Div([
                {'label': 'Mean Absolute Error (MAE)', 'value': 'mae'},
                {'label': 'Directional Accuracy (DA)', 'value': 'da'}
            ],
-           placeholder='Select Evaluation Metric'
+           placeholder='Select Evaluation Metric',
+           style=get_dropdown_style()
        )
    ], style={'width': '50%', 'marginBottom': '20px'}),
   
    # Display Evaluation Metric for Model 1
-   html.Div(id="evaluation_metric1", style={'display': 'inline-block','fontSize': '20px', 'width': '48%'}),
+   html.Div(id="evaluation_metric1", style={'display': 'inline-block','fontSize': '20px', 'width': '48%', 'color':'white'}),
   
    # Display Evaluation Metric for Model 2
-   html.Div(id="evaluation_metric2", style={'display': 'inline-block','fontSize': '20px', 'width': '48%'}),
-
+   html.Div(id="evaluation_metric2", style={'display': 'inline-block','fontSize': '20px', 'width': '48%', 'color':'white'}),
 
    #Display CI for Model 1
    html.Div([
@@ -221,13 +233,13 @@ comparemodels_content = html.Div([
 
 
    #Display DM Test Values
-   html.Div(id="dm_test_results", style={'display': 'inline-block','fontSize': '20px', 'text-align':'center', 'width':'100%'}),
+   html.Div(id="dm_test_results", style={'display': 'inline-block','fontSize': '20px', 'text-align':'center', 'width':'100%', 'color':'white'}),
 ],
-
-
 style={
-       'height': '100vh',  # Ensure the height of the page takes the full viewport height
-       'overflowY': 'scroll'  # Enable scrolling
+       'height': '100vh',
+       'overflowY': 'scroll',  # Enable scrolling
+       'paddingTop': "100px", #Leave space on top for nav bar 
+       'paddingBottom': '20px' #bottom padding
    })
 
 # Plug that content into your default layout
@@ -566,10 +578,8 @@ def compute_dm_test(model1_name, model2_name):
        # Return the result and conclusion in the layout
        return html.Div([
            html.H2("Diebold-Mariano (DM) Test Results"),
-           html.Div(f'DM Statistic: {dm_statistic:.2f}', style={'display': 'inline-block', 'fontSize': '20px', 'width': '60%'}),
-           html.Div(f'p-value: {p_value:.3f}', style={'display': 'inline-block', 'fontSize': '20px', 'width': '60%'}),
-           html.Div(f"Conclusion: {conclusion}", style={'display': 'inline-block', 'fontSize': '18px', 'width': '80%'})
+           html.Div(f'DM Statistic: {dm_statistic:.2f}', style={'display': 'inline-block', 'fontSize': '20px', 'width': '60%', 'color':'white'}),
+           html.Div(f'p-value: {p_value:.3f}', style={'display': 'inline-block', 'fontSize': '20px', 'width': '60%', 'color':'white'}),
+           html.Div(f"Conclusion: {conclusion}", style={'display': 'inline-block', 'fontSize': '18px', 'width': '80%', 'color':'white'})
        ])
-
-
    return "Please select both models to compare."
