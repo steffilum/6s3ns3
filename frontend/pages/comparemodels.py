@@ -157,10 +157,21 @@ def get_dropdown_menu_style():
         "color": "white",                   # white text color for options
     }
 
+def apply_transparent_background(fig):
+   fig.update_layout(
+       paper_bgcolor='rgba(0,0,0,0)',  # Transparent outer background
+       plot_bgcolor='rgba(0,0,0,0)',   # Transparent plotting area
+       margin=dict(l=0, r=0, t=50, b=50),
+       font={'color': 'white'}
+   )
+   return fig
+
 # LAYOUT
 comparemodels_content = html.Div(id="main-content",children=[
    html.H1("Compare NowCast Models", style={'text-align': 'center', 'color':'white'}),
-
+   html.Br(),
+   html.H4("Select a Quarter to Forecast GDP Growth Rate", style={'text-align': 'center', 'color':'white'}),
+   
    # Start and end date inputs
    html.Div([
        dcc.Input(id="start_date", type="number", placeholder="Enter Start Date"), #can use regex output later on
@@ -172,6 +183,7 @@ comparemodels_content = html.Div(id="main-content",children=[
        dcc.Dropdown(
            id="model_title1",
            options=[{'label': f'Model {i}', 'value': f'Model {i}'} for i in range(1, 5)],
+           value = "Model 1",
            placeholder="Select Model 1",
            style=get_dropdown_style()
        ),
@@ -186,6 +198,7 @@ comparemodels_content = html.Div(id="main-content",children=[
        dcc.Dropdown(
            id="model_title2",
            options=[{'label': f'Model {i}', 'value': f'Model {i}'} for i in range(1, 5)],
+           value = "Model 2",
            placeholder="Select Model 2",
            style=get_dropdown_style()
        ),
@@ -196,8 +209,9 @@ comparemodels_content = html.Div(id="main-content",children=[
 
 
    # Evaluation Section
+   html.Br(),
    html.H1("Evaluation", style={'color':'white'}),
-   html.Div(style={'borderTop': '2px solid black', 'margin': '20px 0', 'color':'white'}),
+   html.Div(style={'borderTop': '2px solid white', 'margin': '20px 0'}),
   
    # Dropdown for Evaluation Metric
    html.Div([
@@ -208,6 +222,7 @@ comparemodels_content = html.Div(id="main-content",children=[
                {'label': 'Mean Absolute Error (MAE)', 'value': 'mae'},
                {'label': 'Directional Accuracy (DA)', 'value': 'da'}
            ],
+           value = "mae",
            placeholder='Select Evaluation Metric',
            style=get_dropdown_style()
        )
@@ -269,6 +284,7 @@ def update_graph_and_forecast_1(model_name, start_date, end_date):
       
        # Generate the figure for the selected model and filtered data
        fig = px.line(model_df, x='Year', y='GDP', title=f'{model_name}: GDP Forecast')
+       fig = apply_transparent_background(fig)
        forecast = forecast_values.get(model_name, 0)
        return fig, format_forecast(forecast)
   
@@ -296,6 +312,7 @@ def update_graph_and_forecast_2(model_name, start_date, end_date):
            model_df = model_df[(model_df['Year'].astype(int) >= start_date) & (model_df['Year'].astype(int) <= end_date)]
       
        fig = px.line(model_df, x='Year', y='GDP', title=f'{model_name}: GDP Forecast')
+       fig = apply_transparent_background(fig)
        forecast = forecast_values.get(model_name, 0)
        return fig, format_forecast(forecast)
   
