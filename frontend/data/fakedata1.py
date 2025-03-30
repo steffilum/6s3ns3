@@ -31,6 +31,8 @@ gdp_growth_df['Quarter'] = (
 # Optional: Display first few rows
 #print(gdp_growth_df["Quarter"].max())
 
+# function for quarters
+quarters = gdp_growth_df["Quarter"].tolist()
 
 
 # Define function to get GDP growth rate for quarter
