@@ -3,6 +3,9 @@ from dash import html, dcc, Input, Output, State
 import dash_bootstrap_components as dbc
 import os
 from pages.news import df_articles, generate_card_scroll
+from shared.default_pagelayout import get_default_layout 
+from data.fakedata1 import get_gdp_growth_rate, get_forecast_graph, gdp_growth_df
+from data.cpi_data import cpi_card, get_cpi_graph
 
 
 
@@ -12,190 +15,206 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 dash.register_page(__name__, path="/", name="Home") # Register the homepage
 
-# Homepage layout
-layout = html.Div(
+ # Main content for homepage
+homepage_content = html.Div(
+    id="main-content",
     style={
-        "height": "100vh",
-        "background": "radial-gradient(circle at top left, #3e1f47 0%, #000000 25%)",
-        "boxShadow": "0 0 100px #ff6a00",
-        "margin": "0px",
-        "padding": "0px",
-        "position": "relative",
-        "overflow": "hidden"
+        "position": "absolute",
+        "top": "120px",
+        "left": "65px",
+        "width": "300px",
+        "height": "600px",
+        "zIndex": "1", 
+        "paddingBottom": "100px"
     },
     children=[
-        html.Nav(
+        # Header "Top Stories this Week"
+        html.H1(
+            "Top Stories this Week",
             style={
-                "display": "flex",
-                "justifyContent": "space-between",
-                "alignItems": "center",
-                "padding": "20px 40px",
-                "color": "rgba(206, 203, 203, 0.8)",
-                "fontFamily": "Montserrat, sans-serif",
-                "fontWeight": "400",
-                "fontSize": "22px"
-            },
-            children=[
-                # Logo that clicks to return to homepage
-                dcc.Link("6SENS3", href='/', style={                     
-                    "fontWeight": "800",
-                    "fontSize": "32px", 
-                    "position": "absolute",
-                    "left": "75px",
-                    "top": "35px",
-                    "textDecoration": "none"},
-                    className="logo-clickable"
-                ),
-
-                html.Div([
-                    # About button as a link
-                    dcc.Link("About", href="/about", style={
-                        "position": "absolute",
-                        "left": "482px",
-                        "top": "42px",
-                        "backgroundColor": "transparent",
-                        "border": "none",
-                        "fontFamily": "Montserrat, sans-serif",
-                        "fontSize": "22px",
-                        "cursor": "pointer",
-                        "textDecoration": "none" 
-                    }, className="fade-button-dropdown"),
-
-                    html.Button("Models", id="model-fade-button", className= 'fade-button-dropdown', n_clicks=0, style={
-                        "cursor": "pointer", 
-                        "position": "absolute", 
-                        "left": "669px", 
-                        "top": "42px",
-                        "backgroundColor": "transparent",
-                        "border": "none",
-                        
-                        "fontFamily": "Montserrat, sans-serif",
-                        "fontSize": "22px"
-                    }),
-
-                    html.Button("Indicators", id="indicator-fade-button", className= 'fade-button-dropdown', n_clicks=0, style={
-                        "position": "absolute",
-                        "left": "856px",
-                        "top": "42px",
-                        "backgroundColor": "transparent",
-                        "border": "none",
-                        
-                        "fontFamily": "Montserrat, sans-serif",
-                        "fontSize": "22px",
-                        "cursor": "pointer"
-                    })
-                ])
-            ]
+                "color": "white",
+                "fontWeight": "600",
+                "fontSize": "22px",
+                "marginBottom": "20px",
+                "fontFamily": "Montserrat, sans-serif"
+            }
         ),
-        
-        # Fade Dropdown for models
-        dbc.Fade(
-            id="model-fade",
-            is_in=False,
-            appear=True,
-            children=html.Div(
-                className="mega-dropdown",
-                children=[
-                    html.Div("Explore Models", className="dropdown-item-normal"),
-                    dcc.Link("Model 1", href="/model1", className="dropdown-item-bold"),  # Link to model1 page
-                    dcc.Link("Model 2", href="/model2", className="dropdown-item-bold"),  # Link to model2 page
-                    dcc.Link("Model 3", href="/model3", className="dropdown-item-bold"),  # Link to model3 page
-                    dcc.Link("Model 4", href="/model4", className="dropdown-item-bold"),  # Link to model4 page
-                    dcc.Link("Compare Models", href="/comparemodels", className="dropdown-item-comparemodels") # Link to comparemodels page
-                ]
-            )
-        ),
-        # Fade Dropdown for indicators
-        dbc.Fade(
-            id="indicator-fade",
-            is_in=False,
-            appear=True,
-            children=html.Div(
-                className="mega-dropdown",
-                children=[
-                    html.Div("Explore Indicators", className="dropdown-item-normal"),
-                    dcc.Link("CPI", href="/cpi", className="dropdown-item-bold"),
-                    dcc.Link("Housing Starts", href="/cpi", className="dropdown-item-bold"),
-                    dcc.Link("PMI", href="/cpi", className="dropdown-item-bold")
-                
-                ]
-            )
-        ),
-
-        # Main content (blurs when dropdown is open)
+        # Container for the articles
         html.Div(
-            id="main-content",
+            children=[
+                generate_card_scroll(df_articles)
+            ],
             style={
                 "position": "absolute",
-                "top": "120px",
-                "left": "65px",
-                "width": "300px",
-                "height": "600px",
-                "zindex": "1"
-    },
-            children=[
-                html.H3("Top Stories this Week", style={
-                    "color": "white",
-                    "fontWeight": "600",
-                    "fontSize": "22px",
-                    "marginBottom": "20px",
-                    "fontFamily": "Montserrat, sans-serif"}),
-                html.Div(
-                    children=[
-                        generate_card_scroll(df_articles)],
-                        style={
-                            "position": "absolute",
-                            "left": "-55px",
-                            "display": "block",
-                            "overflowY": "auto",
-                            "overflowX": "hidden",
-                            
-                        }
-                )]
-                
+                "left": "-55px",
+                "display": "block",
+                "overflowY": "auto",
+                "overflowX": "hidden"
+            }
+        ),
+        html.Label(
+            "Select a Quarter to Forecast GDP Growth Rate",
+            style={
+                "color": "white",
+                "fontWeight": "600",
+                "fontSize": "18px",
+                "marginBottom": "20px",
+                "fontFamily": "Montserrat, sans-serif", 
+                "position": "absolute",
+                "left": "1050px", 
+                "width": "200px"
+            }
+        ),
+        # label for start
+        html.Label(
+            "Start Quarter",
+            style={
+                "color": "white",
+                "fontWeight": "400",
+                "fontSize": "18px",
+                "marginBottom": "20px",
+                "fontFamily": "Montserrat, sans-serif", 
+                "position": "absolute",
+                "left": "1050px", 
+                "top": "150px", 
+                "width": "200px"
+            }
+        ),
+        # Range input
+        dcc.Input(
+            id = 'start-quarter-picker',
+            type = 'text',
+            placeholder='Enter Quarter (e.g. 1950Q1)',
+            value='1950Q1',  # Default value
+            style={"width": "150px", "height": "40px", "position": "absolute", "left": "1050px", 'top': '200px'}
+        ),
+        dcc.Input(
+            id = 'end-quarter-picker',
+            type = 'text',
+            placeholder='Enter Quarter (e.g. 2025Q1)',
+            value = '2023Q4',
+            style={"width": "150px", "height": "40px", "position": "absolute", "left": "1050px", 'top': '250px'}
+        ),
+       
+        # Container for Forecast label and value
+        html.Div(
+            children = [
+                html.H1(
+                    "GDP Forecast for Next Quarter:",
+                    style={
+                        "color": "rgba(206, 203, 203)",
+                        "fontWeight": "600",
+                        "fontSize": "22px",
+                        "fontFamily": "Montserrat, sans-serif"
+                    }
+                ),
+                html.H2(
+                    id = 'gdp-forecast', children="",
+                    style={
+                        "color": "white",
+                        "fontWeight": "600",
+                        "fontSize": "28px",
+                        "fontFamily": "Montserrat, sans-serif"
+                    }
+                ),
+
+                ], style={"position": "absolute",
+                        "height": "5px",
+                        "width": "500px", 
+                        "left": "350px",
+                        "top": "-2px"}
+        ), 
+        # Container for displaying forecast graph
+        html.Div( 
+            children =[
+            dcc.Graph(
+                id = 'gdp-forecast-graph',
+                figure = get_forecast_graph("1950Q1", "2023Q4"),
+                config = {"displayModeBar": False},
+                style={
+                    "position": "absolute",
+                    "left": "316px",
+                    "top": "70px",
+                    "width": "700px",
+                    "height": "320px",
+                    "backgroundColor": 'transparent'
+                }
+            )
+            ]
+
+        ),
+
+        # Container for displaying economic indicators
+        html.Div(
+            id = 'economic-indicators',
+            style = {
+                "position": "absolute",
+                "left": "330px",
+                "top": "390px",
+                "width": "270px",
+                "border": "1px solid #444", 
+                "borderRadius": "20px",
+                "overflowY": "auto"
+            },
+            children = [
+                html.H1(
+                    "Key Economic Indicators", 
+                    style ={
+                        "color": "white",
+                        "fontWeight": "600",
+                        "fontSize": "20px",
+                        "fontFamily": "Montserrat, sans-serif", 
+                        "width": "300px",
+                        "marginTop": "10px", 
+                        "marginLeft": "10px"
+                    }
+                )
+            ]
         )
+        
     ]
 )
 
+# Plug that content into your default layout
+layout = get_default_layout(main_content=homepage_content)
 
-# Callback to toggle indicator and model dropdown visibility and blur content
+
+# Callback to update the GDP forecast value
 @dash.callback(
-    Output("model-fade", "is_in"),
-    Output("indicator-fade", "is_in"),
-    Output("main-content", "style"),
-    Input("model-fade-button", "n_clicks"),
-    Input("indicator-fade-button", "n_clicks"),
-    State("model-fade", "is_in"),
-    State("indicator-fade", "is_in"),
-    State("main-content", "style"),
-    prevent_initial_call=True  # Avoid errors on page load
+    Output('gdp-forecast', 'children'),
+    Output('gdp-forecast', 'style'),
+    Input('end-quarter-picker', 'value')
 )
-def toggle_fades(model_clicks, indicator_clicks, model_is_in, indicator_is_in, style):
 
-    ctx = dash.callback_context
+def update_gdp_forecast(selected_quater):
+    base_style = {
+        "color": "grey",
+        "fontWeight": "600",
+        "fontSize": "28px",
+        "fontFamily": "Montserrat, sans-serif"
+    }
+    if selected_quater not in gdp_growth_df['Quarter'].values:
+        return "No data found", base_style
+    
+    value = get_gdp_growth_rate(selected_quater)
+    if value < 0:
+        return f"{value:.2f}%", {**base_style, "color": "red"}
+    if value > 0:
+        return f"{value:.2f}%", {**base_style, "color": "rgb(0, 200, 83)"}
+    else: 
+        return f"{value:.2f}%", {**base_style, "color": "white"}
 
-    # Default fallback if style is None
-    if style is None:
-        style = {"position": "absolute", "top": "150px", "left": "150px", "width": "300px", "filter": "none"}
 
-    new_style = style.copy()
 
-    if not ctx.triggered:
-        return model_is_in, indicator_is_in, new_style
+@dash.callback(
+    Output('gdp-forecast-graph', 'figure'),
+    Input('start-quarter-picker', 'value'), 
+    Input('end-quarter-picker', 'value')
+)
 
-    triggered_id = ctx.triggered[0]['prop_id'].split('.')[0]
-
-    if triggered_id == "model-fade-button":
-        model_show = not model_is_in
-        indicator_show = False
-        new_style["filter"] = "blur(5px)" if model_show else "none"
-        return model_show, indicator_show, new_style
-
-    elif triggered_id == "indicator-fade-button":
-        indicator_show = not indicator_is_in
-        model_show = False
-        new_style["filter"] = "blur(5px)" if indicator_show else "none"
-        return model_show, indicator_show, new_style
-
-    return model_is_in, indicator_is_in, new_style
+def update_gdp_forecast_graph(selected_start, selected_end):
+    if selected_start not in gdp_growth_df['Quarter'].values or selected_end not in gdp_growth_df['Quarter'].values:
+        return get_forecast_graph("1950Q1", "2023Q4")
+    else: 
+        return get_forecast_graph(selected_start, selected_end)
 

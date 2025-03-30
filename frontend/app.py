@@ -1,6 +1,7 @@
 import dash
 from dash import html
 import dash_bootstrap_components as dbc
+import shared.navbar_callback 
 
 app = dash.Dash(
     __name__,
