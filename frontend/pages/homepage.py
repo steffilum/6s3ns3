@@ -5,6 +5,7 @@ import os
 from pages.news import df_articles, generate_card_scroll
 from shared.default_pagelayout import get_default_layout 
 from data.fakedata1 import get_gdp_growth_rate, get_forecast_graph, gdp_growth_df
+from data.cpi_data import cpi_card, get_cpi_graph
 
 
 
@@ -123,7 +124,7 @@ homepage_content = html.Div(
                         "left": "350px",
                         "top": "-2px"}
         ), 
-        # Add graph here
+        # Container for displaying forecast graph
         html.Div( 
             children =[
             dcc.Graph(
@@ -148,10 +149,9 @@ homepage_content = html.Div(
             id = 'economic-indicators',
             style = {
                 "position": "absolute",
-                "left": "316px",
+                "left": "330px",
                 "top": "390px",
-                "width": "720px",
-                "height": "250px",
+                "width": "270px",
                 "border": "1px solid #444", 
                 "borderRadius": "20px",
                 "overflowY": "auto"
@@ -161,7 +161,7 @@ homepage_content = html.Div(
                     "Key Economic Indicators", 
                     style ={
                         "color": "white",
-                        "fontWeight": "400",
+                        "fontWeight": "600",
                         "fontSize": "20px",
                         "fontFamily": "Montserrat, sans-serif", 
                         "width": "300px",
