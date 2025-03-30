@@ -142,34 +142,6 @@ homepage_content = html.Div(
             )
             ]
 
-        ),
-
-        # Container for displaying economic indicators
-        html.Div(
-            id = 'economic-indicators',
-            style = {
-                "position": "absolute",
-                "left": "330px",
-                "top": "390px",
-                "width": "270px",
-                "border": "1px solid #444", 
-                "borderRadius": "20px",
-                "overflowY": "auto"
-            },
-            children = [
-                html.H1(
-                    "Key Economic Indicators", 
-                    style ={
-                        "color": "white",
-                        "fontWeight": "600",
-                        "fontSize": "20px",
-                        "fontFamily": "Montserrat, sans-serif", 
-                        "width": "300px",
-                        "marginTop": "10px", 
-                        "marginLeft": "10px"
-                    }
-                )
-            ]
         )
         
     ]
