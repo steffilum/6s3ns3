@@ -53,7 +53,7 @@ homepage_content = html.Div(
             }
         ),
         html.Label(
-            "Select a Quarter to Forecast GDP Growth Rate",
+            "Select a Quarter to Forecast GDP Growth Rate:",
             style={
                 "color": "white",
                 "fontWeight": "600",
@@ -61,25 +61,13 @@ homepage_content = html.Div(
                 "marginBottom": "20px",
                 "fontFamily": "Montserrat, sans-serif", 
                 "position": "absolute",
-                "left": "1050px", 
-                "width": "200px"
+                "left": "350px", 
+                "top": "400px",
+                "width": "450px"
             }
         ),
-        # label for start
-        html.Label(
-            "Start Quarter",
-            style={
-                "color": "white",
-                "fontWeight": "400",
-                "fontSize": "18px",
-                "marginBottom": "20px",
-                "fontFamily": "Montserrat, sans-serif", 
-                "position": "absolute",
-                "left": "1050px", 
-                "top": "150px", 
-                "width": "200px"
-            }
-        ),
+        
+
         # Range input
         dcc.Input(
             id = 'start-quarter-picker',
@@ -142,34 +130,6 @@ homepage_content = html.Div(
             )
             ]
 
-        ),
-
-        # Container for displaying economic indicators
-        html.Div(
-            id = 'economic-indicators',
-            style = {
-                "position": "absolute",
-                "left": "330px",
-                "top": "390px",
-                "width": "270px",
-                "border": "1px solid #444", 
-                "borderRadius": "20px",
-                "overflowY": "auto"
-            },
-            children = [
-                html.H1(
-                    "Key Economic Indicators", 
-                    style ={
-                        "color": "white",
-                        "fontWeight": "600",
-                        "fontSize": "20px",
-                        "fontFamily": "Montserrat, sans-serif", 
-                        "width": "300px",
-                        "marginTop": "10px", 
-                        "marginLeft": "10px"
-                    }
-                )
-            ]
         )
         
     ]
