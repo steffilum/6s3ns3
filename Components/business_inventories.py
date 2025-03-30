@@ -6,40 +6,60 @@ given_date = "2006-12-01"
 
 df = get_most_recent_series_of_date("BUSINV", given_date, fred)
 df = df[df.index<=pd.to_datetime("2006-06-01")]
-print(df)
 
 pct_chg_business_inventories = transform_series(df, 5).dropna()
-pct_chg_business_inventories.plot()
-plt.show()
-
 # pct_chg_business_inventories.plot()
-# plt.show() ## two years of outliers observed, in ~ 2002 and ~ 2009
+# plt.show()
 
-# pct_chg_business_inventories = pct_chg_business_inventories.to_frame().rename(columns = {0: "value"})
-# pct_chg_business_inventories["OutlierIndicator"] = np.where(pct_chg_business_inventories["value"] <= -0.01, 1, 0) ## set a dummy variable to mark outliers
+pct_chg_business_inventories = pct_chg_business_inventories.diff().dropna()
+# pct_chg_business_inventories.plot()
+# plt.show()
 
-# ## checking for stationarity -- small p-value: stationary
-# # print("ADF Test Result: ", adfuller(pct_chg_business_inventories["value"]))
+# print("ADF Test Result: ", adfuller(pct_chg_business_inventories))
 
-# # plot_acf_pacf(pct_chg_business_inventories["value"]) ## guess p as 3, q as 8
-# # plt.show()
+# plot_acf_pacf(pct_chg_business_inventories)
+# plt.show() # guess p = 2, q = 1
 
-# # #looks like a garch(1, 1) is suitable
-# # model = arch_model(pct_chg_business_inventories, mean = 'AR', lags = 1, vol='Garch', p=1, q=1)
-# # fit = model.fit()
-# # # # print(fit.summary())
+# best_p, best_q = best_arma(pct_chg_business_inventories, max_p = 2, max_q = 1, test_size = 10, trend = "n")
+# print(best_p, best_q) 
 
-# # last_month = pct_chg_business_inventories.index[-1]+ pd.offsets.MonthBegin(1)
+model = ARIMA(pct_chg_business_inventories, order=(2, 0, 1), trend = 'n', freq = 'MS')
+model = model.fit(start_params = np.full(2+1+1, .01))
 
-# # #prediction
-# # pred = fit.forecast(horizon=4-int(last_month.month)%4).mean.iloc[-1].values
+# fig, ax = plt.subplots()
+# ax.plot(model.fittedvalues, label = "fitted")
+# ax.plot(pct_chg_business_inventories, label = "actual")
+# ax.legend(loc="upper left")
+# plt.show()
 
-# # new_dates = pd.date_range(start = last_month , periods = 4-int(last_month.month)%4, freq='MS')
-# # new_df = pd.Series(pred, index=new_dates)
+# plot_acf_pacf(model.resid)
+# plt.plot(model.resid)
+# plt.show()
 
-# # pct_chg_pred = pd.concat([pct_chg_business_inventories, new_df])
+start_date_pred = pct_chg_business_inventories.index[-1]+ pd.offsets.MonthBegin(1)
+end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
 
-# # quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
+#prediction
+pred = model.predict(start = start_date_pred, end = end_date_pred)
 
-# # def quart_pct_chg_pce(date = "2020-01-01"):
-# #      return quarterly_pct_chage
+pct_chg_pred = pd.concat([pct_chg_business_inventories, pred])
+
+quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
+
+# takes in the given dates and return values up to the date if have if not predict
+#takes in given date and period, so 'Q' or 'M' for bridge or midas
+def quart_pct_chg_business_inventories(date = "2020-01-01", period = 'Q'):
+    fred = Fred(api_key = os.getenv("API_KEY"))
+    df = get_most_recent_series_of_date("BUSINV", date, fred)
+    df = df[df.index<pd.Timestamp(date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
+    pct_chg_business_inventories = transform_series(df, 5).dropna().diff().dropna()*100
+    model = ARIMA(pct_chg_business_inventories, order=(2, 0, 1), trend = 'n', freq = 'MS').fit(start_params = np.full(2+1+1, .01))
+    start_date_pred = pct_chg_business_inventories.index[-1]+ pd.offsets.MonthBegin(1)
+    end_date_pred = pd.Period(date, freq='Q').end_time.to_period(freq='M').start_time
+    pred = model.predict(start = start_date_pred, end = end_date_pred)
+    pct_chg_pred = pd.concat([pct_chg_business_inventories, pred])
+    if period == 'M':
+        return pct_chg_pred
+    elif period == 'Q':
+        quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
+        return quarterly_pct_chage
