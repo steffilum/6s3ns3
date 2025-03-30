@@ -75,7 +75,7 @@ def get_default_layout(main_content= None):
                         }),
 
                         # Indicators button as a tab
-                        html.Button("Indicators", id="indicator-fade-button", className= 'fade-button-dropdown', n_clicks=0, style={
+                        html.Button("Latest US Economic Data", id="indicator-fade-button", className= 'fade-button-dropdown', n_clicks=0, style={
                             "position": "absolute",
                             "left": "856px",
                             "top": "42px",
@@ -112,7 +112,7 @@ def get_default_layout(main_content= None):
                 children=html.Div(
                     className="mega-dropdown",
                     children=[
-                        html.Div("Explore Indicators", className="dropdown-item-normal"),
+                        html.Div("Explore Data", className="dropdown-item-normal"),
                         dcc.Link("CPI", href="/cpi", className="dropdown-item-bold"),
                         dcc.Link("Housing Starts", href="/test_page", className="dropdown-item-bold"),
                         dcc.Link("PMI", href="/cpi", className="dropdown-item-bold")
