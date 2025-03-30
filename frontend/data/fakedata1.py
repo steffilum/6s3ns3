@@ -76,8 +76,8 @@ def get_forecast_graph(start_quarter, end_quarter):
                 "color": "grey",
                 "family": "Montserrat, sans-serif"
             }
-
-        }
+        }, 
+        height=280
     )
 
     
