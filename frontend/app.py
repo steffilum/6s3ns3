@@ -2,6 +2,10 @@ import dash
 from dash import html
 import dash_bootstrap_components as dbc
 import shared.navbar_callback 
+#update python certificates
+import os
+import certifi
+os.environ['SSL_CERT_FILE'] = certifi.where()
 
 app = dash.Dash(
     __name__,
