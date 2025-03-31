@@ -1,7 +1,7 @@
 import dash
 from dash import html, dcc, Input, Output
 from shared.default_pagelayout import get_default_layout 
-from data.cpi_data import get_cpi_graph, get_latest_cpi, cpi, get_latest_month
+from data.cpi_data import get_cpi_graph, get_latest_cpi, cpi, get_latest_month, get_next_release_date
 import dash_bootstrap_components as dbc
 
 dash.register_page(__name__, path="/cpi", name="CPI")
@@ -136,11 +136,22 @@ cpi_content = html.Div(
                         "fontSize": "18px",
                         "fontFamily": "Montserrat, sans-serif"
                     }
+                ), 
+                html.H4(
+                    f"Next release of CPI data is scheduled for at {get_next_release_date()}.",
+                    style={
+                        "color": "grey", 
+                        "fontSize": "14px",
+                        "fontFamily": "Montserrat, sans-serif",
+                        "fontWeight": "400",
+                        "fontStyle": "italic", 
+                        "marginLeft": "0px"
+                    }
                 )
             ],
             style={
                 "marginTop": "30px",
-                "marginLeft": "150px"
+                "marginLeft": "170px"
             }
         )
     ]
