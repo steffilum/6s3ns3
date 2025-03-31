@@ -1,7 +1,7 @@
 import dash
 from dash import html, dcc, Input, Output
 from shared.default_pagelayout import get_default_layout 
-from data.cpi_data import get_cpi_graph, get_latest_cpi
+from data.cpi_data import get_cpi_graph, get_latest_cpi, cpi
 import dash_bootstrap_components as dbc
 
 dash.register_page(__name__, path="/cpi", name="CPI")
@@ -46,15 +46,16 @@ cpi_content = html.Div(
                     style={"height": "400px", "width": "100%"},
                     config={"displayModeBar": False}
                 ),
-                # Button positioned on top of the graph
+                html.Div(
+                    children = [
                 dbc.Button(
                     "1y",
                     id="1y-button",
                     size="sm",
-                    style={
+                     style={
                         "position": "absolute",
                         "top": "10px",       
-                        "right": "150px",     
+                        "right": "102px",     
                         "zIndex": "1000",    # Ensures it sits on top
                         "backgroundColor": "grey",
                         "color": "white",
@@ -64,13 +65,29 @@ cpi_content = html.Div(
                     }
                 ), 
                 dbc.Button(
-                    "5y", 
+                    "5y",
                     id="5y-button",
+                    size="sm",
+                    style={
+                        "position": "absolute",
+                        "top": "10px",
+                        "right": "150px",
+                        "zIndex": "1000",
+                        "backgroundColor": "grey",
+                        "color": "white",
+                        "border": "none",
+                        "padding": "4px 8px",
+                        "fontSize": "14px"
+                    }
+                ),
+                dbc.Button(
+                    "10y", 
+                    id="10y-button",
                     size= 'sm',
                     style ={ 
                         "position": "absolute",
                         "top": "10px",       
-                        "right": "100px",     
+                        "right": "197px",     
                         "zIndex": "1000",    
                         "backgroundColor": "grey",
                         "color": "white",
@@ -78,7 +95,34 @@ cpi_content = html.Div(
                         "padding": "4px 8px",
                         "fontSize": "14px"
                     }
+                ), 
+                dbc.Button(
+                    'All', 
+                    id= 'all-button',
+                    size = 'sm',
+                    style = {
+                        "position": "absolute",
+                        "top": "10px",
+                        "right": "250px",
+                        "zIndex": "1000",
+                        "backgroundColor": "grey",
+                        "color": "white",
+                        "border": "none",
+                        "padding": "4px 8px",
+                        "fontSize": "14px"
+                    }
                 )
+                    ], 
+                    style = {
+                        "position": "absolute",
+                        "top": "10px",
+                        "right": "-100px",  # Adjust as needed to move them further/closer to the right edge
+                        "zIndex": "1000",
+                        "display": "flex",      # Optional: to lay them out in a row
+                        "gap": "20px" }
+                )
+                
+                
             ]
         ),
         # Latest CPI value
@@ -109,16 +153,48 @@ cpi_content = html.Div(
 
 layout = get_default_layout(main_content=cpi_content)
 
+# @dash.callback(
+#     Output("cpi-graph", "figure"),
+#     Input("1y-button", "n_clicks"), 
+#     Input("5y-button", "n_clicks")
+# )
+# def update_cpi_graph(n_clicks):  
+#     # Determine which period to use based on button clicks
+#     if not n_clicks or n_clicks % 2 == 0:
+#         fig = get_cpi_graph(60)
+#     else:
+#         fig = get_cpi_graph(12)
+    
+#     # Force the figure to a fixed size
+#     fig.update_layout(autosize=False, width=1000, height=400)
+#     return fig
+
 @dash.callback(
     Output("cpi-graph", "figure"),
-    Input("1y-button", "n_clicks")
+    Input("1y-button", "n_clicks"), 
+    Input("5y-button", "n_clicks"),
+    Input("10y-button", "n_clicks"), 
+    Input("all-button", "n_clicks")
 )
-def update_cpi_graph(n_clicks):  
-    # Determine which period to use based on button clicks
-    if not n_clicks or n_clicks % 2 == 0:
-        fig = get_cpi_graph(60)
+def update_cpi_graph(n_clicks_1, n_clicks_5, n_clicks_10, n_clicks_all):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        button_id = 'No clicks yet'
     else:
-        fig = get_cpi_graph(12)
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    # Use the button id to decide which period to display
+    if button_id == "10y-button":
+        fig = get_cpi_graph(120)  # 10-year data
+    elif button_id == "1y-button":
+        fig = get_cpi_graph(12)  # 1-year data
+    elif button_id == "5y-button":
+        fig = get_cpi_graph(60) # 5-year data
+    elif button_id == "all-button":
+        fig = get_cpi_graph(len(cpi))
+    else:
+        # Fallback to a default state
+        fig = get_cpi_graph(60)
     
     # Force the figure to a fixed size
     fig.update_layout(autosize=False, width=1000, height=400)
