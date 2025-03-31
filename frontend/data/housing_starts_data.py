@@ -28,6 +28,48 @@ housing_starts['YOY Change'] = housing_starts['CPI'].pct_change(periods=12) * 10
 # Calculate monthly over monthly change in Housing Starts
 housing_starts['MoM Change'] = housing_starts['CPI'].pct_change() * 100
 
+# For plotting yoy and mom change in housing starts
+# def get_housingstarts_graph(period=60):
+#     # get trailing period of data
+#     housingstarts = housing_starts.iloc[-period:].copy()
+    
+#     # Reshape for multiple lines
+#     df_melted = housingstarts.melt(
+#         id_vars=['MonthYear'],
+#         value_vars=['YOY Change', 'MoM Change'],
+#         var_name='Change Type',
+#         value_name='Change (%)'
+#     )
+    
+#     fig = px.line(
+#         df_melted,
+#         x='MonthYear',
+#         y='Change (%)',
+#         color='Change Type',
+#         title='New Privately-Owned Housing Units Started (YoY vs MoM)',
+#         labels={"MonthYear": "", "Change Type": "", "Change (%)": "Change (%)"},
+#         template='plotly_dark'
+#     )
+    
+#     # Styling
+#     fig.update_xaxes(showgrid=False)
+#     fig.update_yaxes(showgrid=False)
+    
+#     fig.update_layout(
+#         autosize=True,
+#         paper_bgcolor='rgba(0,0,0,0)',
+#         plot_bgcolor='rgba(0,0,0,0)',
+#         margin=dict(l=0, r=0, t=50, b=50),
+#         title={
+#             "font": {
+#                 "color": "grey",
+#                 "family": "Montserrat, sans-serif"
+#             }
+#         },
+#         height=250  # Adjust as needed
+#     )
+#     return fig
+
 def get_housingstarts_graph(period=60):
     # get trailing 60 months of data
     housingstarts = housing_starts.iloc[-period:]
@@ -52,6 +94,8 @@ def get_housingstarts_graph(period=60):
         height=200
     )
     return fig
+
+
 
 def get_latest_housingstarts():
     # Latest Percent Change in CPI round off to 2 dp
