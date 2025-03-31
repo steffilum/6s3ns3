@@ -96,7 +96,7 @@ def get_default_layout(main_content=None):
                         html.Div("Explore Indicators", className="dropdown-item-normal"),
                         dcc.Link("CPI", href="/cpi", className="dropdown-item-bold"),
                         dcc.Link("Housing Starts", href="/housing_starts", className="dropdown-item-bold"),
-                        dcc.Link("Industrial Production", href="/cpi", className="dropdown-item-bold")
+                        dcc.Link("Industrial Production", href="/industrial_production", className="dropdown-item-bold")
                     ]
                 )
             ),
