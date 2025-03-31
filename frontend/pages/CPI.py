@@ -130,7 +130,7 @@ cpi_content = html.Div(
         html.Div(
             children=[
                 html.H3(
-                    f"Latest CPI Number as of {get_latest_month()}: {get_latest_cpi()}%",
+                    f"Latest CPI number as of {get_latest_month()}: {get_latest_cpi()}%",
                     style={
                         "color": "white",
                         "fontWeight": "600",
@@ -271,7 +271,7 @@ cpi_content = html.Div(
         html.Div(
             children=[
                 html.H3(
-                    f"Latest Core-CPI Number as of {get_latest_core_month()}: {get_latest_core_cpi()}%",
+                    f"Latest Core-CPI number as of {get_latest_core_month()}: {get_latest_core_cpi()}%",
                     style={
                         "color": "white",
                         "fontWeight": "600",
