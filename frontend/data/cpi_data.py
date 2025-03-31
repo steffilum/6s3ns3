@@ -60,3 +60,9 @@ def get_latest_month():
     latest_month = cpi['MonthYear'].iloc[-1]
     return latest_month
 
+def get_next_release_date():
+    latest_date = cpi['Date'].iloc[-1]
+    next_date = latest_date + pd.DateOffset(months=1)
+    return f"{next_date:%B} {next_date.day}, {next_date:%Y}"
+
+
