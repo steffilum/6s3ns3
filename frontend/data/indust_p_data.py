@@ -33,7 +33,7 @@ indust_p['MoM Change'] = indust_p['industrialproduction'].pct_change() * 100
 def get_iprodcution_graph(period=60):
     # get trailing 60 months of data
     iproduction = indust_p.iloc[-period:]
-    fig = px.line(iproduction, x='MonthYear', y='YOY Change', title='Industrial Production Index',
+    fig = px.line(iproduction, x='MonthYear', y='YOY Change', title='Industrial Production: Equipment: Business Equipment',
                   labels={"MonthYear": "", "YOY Change": "YOY Change (%)"}, template='plotly_dark')
     
     # Remove grid lines
