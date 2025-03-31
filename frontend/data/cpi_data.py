@@ -25,17 +25,22 @@ cpi['MoM Change'] = cpi['CPI'].pct_change() * 100
 
 #print(cpi.tail())
 
-def get_cpi_graph():
+def get_cpi_graph(period=60):
     # get trailing 60 months of data
-    cpi_filtered = cpi.iloc[-60:]
-    fig = px.line(cpi_filtered, x='MonthYear', y='YOY Change', title='US Consumer Price Index (CPI)',
-                  labels={"MonthYear": "Month"}, template='plotly_dark')
+    cpi_filtered = cpi.iloc[-period:]
+    fig = px.line(cpi_filtered, x='MonthYear', y='YOY Change', title='US Consumer Price Index (CPI), Seasonally Adjusted',
+                  labels={"MonthYear": "", "YOY Change": "YOY Change (%)"}, template='plotly_dark', markers=True)
+    
+    # Remove grid lines
+    fig.update_xaxes(showgrid=False)
+    fig.update_yaxes(showgrid=False)
+
     fig.update_layout(
+        autosize=True,
         paper_bgcolor='rgba(0,0,0,0)',  # Transparent outer background
         plot_bgcolor='rgba(0,0,0,0)',   # Transparent plotting area
         margin=dict(l=0, r=0, t=50, b=50),
         title={
-            "text": "Monthly % Change in CPI (MoM)",
             "font": {
                 "color": "grey",
                 "family": "Montserrat, sans-serif"
@@ -46,23 +51,10 @@ def get_cpi_graph():
     return fig
 
 def get_latest_cpi():
-    latest_cpi = cpi['CPI'].iloc[-1]
-    return latest_cpi
+    # Latest Percent Change in CPI round off to 2 dp
+
+    latest_cpi = cpi['YOY Change'].iloc[-1]
+    return round(latest_cpi,2)
 
 
 
-cpi_card = {
-    "key": "cpi-slide",
-    "children": html.Div(
-        style={
-            "width": "100%"
-        },
-        children=[
-            html.H2(f"CPI: {get_latest_cpi():+.1f}%"),
-            dcc.Graph(
-                figure=get_cpi_graph(),
-                config={"displayModeBar": False}
-            )
-        ]
-    )
-}

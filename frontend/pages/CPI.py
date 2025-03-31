@@ -1,53 +1,125 @@
 import dash
-from dash import html, dcc, Input, Output, State
-import plotly.express as px
-import pandas as pd
+from dash import html, dcc, Input, Output
+from shared.default_pagelayout import get_default_layout 
+from data.cpi_data import get_cpi_graph, get_latest_cpi
+import dash_bootstrap_components as dbc
 
 dash.register_page(__name__, path="/cpi", name="CPI")
 
-# Mock Data
-model1 = pd.DataFrame({"Year": [str(y) for y in range(2010, 2020)], "GDP": [15, 10, 20, 30, 35, 22, 8, 4, 23, 31]})
-model2 = pd.DataFrame({"Year": [str(y) for y in range(2010, 2020)], "GDP": [20, 31, 54, 23, 43, 12, 25, 12, 4, 3]})
-model3 = pd.DataFrame({"Year": [str(y) for y in range(2010, 2020)], "GDP": [12, 18, 33, 28, 39, 25, 19, 11, 6, 15]})
+cpi_content = html.Div(
+    id="main-content",
+    style={
+       'height': '100vh',
+       'overflowY': 'scroll',  # Enable scrolling
+       'paddingTop': "50px",   # Leave space on top for nav bar 
+       'paddingBottom': '100px' # bottom padding
+   },
+    children=[
+        # Header text container
+        html.Div(
+            children=[
+                html.H1(
+                    "Consumer Price Index (CPI)",
+                    style={
+                        "color": "white",
+                        "fontWeight": "600",
+                        "fontSize": "32px",
+                        "fontFamily": "Montserrat, sans-serif"
+                    }
+                )
+            ],
+            style={"textAlign": "center"}
+        ),
+        html.Br(),
+        # Container for the graph and the button overlay
+        html.Div(
+            style={
+                "position": "relative",
+                "maxWidth": "1000px",
+                "margin": "0 auto"
+            },
+            children=[
+                # Graph
+                dcc.Graph(
+                    id="cpi-graph",
+                    figure=get_cpi_graph(60),
+                    style={"height": "400px", "width": "100%"},
+                    config={"displayModeBar": False}
+                ),
+                # Button positioned on top of the graph
+                dbc.Button(
+                    "1y",
+                    id="1y-button",
+                    size="sm",
+                    style={
+                        "position": "absolute",
+                        "top": "10px",       
+                        "right": "150px",     
+                        "zIndex": "1000",    # Ensures it sits on top
+                        "backgroundColor": "grey",
+                        "color": "white",
+                        "border": "none",
+                        "padding": "4px 8px",
+                        "fontSize": "14px"
+                    }
+                ), 
+                dbc.Button(
+                    "5y", 
+                    id="5y-button",
+                    size= 'sm',
+                    style ={ 
+                        "position": "absolute",
+                        "top": "10px",       
+                        "right": "100px",     
+                        "zIndex": "1000",    
+                        "backgroundColor": "grey",
+                        "color": "white",
+                        "border": "none",
+                        "padding": "4px 8px",
+                        "fontSize": "14px"
+                    }
+                )
+            ]
+        ),
+        # Latest CPI value
+        html.Div(
+            children=[
+                html.H3(
+                    f"Latest CPI Number: {get_latest_cpi()}%",
+                    style={
+                        "color": "white",
+                        "fontWeight": "600",
+                        "fontSize": "18px",
+                        "fontFamily": "Montserrat, sans-serif"
+                    }
+                )
+            ],
+            style={
+                "marginTop": "30px",
+                "marginLeft": "150px"
+            }
+        ), 
+        dcc.Graph(
+            id = '',
+            figure=get_cpi_graph(60)
+           
+        )
+    ]
+)
 
-figures = [
-    px.line(model1, x='Year', y='GDP', title='Model 1'),
-    px.line(model2, x='Year', y='GDP', title='Model 2'),
-    px.line(model3, x='Year', y='GDP', title='Model 3')
-]
-
-layout = html.Div([
-    html.H2("CPI Nowcasting"),
-    dcc.Store(id='page-index', data=0),
-    dcc.Graph(id='graph-display'),
-    html.Div([
-        html.Button("Previous", id='prev-btn', n_clicks=0),
-        html.Button("Next", id='next-btn', n_clicks=0)
-    ], style={'marginTop': '20px'}),
-    html.Div(id='page-label', style={'marginTop': '10px', 'fontWeight': 'bold'})
-])
+layout = get_default_layout(main_content=cpi_content)
 
 @dash.callback(
-    Output('page-index', 'data'),
-    Input('prev-btn', 'n_clicks'),
-    Input('next-btn', 'n_clicks'),
-    State('page-index', 'data')
+    Output("cpi-graph", "figure"),
+    Input("1y-button", "n_clicks")
 )
-def update_page(prev_clicks, next_clicks, current_index):
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        return current_index
-    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    if button_id == 'next-btn':
-        return min(current_index + 1, len(figures) - 1)
-    elif button_id == 'prev-btn':
-        return max(current_index - 1, 0)
-    return current_index
-
-@dash.callback(
-    Output('graph-display', 'figure'),
-    Output('page-label', 'children'),
-    Input('page-index', 'data')
-)
-def display_graph(index):
-    return figures[index], f"Page {index + 1} of {len(figures)}"
+def update_cpi_graph(n_clicks):  
+    # Determine which period to use based on button clicks
+    if not n_clicks or n_clicks % 2 == 0:
+        fig = get_cpi_graph(60)
+    else:
+        fig = get_cpi_graph(12)
+    
+    # Force the figure to a fixed size
+    fig.update_layout(autosize=False, width=1000, height=400)
+    return fig
