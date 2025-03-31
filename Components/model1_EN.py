@@ -11,7 +11,7 @@ df = df.pct_chg
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
-# X, y = load_data_midas(given_date=given_date)
+# X, y = load_data_bridge(given_date=given_date)
 
 # vif_data = pd.DataFrame()
 # vif_data["Feature"] = X.columns
@@ -33,11 +33,11 @@ for index in range(1, 51):
     date = pd.to_datetime(given_date)
     new_date = date - pd.DateOffset(months=3*index)
     new_date_str = new_date.strftime('%Y-%m-%d')
-    X_train, y_train = load_data_midas(new_date_str)
+    X_train, y_train = load_data_bridge(new_date_str)
     X_train = sm.add_constant(X_train)    
     X_test = X_train.iloc[-1, :]
     X_train = X_train.iloc[:-1, :]
-    model = sm.OLS(y_train, X_train).fit()
+    model = sm.OLS(y_train, X_train).fit_regularized(alpha=.25, L1_wt=.25)
     pred.append(model.predict(X_test)[0])
     print(f"Iteration {index}")
 

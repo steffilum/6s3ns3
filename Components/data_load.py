@@ -15,14 +15,13 @@ def quart_pct_chg_pce(given_date = "2020-01-01", period = 'Q'):
     if period == 'M':
         return pct_chg_pred
     elif period == 'Q':
-
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
     
 # takes in the given dates and return values up to the date if have if not predict
 #takes in given date and period, so 'Q' or 'M' for bridge or midas
 def quart_pct_chg_biz_equip(date = "2020-01-01", period = 'Q'):
-    given_date = "2020-01-01"
+    given_date = max("2020-01-01", date)
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("IPBUSEQ", given_date, fred)
     df = df[df.index<pd.Timestamp(date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
@@ -74,7 +73,6 @@ def quart_pct_chg_comm_loans(date = "2020-01-01", period = 'Q'):
     if period == 'M':
         return pct_chg_pred
     elif period == 'Q':
-
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
 
@@ -86,7 +84,7 @@ def quart_pct_chg_exports(date = "2020-01-01", period = 'Q'):
     df = get_most_recent_series_of_date("BOPTEXP", given_date, fred)
     df = df[df.index<pd.Timestamp(date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
     pct_chg_exports = transform_series(df, 5).dropna()*100
-    model = ARIMA(pct_chg_exports, order=(5, 0, 5), trend = 'c', freq = 'MS').fit(start_params = np.full(5+5+1+1, .01), method_kwargs={'maxiter':200})
+    model = ARIMA(pct_chg_exports, order=(5, 0, 5), trend = 'c', freq = 'MS').fit(start_params = np.full(5+5+1+1, .01), method_kwargs={'maxiter':300})
     start_date_pred = pct_chg_exports.index[-1]+ pd.offsets.MonthBegin(1)
     end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
     pred = model.predict(start = start_date_pred, end = end_date_pred)
@@ -95,7 +93,6 @@ def quart_pct_chg_exports(date = "2020-01-01", period = 'Q'):
     if period == 'M':
         return pct_chg_pred
     elif period == 'Q':
-
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
 
@@ -107,7 +104,7 @@ def quart_pct_chg_govt_constr(date = "2020-01-01", period = 'Q'):
     df = get_most_recent_series_of_date("TLPBLCONS", given_date, fred)
     df = df[df.index<pd.Timestamp(date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
     pct_chg_govt_constr = transform_series(df, 5).dropna()*100
-    model = ARIMA(pct_chg_govt_constr, order=(1, 0, 1), trend = 'c', freq = 'MS').fit(start_params = np.full(1+1+1+1, .01))
+    model = ARIMA(pct_chg_govt_constr, order=(1, 0, 1), trend = 'c', freq = 'MS').fit(start_params = np.full(1+1+1+1, .01), method_kwargs={'maxiter':300})
     start_date_pred = pct_chg_govt_constr.index[-1]+ pd.offsets.MonthBegin(1)
     end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
     pred = model.predict(start = start_date_pred, end = end_date_pred)
@@ -116,7 +113,6 @@ def quart_pct_chg_govt_constr(date = "2020-01-01", period = 'Q'):
     if period == 'M':
         return pct_chg_pred
     elif period == 'Q':
-
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
 
@@ -150,13 +146,14 @@ def quart_pct_chg_housing_units_started(given_date = "2020-01-01", period = 'Q')
     if period == 'M':
         return pct_chg_pred
     elif period == 'Q':
-
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
     
-def quart_pct_chg_imports(given_date = "2020-01-01", period = 'Q'):
+def quart_pct_chg_imports(date = "2020-01-01", period = 'Q'):
+    given_date = max("2020-01-01", date)
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("BOPTIMP", given_date, fred)
+    df = df[df.index<pd.Timestamp(date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
     pct_chg_imports = transform_series(df, 5).dropna()*100
     model = ARIMA(pct_chg_imports, order=(3, 0, 4), trend = 'c', freq = 'MS').fit(start_params = np.full(3+4+1+1, .01))
     start_date_pred = pct_chg_imports.index[-1]+ pd.offsets.MonthBegin(1)
@@ -167,7 +164,6 @@ def quart_pct_chg_imports(given_date = "2020-01-01", period = 'Q'):
     if period == 'M':
         return pct_chg_pred
     elif period == 'Q':
-
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
 
@@ -186,7 +182,6 @@ def quart_pct_cap(date = "2020-01-01", period = 'Q'):
     if period == 'M':
         return pct_chg_pred
     elif period == 'Q':
-
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
 
@@ -194,55 +189,41 @@ def load_data_bridge(given_date = "2020-01-01"):
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("GDP", given_date, fred)
     df = pct_chg(df)
-    lag_gdp = df.pct_chg.shift()
+    lag_gdp = df.pct_chg.copy()
+    lag_gdp.index = lag_gdp.index + pd.DateOffset(months = 3)
     compiled = pd.concat([quart_pct_chg_pce(given_date), quart_pct_chg_govt_constr(given_date),
                       quart_pct_chg_business_inventories(given_date), quart_pct_chg_comm_loans(given_date),
                       quart_pct_chg_exports(given_date), quart_pct_cap(given_date),
                       quart_pct_chg_biz_equip(given_date), quart_pct_chg_defence(given_date),
                       quart_pct_chg_housing_units_started(given_date), quart_pct_chg_imports(given_date),
-                      lag_gdp,
-                      df.pct_chg], axis = 1).dropna()
+                      lag_gdp], axis = 1).dropna()
     compiled.columns = ['PCE', 'Govt_Constr',
                         'Biz_Inventory', 'Com_Loans',
                         'Exports', 'Capital_Goods',
                         'Biz_Equip', 'Defence',
                         'Housing_Start', 'Import',
-                        'Lag_GDP',
-                        'GDP']
-    X = compiled.iloc[:, :-1]
-    y = compiled.GDP   
+                        'Lag_GDP']
+    #diff from midas due to aggregation of data
+    df = df[df.index>="1993-01-01"]
     print("Bridge Data Loaded") 
+    return compiled, df.pct_chg
+
+def load_data_rf_aggregated(given_date = "2020-01-01"):
+    X, y = load_data_bridge(given_date) 
+    print("RF agg data Loaded")   
     return X, y 
 
-def load_data_rf(given_date = "2020-01-01"):
-    fred = Fred(api_key = os.getenv("API_KEY"))
-    df = get_most_recent_series_of_date("GDP", given_date, fred)
-    df = pct_chg(df)
-    lag_gdp = df.pct_chg.shift()
-    compiled = pd.concat([quart_pct_chg_pce(given_date), quart_pct_chg_govt_constr(given_date),
-                      quart_pct_chg_business_inventories(given_date), quart_pct_chg_comm_loans(given_date),
-                      quart_pct_chg_exports(given_date), quart_pct_cap(given_date),
-                      quart_pct_chg_biz_equip(given_date), quart_pct_chg_defence(given_date),
-                      quart_pct_chg_housing_units_started(given_date), quart_pct_chg_imports(given_date),
-                      lag_gdp,
-                      df.pct_chg], axis = 1).dropna()
-    compiled.columns = ['PCE', 'Govt_Constr',
-                        'Biz_Inventory', 'Com_Loans',
-                        'Exports', 'Capital_Goods',
-                        'Biz_Equip', 'Defence',
-                        'Housing_Start', 'Import',
-                        'Lag_GDP',
-                        'GDP']
-    X = compiled.iloc[:, :-1]
-    y = compiled.GDP 
-    print("RF data Loaded")   
+def load_data_rf_monthly(given_date = "2020-01-01"):
+    X, y = load_data_midas(given_date) 
+    print("RF monthly data Loaded")   
     return X, y 
 
 def load_data_midas(given_date = "2020-01-01"):
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("GDP", given_date, fred)
     df = pct_chg(df)
-    lag_gdp = df.pct_chg.shift()
+    lag_gdp = df.pct_chg.copy()
+    lag_gdp.index = lag_gdp.index + pd.DateOffset(months = 3)
     compiled = pd.concat([quart_pct_chg_pce(given_date, 'M'), quart_pct_chg_govt_constr(given_date, 'M'),
                       quart_pct_chg_business_inventories(given_date, 'M'), quart_pct_chg_comm_loans(given_date, 'M'),
                       quart_pct_chg_exports(given_date, 'M'), quart_pct_cap(given_date, 'M'),
@@ -257,7 +238,8 @@ def load_data_midas(given_date = "2020-01-01"):
     df_q = pd.DataFrame(df_q.tolist(), index=df_q.index)
     df_q.columns = [f"{col}_m{i+1}" for col in compiled.columns for i in range(3)]
     df_q.index = df_q.index.to_period('Q').to_timestamp(how='start')
-    compiled = pd.concat([df_q, quart_pct_chg_defence(given_date), lag_gdp, df.pct_chg], axis = 1).dropna()
-    compiled.columns.values[-3:] = ['Defence', 'Lag_GDP', 'GDP']
+    compiled = pd.concat([df_q, quart_pct_chg_defence(given_date), lag_gdp], axis = 1).dropna()
+    compiled.columns.values[-2:] = ['Defence', 'Lag_GDP']
+    df = df[df.index>="1993-04-01"]
     print("MIDAS data Loaded")  
-    return compiled.iloc[:, :-1], compiled.iloc[:, -1]
+    return compiled, df.pct_chg

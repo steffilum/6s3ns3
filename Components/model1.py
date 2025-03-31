@@ -1,33 +1,52 @@
 from data_load import *
 
-X, y = load_data_bridge()
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=50, shuffle = False)
+given_date = "2020-03-01"
 
-X = sm.add_constant(X)
+fred = Fred(api_key = os.getenv("API_KEY"))
 
-# print(X.shape)
+df = get_most_recent_series_of_date("GDP", given_date, fred)
+df = pct_chg(df)
 
-vif_data = pd.DataFrame()
-vif_data["Feature"] = X.columns
-vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
-print(vif_data)
+df = df.pct_chg
+
+_, test = train_test_split(df, test_size=50, shuffle=False)
+
+# X, y = load_data_bridge(given_date=given_date)
+
+# vif_data = pd.DataFrame()
+# vif_data["Feature"] = X.columns
+# vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+# print(vif_data)
+
+# # Even though govt construction is not correlated w GDP, when adding model performance is better and condition number is similar so include
+# combined = pd.concat([X, y], axis = 1)
+# corr_matrix = combined.corr()
+# sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+# plt.show()
+
+# condition_number = np.linalg.cond(X.values)
+# print(f"Condition number: {condition_number}")
 
 # Evaluation on test set
 pred = []
 for index in range(1, 51):
-    X_train = X.iloc[:-index, :]
-    y_train = y.iloc[:-index]
-    X_test = X.iloc[-index, :]
+    date = pd.to_datetime(given_date)
+    new_date = date - pd.DateOffset(months=3*index)
+    new_date_str = new_date.strftime('%Y-%m-%d')
+    X_train, y_train = load_data_bridge(new_date_str)
+    X_train = sm.add_constant(X_train)    
+    X_test = X_train.iloc[-1, :]
+    X_train = X_train.iloc[:-1, :]
     model = sm.OLS(y_train, X_train).fit()
     pred.append(model.predict(X_test)[0])
+    print(f"Iteration {index}")
 
 pred.reverse()
 
-y_test = y.iloc[-50:]
-pred = pd.Series(pred, index = y_test.index)
+pred = pd.Series(pred, index = test.index)
 
 #evaluation
-eval(pred, y_test)
+eval(pred, test)
 
-model = sm.OLS(y, X).fit()
-print(model.summary())
+# model = sm.OLS(y, X).fit()
+# print(model.summary())

@@ -2,7 +2,9 @@ from package_imports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
-df = get_most_recent_series_of_date("GDP", "2020-01-01", fred)
+given_date = "2020-01-01"
+
+df = get_most_recent_series_of_date("GDP", given_date, fred)
 df = pct_chg(df)
 # df.plot(y = "pct_chg")
 # plt.show()

@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
+import seaborn as sns
 
 from statsmodels.tsa.stattools import adfuller
 
@@ -18,7 +19,7 @@ from statsmodels.tsa.ar_model import AutoReg, ar_select_order
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import arma_order_select_ic
 from arch import arch_model
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, ElasticNet
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from midaspy.iolib import *

@@ -37,7 +37,7 @@ for index in range(1, 51):
     X_train = sm.add_constant(X_train)    
     X_test = X_train.iloc[-1, :]
     X_train = X_train.iloc[:-1, :]
-    model = sm.OLS(y_train, X_train).fit()
+    model = sm.OLS(y_train, X_train).fit_regularized(alpha = .25, L1_wt=.5)
     pred.append(model.predict(X_test)[0])
     print(f"Iteration {index}")
 
