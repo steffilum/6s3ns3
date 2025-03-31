@@ -16,6 +16,9 @@ cpi = cpi.reset_index()
 cpi.columns = ['Date', 'CPI']
 cpi['MonthYear'] = cpi['Date'].dt.strftime('%b %Y')
 
+# Start data from 1993
+cpi = cpi[cpi['Date'] >= pd.Timestamp('1993-01-01')]
+
 # Calculate year over year change in CPI
 cpi['YOY Change'] = cpi['CPI'].pct_change(periods=12) * 100
 
@@ -76,6 +79,9 @@ core_cpi = fred.get_series('CPILFESL')
 core_cpi = core_cpi.reset_index()
 core_cpi.columns = ['Date', 'Core CPI']
 core_cpi['MonthYear'] = core_cpi['Date'].dt.strftime('%b %Y')
+
+# start data from 1993
+core_cpi = core_cpi[core_cpi['Date'] >= pd.Timestamp('1993-01-01')]
 
 # Calculate year over year change in Core CPI
 core_cpi['YOY Change'] = core_cpi['Core CPI'].pct_change(periods=12) * 100
