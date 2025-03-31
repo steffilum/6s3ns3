@@ -29,7 +29,7 @@ def get_cpi_graph(period=60):
     # get trailing 60 months of data
     cpi_filtered = cpi.iloc[-period:]
     fig = px.line(cpi_filtered, x='MonthYear', y='YOY Change', title='US Consumer Price Index (CPI), Seasonally Adjusted',
-                  labels={"MonthYear": "", "YOY Change": "YOY Change (%)"}, template='plotly_dark', markers=True)
+                  labels={"MonthYear": "", "YOY Change": "YOY Change (%)"}, template='plotly_dark')
     
     # Remove grid lines
     fig.update_xaxes(showgrid=False)
