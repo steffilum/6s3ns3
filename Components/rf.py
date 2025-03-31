@@ -1,26 +1,40 @@
 from data_load import *
 
-X_train, X_test, y_train, y_test = load_data()
-X_train, X_validation, y_train, y_validation = train_test_split(X_train, y_train, test_size=50)
+X, y= load_data_rf()
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=50, shuffle = False)
 
-# best_rmse = 0
-# best_trees = 0
-# rmse = []
-# for trees in range(0, 1300, 10):
-#     regressor = RandomForestRegressor(n_estimators=trees, n_jobs = 4) 
+best_rmse = 0
+best_trees = 0
+rmse = []
+for trees in range(10, 1000, 10):
+    rmse.append(0)
+    for index in range(1, 10):
+        X_cv = X_train.iloc[:-index-1, :]
+        y_cv = y_train.iloc[:-index-1]
+        X_validate = X_train.iloc[-index, :].values.reshape(1, -1) 
+        y_validate = y_train.iloc[-index]
+        regressor = RandomForestRegressor(n_estimators=trees, n_jobs = 4) 
+        regressor.fit(X_cv, y_cv)
+        prediction = regressor.predict(X_validate)
+        rmse[-1] += (y_validate - prediction)**2
+plt.plot(rmse)
+plt.show()
 
-#     regressor.fit(X_train, y_train)
+# best at 1240
 
-#     predictions = regressor.predict(X_validation)
+# Evaluation on test set
+pred = []
+for index in range(1, 51):
+    X_train = X.iloc[:-index-1, :]
+    y_train = y.iloc[:-index-1]
+    X_validate = X.iloc[-index, :].values.reshape(1, -1) 
+    regressor = RandomForestRegressor(n_estimators=1000, n_jobs = 4) 
+    regressor.fit(X_train, y_train)
+    prediction = regressor.predict(X_validate)
+    pred.append(prediction)
 
-#     rmse.append(mean_squared_error(y_validation, predictions, squared=False))
+pred.reverse()
+pred = pd.Series(pred, index = y_test.index)
 
-# plt.plot(rmse)
-# plt.show()
-
-#best at 1240
-
-# eval
-# regressor = RandomForestRegressor(n_estimators=1240, n_jobs=4).fit(X_test, y_test)
-# pred = regressor.predict(X_validation)
-# eval(pred, y_test)
+#evaluation
+eval(pred, y_test)

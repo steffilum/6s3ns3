@@ -23,6 +23,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from midaspy.iolib import *
 from midaspy.model import MIDASRegressor
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 
 

@@ -46,10 +46,10 @@ quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
 
 # takes in the given dates and return values up to the date if have if not predict
 #takes in given date and period, so 'Q' or 'M' for bridge or midas
-def quart_pct_chg_govt_constr(date = "2020-01-01", period = 'Q'):
+def quart_pct_chg_biz_equip(date = "2020-01-01", period = 'Q'):
     given_date = "2020-01-01"
     fred = Fred(api_key = os.getenv("API_KEY"))
-    df = get_most_recent_series_of_date("TLPBLCONS", given_date, fred)
+    df = get_most_recent_series_of_date("IPBUSEQ", given_date, fred)
     df = df[df.index<pd.Timestamp(date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
     pct_chg_business_equipment = transform_series(df, 5).dropna().diff().dropna()*100
     model = ARIMA(pct_chg_business_equipment, order=(5, 0, 1), trend = 'n', freq = 'MS').fit(start_params = np.full(5+1+1, .01))

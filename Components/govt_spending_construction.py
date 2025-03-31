@@ -49,7 +49,7 @@ def quart_pct_chg_govt_constr(date = "2020-01-01", period = 'Q'):
     df = get_most_recent_series_of_date("TLPBLCONS", given_date, fred)
     df = df[df.index<pd.Timestamp(given_date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
     pct_chg_govt_constr = transform_series(df, 5).dropna()*100
-    model = ARIMA(pct_chg_govt_constr, order=(1, 0, 1), trend = 'c', freq = 'QS').fit(start_params = np.full(1+1+1+1, .01))
+    model = ARIMA(pct_chg_govt_constr, order=(1, 0, 1), trend = 'c', freq = 'MS').fit(start_params = np.full(1+1+1+1, .01))
     start_date_pred = pct_chg_govt_constr.index[-1]+ pd.offsets.MonthBegin(1)
     end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
     pred = model.predict(start = start_date_pred, end = end_date_pred)

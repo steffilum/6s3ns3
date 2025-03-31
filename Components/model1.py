@@ -1,9 +1,16 @@
 from data_load import *
 
-X, y = load_data()
+X, y = load_data_bridge()
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=50, shuffle = False)
 
 X = sm.add_constant(X)
+
 # print(X.shape)
+
+vif_data = pd.DataFrame()
+vif_data["Feature"] = X.columns
+vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+print(vif_data)
 
 # Evaluation on test set
 pred = []
@@ -22,8 +29,5 @@ pred = pd.Series(pred, index = y_test.index)
 #evaluation
 eval(pred, y_test)
 
-# new_X = np.array([1, ne.values[-1], pce.values[-1], df.lag_GDP[-1]])
-
-# predictions = model.predict(new_X)
-
-# print("Predicted values:", predictions)
+model = sm.OLS(y, X).fit()
+print(model.summary())

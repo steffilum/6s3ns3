@@ -41,7 +41,7 @@ pct_chg_pred = pd.concat([pct_chg_nondefense_capital_goods, pred])
 
 quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
 
-def quart_pct_chg_pce(date = "2020-01-01", period = 'Q'):
+def quart_pct_cap(date = "2020-01-01", period = 'Q'):
     given_date = "2020-01-01"
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("ANDENO", given_date, fred)
