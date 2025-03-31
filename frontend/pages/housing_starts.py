@@ -129,7 +129,7 @@ housingstarts_content = html.Div(
         html.Div(
             children=[
                 html.H3(
-                    f"Latest Housing Starts number as of {get_latest_month()}: {get_latest_housingstarts()}%",
+                    f"Latest Year over Year percentage change in Housing Starts as of {get_latest_month()}: {get_latest_housingstarts()}%",
                     style={
                         "color": "white",
                         "fontWeight": "600",
