@@ -98,7 +98,7 @@ def get_housingstarts_graph(period=60):
 
 
 def get_latest_housingstarts():
-    # Latest Percent Change in CPI round off to 2 dp
+    # Latest Percent Change in housing starts round off to 2 dp
 
     latest_housingstart = housing_starts['YOY Change'].iloc[-1]
     return round(latest_housingstart,2)
