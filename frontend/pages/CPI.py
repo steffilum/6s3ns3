@@ -1,7 +1,7 @@
 import dash
 from dash import html, dcc, Input, Output
 from shared.default_pagelayout import get_default_layout 
-from data.cpi_data import get_cpi_graph, get_latest_cpi, cpi
+from data.cpi_data import get_cpi_graph, get_latest_cpi, cpi, get_latest_month
 import dash_bootstrap_components as dbc
 
 dash.register_page(__name__, path="/cpi", name="CPI")
@@ -129,7 +129,7 @@ cpi_content = html.Div(
         html.Div(
             children=[
                 html.H3(
-                    f"Latest CPI Number: {get_latest_cpi()}%",
+                    f"Latest CPI Number as of {get_latest_month()}: {get_latest_cpi()}%",
                     style={
                         "color": "white",
                         "fontWeight": "600",
@@ -142,32 +142,13 @@ cpi_content = html.Div(
                 "marginTop": "30px",
                 "marginLeft": "150px"
             }
-        ), 
-        dcc.Graph(
-            id = '',
-            figure=get_cpi_graph(60)
-           
         )
     ]
 )
 
 layout = get_default_layout(main_content=cpi_content)
 
-# @dash.callback(
-#     Output("cpi-graph", "figure"),
-#     Input("1y-button", "n_clicks"), 
-#     Input("5y-button", "n_clicks")
-# )
-# def update_cpi_graph(n_clicks):  
-#     # Determine which period to use based on button clicks
-#     if not n_clicks or n_clicks % 2 == 0:
-#         fig = get_cpi_graph(60)
-#     else:
-#         fig = get_cpi_graph(12)
-    
-#     # Force the figure to a fixed size
-#     fig.update_layout(autosize=False, width=1000, height=400)
-#     return fig
+
 
 @dash.callback(
     Output("cpi-graph", "figure"),
