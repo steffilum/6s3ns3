@@ -295,6 +295,37 @@ cpi_content = html.Div(
                 "marginTop": "30px",
                 "marginLeft": "170px"
             }
+        ), 
+        html.Br(),
+        html.Br(),
+        html.Div(
+            children=[
+                html.H3(
+                    "What is the Consumer Price Index (CPI)?",
+                    style={
+                        "color": "white",
+                        "fontWeight": "600",
+                        "fontSize": "32px",
+                        "fontFamily": "Montserrat, sans-serif", 
+                        "textalign": "center"
+                    }
+                )
+            ], style={"textAlign": "center"}
+        ), 
+        html.Div(
+            children = [
+                html.P("The Consumer Price Index (CPI) is a measure of the average change over time in the prices paid by urban consumers for a market basket of consumer goods and services. Core CPI is an aggregate of prices paid by urban consumers for a typical basket of goods, excluding food and energy. This measurement is widely used by economists because food and energy have very volatile prices. The CPI is a key economic indicator used to measure inflation and changes in purchasing trends. The CPI is published monthly by the Bureau of Labor Statistics (BLS). This data is taken from FRED."
+                )
+            ], style = {
+                "marginLeft": "100px",
+                "marginRight": "100px",
+                "marginTop": "20px",
+                "color": "white",
+                "fontSize": "18px",
+                "fontFamily": "Montserrat, sans-serif"
+            }
+                              
+
         )
     ]
 )
@@ -333,6 +364,7 @@ def update_cpi_graph(n_clicks_1, n_clicks_5, n_clicks_10, n_clicks_all):
     # Force the figure to a fixed size
     fig.update_layout(autosize=False, width=1000, height=400)
     return fig
+
 
 @dash.callback(
     Output("core-cpi-graph", "figure"),
