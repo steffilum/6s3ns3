@@ -16,17 +16,17 @@ housing_starts = fred.get_series('HOUST')
 
 # convert to DataFrame
 housing_starts = housing_starts.reset_index()
-housing_starts.columns = ['Date', 'CPI']
+housing_starts.columns = ['Date', 'housingstarts']
 housing_starts['MonthYear'] = housing_starts['Date'].dt.strftime('%b %Y')
 
 # Start data from 1993
 housing_starts = housing_starts[housing_starts['Date'] >= pd.Timestamp('1993-01-01')]
 
 # Calculate year over year change in Housing Starts
-housing_starts['YOY Change'] = housing_starts['CPI'].pct_change(periods=12) * 100
+housing_starts['YOY Change'] = housing_starts['housingstarts'].pct_change(periods=12) * 100
 
 # Calculate monthly over monthly change in Housing Starts
-housing_starts['MoM Change'] = housing_starts['CPI'].pct_change() * 100
+housing_starts['MoM Change'] = housing_starts['housingstarts'].pct_change() * 100
 
 # For plotting yoy and mom change in housing starts
 # def get_housingstarts_graph(period=60):
