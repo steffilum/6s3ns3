@@ -8,6 +8,10 @@ import dash_bootstrap_components as dbc
 
 fred = Fred(api_key='aca56acb87a4241e0e9684e37849de17')
 
+##############################################
+# Data for CPI 
+##############################################
+
 # Example: Pull US CPI data (Seasonally Adjusted)
 cpi = fred.get_series('CPIAUCNS')
 
