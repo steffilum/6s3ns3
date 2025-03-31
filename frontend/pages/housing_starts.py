@@ -153,6 +153,37 @@ housingstarts_content = html.Div(
                 "marginTop": "30px",
                 "marginLeft": "170px"
             }
+        ),
+        html.Br(),
+        html.Br(),
+        html.Div(
+            children=[
+                html.H3(
+                    "What is Housing Starts?",
+                    style={
+                        "color": "white",
+                        "fontWeight": "600",
+                        "fontSize": "32px",
+                        "fontFamily": "Montserrat, sans-serif", 
+                        "textalign": "center"
+                    }
+                )
+            ], style={"textAlign": "center"}
+        ), 
+        html.Div(
+            children = [
+                html.P("Housing Starts is an economic indicator that measures the number of new residential construction projects that have begun during any particular month. The U.S. Census Bureau and the U.S. Department of Housing and Urban Development jointly release the data on a monthly basis. The data is used to gauge the health of the housing market and the overall economy. A high number of housing starts is generally seen as a positive sign for the economy, as it indicates that builders are confident in the market and are investing in new construction projects. Conversely, a low number of housing starts can be a sign of a weak economy, as it suggests that builders are hesitant to invest in new projects."
+                )
+            ], style = {
+                "marginLeft": "100px",
+                "marginRight": "100px",
+                "marginTop": "20px",
+                "color": "white",
+                "fontSize": "18px",
+                "fontFamily": "Montserrat, sans-serif"
+            }
+                              
+
         )
     ]
 )
