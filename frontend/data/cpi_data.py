@@ -56,5 +56,7 @@ def get_latest_cpi():
     latest_cpi = cpi['YOY Change'].iloc[-1]
     return round(latest_cpi,2)
 
-
+def get_latest_month():
+    latest_month = cpi['MonthYear'].iloc[-1]
+    return latest_month
 
