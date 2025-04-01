@@ -10,6 +10,7 @@ df = pct_chg(df)
 df = df.pct_chg
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
+
 #use this date instead for cv
 # given_date = "2007-09-01"
 

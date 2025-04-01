@@ -27,6 +27,33 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 # condition_number = np.linalg.cond(X.values)
 # print(f"Condition number: {condition_number}")
 
+#use this date instead for cv
+# given_date = "2007-09-01"
+
+# 30 chosen due to insufficient data
+# test, _ = train_test_split(test, train_size=30, shuffle=False)
+
+# rmse = []
+# for alpha in [0.0001, 0.001, 0.01, 0.1, 1]:
+#     for l1_ratio in [0.01, 0.1, 0.5, 0.9, .99]:
+#         pred = []
+#         for index in range(1, 31):
+#             date = pd.to_datetime(given_date)
+#             new_date = date - pd.DateOffset(months=3*index)
+#             new_date_str = new_date.strftime('%Y-%m-%d')
+#             with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'rb') as f:
+#                 X_train, y_train = pickle.load(f)        
+#             X_train = sm.add_constant(X_train)    
+#             X_test = X_train.iloc[-1, :]
+#             X_train = X_train.iloc[:-1, :]
+#             model = sm.OLS(y_train, X_train).fit_regularized(alpha=alpha, L1_wt=l1_ratio)
+#             pred.append(model.predict(X_test)[0])
+#         rmse.append(mean_squared_error(pred, test, squared=False))
+#         print(f'Alpha {alpha} L1_wt {l1_ratio} {mean_squared_error(pred, test, squared=False)}')
+# rmse = np.array(rmse).reshape(5, 5)
+# print(rmse)
+#Best is alpha = 1, L1_wt = .5
+
 # # Evaluation on test set
 # pred = []
 # for index in range(1, 51):
@@ -38,7 +65,7 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 #     X_train = sm.add_constant(X_train)    
 #     X_test = X_train.iloc[-1, :]
 #     X_train = X_train.iloc[:-1, :]
-#     model = sm.OLS(y_train, X_train).fit_regularized(alpha=.25, L1_wt=.25)
+#     model = sm.OLS(y_train, X_train).fit_regularized(alpha=1, L1_wt=0) #since the pred val look too small, decreasing l1 weight to prevent sparsity increase rmse
 #     pred.append(model.predict(X_test)[0])
 #     print(f"Iteration {index}")
 
