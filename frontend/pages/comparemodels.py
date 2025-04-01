@@ -253,8 +253,8 @@ comparemodels_content = html.Div(id="main-content",children=[
 style={
        'height': '100vh',
        'overflowY': 'scroll',  # Enable scrolling
-       'paddingTop': "100px", #Leave space on top for nav bar 
-       'paddingBottom': '20px' #bottom padding
+       'paddingTop': "25px", #Leave space on top for nav bar 
+       'paddingBottom': '200px' #bottom padding
    })
 
 # Plug that content into your default layout
