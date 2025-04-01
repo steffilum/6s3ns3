@@ -18,13 +18,19 @@ print(df.shape)
 pred = []
 
 for index in range(1, 51):
-    train = df.iloc[:291-index]
+    date = pd.to_datetime(given_date)
+    new_date = date - pd.DateOffset(months=3*index)
+    new_date_str = new_date.strftime('%Y-%m-%d')
+    with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'rb') as f:
+        _, train = pickle.load(f)   
+    train.index = pd.to_datetime(train.index).to_period('Q')
     model = AutoReg(train, lags = 4, trend = 'ct').fit()
-    pred.append(model.predict(start = 291-index, end = 291-index))
+    pred.append(model.predict(start = len(train), end = len(train)))
 
 # print(model.params)
 
 pred.reverse()
+print(pred)
 pred = pd.concat(pred)
 pred.index = pred.index.to_timestamp()
 print(pred)

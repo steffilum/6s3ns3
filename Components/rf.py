@@ -40,18 +40,20 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 # Tried values from 100 to 2000 in multiple of 100, then 50 to 400 in multiple of 10
 
 # Evaluation on test set
-pred = []
-for index in range(1, 51):
-    date = pd.to_datetime(given_date)
-    new_date = date - pd.DateOffset(months=3*index)
-    new_date_str = new_date.strftime('%Y-%m-%d')
-    X_train, y_train = load_data_bridge(new_date_str)
-    X_train = X_train.iloc[:-1, :]
-    X_validate = X_train.iloc[-1, :].values.reshape(1, -1) 
-    regressor = RandomForestRegressor(n_estimators=300, n_jobs=4)
-    regressor.fit(X_train, y_train)
-    prediction = regressor.predict(X_validate)
-    pred.append(prediction)
+# pred = []
+# for index in range(1, 51):
+#     date = pd.to_datetime(given_date)
+#     new_date = date - pd.DateOffset(months=3*index)
+#     new_date_str = new_date.strftime('%Y-%m-%d')
+#     with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'rb') as f:
+#         X_train, y_train = pickle.load(f)
+#     X_train = X_train.iloc[:-1, :]
+#     X_validate = X_train.iloc[-1, :].values.reshape(1, -1) 
+#     regressor = RandomForestRegressor(n_estimators=300, n_jobs=4)
+#     regressor.fit(X_train, y_train)
+#     prediction = regressor.predict(X_validate)
+#     pred.append(prediction)
+#     print(f"Iteration {index}")
 
 pred.reverse()
 pred = pd.Series(pred, index = test.index)
