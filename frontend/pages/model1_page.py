@@ -20,12 +20,12 @@ model1_content = html.Div(
     children=[
         html.Br(), 
         # Header "Model 1"
-        html.H1("Model 1", style={"textAlign": "left", "color": "white", "marginBottom": "20px"}),
+        html.H1("Model 1", style={ "color": "white", "marginBottom": "20px"}),
 
         # Container for the graph and input fields
         html.Div([
             # Graph on the left
-            dcc.Graph(id='model1-graph', style={"flex": "3", "height": "500px"}),
+            dcc.Graph(id='model1-graph', style={ "flex": "3", "height": "500px"}),
 
             # Input fields on the right
             html.Div([
@@ -49,14 +49,14 @@ model1_content = html.Div(
                     style={"width": "150px", "height": "40px", "padding": "5px", "fontSize": "16px"}
                 )
             ], style={"display": "flex", "flexDirection": "column", "alignItems": "center", "marginLeft": "20px"})
-        ], style={"display": "flex", "alignItems": "center", "justifyContent": "center"}),
+        ], style={ "display": "flex", "alignItems": "center", "justifyContent": "center"}),
 
         # Header "Model Description"
-        html.H2("Model Description", style={"textAlign": "left", "color": "white", "marginTop": "30px"}),
+        html.H2("Model Description", style={ "color": "white", "marginTop": "30px"}),
 
         # Description text
         html.P("This model represents a sample visualization of economic trends over time. The graph above updates dynamically based on the selected year range.",
-               style={"color": "white", "textAlign": "left", "maxWidth": "800px"}
+               style={ "color": "white", "textAlign": "left", "maxWidth": "800px"}
         )
     ]
 )
