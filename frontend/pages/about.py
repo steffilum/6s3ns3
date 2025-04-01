@@ -83,7 +83,7 @@ about_content = html.Div(
             Dependent variable "GDP": "Gross Domestic Product", Quarterly
             Current Problems Most of these data is quarterly, not high frequency enough should consider high frequency proxies instead
             """, 
-            style={"color": "lightgrey", "fontSize": "18px", "fontFamily": "Montserrat, sans-serif", 
+            style={"color": "lightgrey", "fontSize": "18px", "fontFamily": "Montserrat, sans-serif",
                         "marginLeft": "10%", "marginRight": "10%", "textAlign": "justify"}
         ),
         html.Br(),
