@@ -55,8 +55,8 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 #     pred.append(prediction)
 #     print(f"Iteration {index}")
 
-pred.reverse()
-pred = pd.Series(pred, index = test.index)
+# pred.reverse()
+# pred = pd.Series(pred, index = test.index)
 
-#evaluation
-eval(pred, test)
+# #evaluation
+# eval(pred, test)
