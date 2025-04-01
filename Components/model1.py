@@ -11,7 +11,7 @@ df = df.pct_chg
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
-# X, y = load_data_bridge(given_date=given_date)
+X, y = load_data_bridge(given_date=given_date)
 
 # vif_data = pd.DataFrame()
 # vif_data["Feature"] = X.columns
@@ -33,7 +33,8 @@ for index in range(1, 51):
     date = pd.to_datetime(given_date)
     new_date = date - pd.DateOffset(months=3*index)
     new_date_str = new_date.strftime('%Y-%m-%d')
-    X_train, y_train = load_data_bridge(new_date_str)
+    with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'rb') as f:
+        X_train, y_train = pickle.load(f)
     X_train = sm.add_constant(X_train)    
     X_test = X_train.iloc[-1, :]
     X_train = X_train.iloc[:-1, :]
@@ -48,5 +49,5 @@ pred = pd.Series(pred, index = test.index)
 #evaluation
 eval(pred, test)
 
-# model = sm.OLS(y, X).fit()
-# print(model.summary())
+model = sm.OLS(y, X.iloc[:-1, :]).fit()
+print(model.summary())

@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import seaborn as sns
+import plotly
+import pickle
 
 from statsmodels.tsa.stattools import adfuller
 
@@ -21,6 +23,7 @@ from arch import arch_model
 from sklearn.linear_model import LinearRegression, ElasticNet
 from sklearn.ensemble import RandomForestRegressor
 from statsmodels.stats.outliers_influence import variance_inflation_factor
+from prophet import Prophet
 
 
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error

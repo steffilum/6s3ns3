@@ -184,6 +184,26 @@ def quart_pct_cap(date = "2020-01-01", period = 'Q'):
     elif period == 'Q':
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
+    
+def sahms(date = "2020-01-01", period = 'Q'):
+    given_date = max("2020-01-01", date)
+    fred = Fred(api_key = os.getenv("API_KEY"))
+    df = get_most_recent_series_of_date("SAHMREALTIME", given_date, fred)
+    df = df[df.index<pd.Timestamp(date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
+    df = pd.concat([df, df.shift()], axis = 1)
+    df.columns = ['SAHM', 'Lag_SAHM']
+    df['Indicator'] = ((df.SAHM>=.5) & (df.SAHM>=df.Lag_SAHM)).astype(int)
+    df = df.Indicator.astype(int)
+    print('SAHM data Loaded')
+    if period == 'M':
+        return df
+    elif period == 'Q':
+        date_range = pd.date_range(start = df.index[-1] + pd.offsets.MonthBegin(1), end = pd.to_datetime(date).to_period('Q').end_time, freq = 'MS')
+        data = pd.Series(np.nan, index=date_range)
+        df = pd.concat([df, data]).ffill()
+        quarterly = df.resample('QS').max()
+        return quarterly.astype(int)
+
 
 def load_data_bridge(given_date = "2020-01-01"):
     fred = Fred(api_key = os.getenv("API_KEY"))
@@ -196,12 +216,14 @@ def load_data_bridge(given_date = "2020-01-01"):
                       quart_pct_chg_exports(given_date), quart_pct_cap(given_date),
                       quart_pct_chg_biz_equip(given_date), quart_pct_chg_defence(given_date),
                       quart_pct_chg_housing_units_started(given_date), quart_pct_chg_imports(given_date),
+                      sahms(given_date),
                       lag_gdp], axis = 1).dropna()
     compiled.columns = ['PCE', 'Govt_Constr',
                         'Biz_Inventory', 'Com_Loans',
                         'Exports', 'Capital_Goods',
                         'Biz_Equip', 'Defence',
                         'Housing_Start', 'Import',
+                        'SAHM',
                         'Lag_GDP']
     #diff from midas due to aggregation of data
     df = df[df.index>="1993-01-01"]
