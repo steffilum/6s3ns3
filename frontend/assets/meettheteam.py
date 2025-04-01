@@ -18,7 +18,7 @@ def create_team_layout(team_members, cols_per_row=3):
     for i in range(0, len(team_members), cols_per_row):
         row_members = team_members[i:i+cols_per_row]
         row = dbc.Row(
-            [
+            [   
                 dbc.Col(
                     html.Div(
                         [
@@ -32,8 +32,8 @@ def create_team_layout(team_members, cols_per_row=3):
                                     "marginBottom": "10px"
                                 }
                             ),
-                            html.H4(member["name"], style={"color": "white", "marginBottom": "0px"}),
-                            html.P(member["title"], style={"color": "lightgrey"})
+                            html.H4(member["name"], style={"color": "white", "marginBottom": "0px", "fontFamily": "Montserrat"}),
+                            html.P(member["title"], style={"color": "lightgrey", "fontFamily": "Montserrat"})
                         ],
                         style={"textAlign": "center"}
                     ),
