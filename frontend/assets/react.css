@@ -6,24 +6,9 @@ body, html {
   overflow: hidden;
 }
 
-.main-content {
-  position: relative;
-  z-index: 1;
-  color: white;
-  font-size: 60px;
-  text-align: center;
-  margin-top: 200px;
-  transition: filter 0.3s ease;
-}
-
-.blur-content {
-  filter: blur(10px);
-  pointer-events: none;
-}
-
 .logo-clickable {
-  transition: color 0.3s ease;
   color: white;
+  transition: color 0.3s ease;
   text-decoration: none;
 }
 
@@ -32,8 +17,22 @@ body, html {
   text-shadow: 0 0 10px #959595, 0 0 20px #abaaa9, 0 0 30px #858482;
 }
 
+.fade-button-dropdown {
+  color: rgba(206, 203, 203, 0.8);
+  background: transparent;
+  border: none;
+  font-family: "Montserrat", sans-serif;
+  font-size: 22px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
 
-/* Dropdown Styling */
+.fade-button-dropdown:hover {
+  color: #fdfdfd;
+}
+
+/* Dropdown styles remain unchanged */
 .mega-dropdown {
   position: absolute;
   top: 100px;
@@ -46,13 +45,11 @@ body, html {
   min-height: 100px;
 }
 
-/* Items */
 .dropdown-item-bold {
   font-weight: 600;
   font-size: 24px;
   padding: 7px 0;
   color: white;
-  transition: color 0.3s ease;
   text-decoration: none;
   display: block;
 }
@@ -60,19 +57,6 @@ body, html {
 .dropdown-item-bold:hover {
   color: #ff9900;
 }
-
-.fade-button-dropdown {
-  color: rgba(187, 186, 186, 0.8);
-}
-
-.fade-button-dropdown.selected{
-  color: #fdfdfd;
-}
-
-.fade-button-dropdown:hover {
-  color: #fdfdfd;
-}
-
 
 .dropdown-item-normal {
   font-weight: 400;
@@ -82,38 +66,54 @@ body, html {
   margin-bottom: 20px;
   pointer-events: none;
   cursor: default;
-  margin-top: -20px;
 }
 
 .dropdown-item-comparemodels {
-  font-weight: 400;
   font-size: 16px;
-  padding: 2px 0; 
+  padding: 2px 0;
   color: rgba(206, 203, 203, 0.8);
-  cursor: default;
-  margin-top: 20px;
   cursor: pointer;
   display: block;
   text-decoration: none;
+  margin-top: 20px;
 }
 
 .dropdown-item-comparemodels:hover {
   color: #ff9900;
 }
 
-/* News Styling */
 .card-title {
   color: white;
-  text-decoration: none;
-  font-size: 14px;
   text-decoration: none;
   font-size: 16px;
   font-weight: 600;
   font-family: "Montserrat", sans-serif;
+  transition: all 0.3s ease;
 }
 
 .card-title:hover {
   color: white;
-  text-shadow: 0 0 10px #959595, 0 0 20px #abaaa9, 0 0 30px #858482;
+  text-decoration: none;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+
+.rc-slider-rail {
+    background-color: grey !important;
+    height: 4px;
+    border-radius: 2px;
+}
+
+/* Selected range between thumbs (track) */
+.rc-slider-track {
+    background-color: orange !important;
+    height: 4px;
+}
+
+/* Optional: make thumbs stand out */
+.rc-slider-handle {
+    border: 2px solid orange !important;
+    background-color: white !important;
+    box-shadow: 0 0 5px orange;
 }
 
