@@ -178,7 +178,7 @@ housingstarts_content = html.Div(
                 "marginLeft": "100px",
                 "marginRight": "100px",
                 "marginTop": "20px",
-                "color": "white",
+                "color": "lightgrey",
                 "fontSize": "18px",
                 "fontFamily": "Montserrat, sans-serif"
             }
