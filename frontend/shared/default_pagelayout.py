@@ -55,7 +55,7 @@ def get_default_layout(main_content=None):
                         }),
                         dcc.Link("About", href="/about", className="fade-button-dropdown", style={
                             **_nav_link_style,
-                            "marginLeft": "180px"
+                            "marginLeft": "60px"
                         }),
                         html.Button("Models", id="model-fade-button", n_clicks=0,
                                     className="fade-button-dropdown", style=_nav_link_style),
@@ -63,7 +63,7 @@ def get_default_layout(main_content=None):
                                     className="fade-button-dropdown", style=_nav_link_style),
                     ], style={
                         "display": "flex",
-                        "gap": "100px",
+                        "gap": "140px",
                         "alignItems": "center"
                     })
                 ]
@@ -95,8 +95,9 @@ def get_default_layout(main_content=None):
                     children=[
                         html.Div("Explore Indicators", className="dropdown-item-normal"),
                         dcc.Link("CPI", href="/cpi", className="dropdown-item-bold"),
-                        dcc.Link("Housing Starts", href="/test_page", className="dropdown-item-bold"),
-                        dcc.Link("PMI", href="/cpi", className="dropdown-item-bold")
+                        dcc.Link("Housing Starts", href="/housing_starts", className="dropdown-item-bold"),
+                        dcc.Link("Industrial Production", href="/industrial_production", className="dropdown-item-bold"), 
+                        dcc.Link("Unemployment Rate", href="/unemployment_rate", className="dropdown-item-bold"),
                     ]
                 )
             ),

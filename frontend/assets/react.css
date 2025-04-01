@@ -96,3 +96,24 @@ body, html {
   text-decoration: none;
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
 }
+
+
+.rc-slider-rail {
+    background-color: grey !important;
+    height: 4px;
+    border-radius: 2px;
+}
+
+/* Selected range between thumbs (track) */
+.rc-slider-track {
+    background-color: orange !important;
+    height: 4px;
+}
+
+/* Optional: make thumbs stand out */
+.rc-slider-handle {
+    border: 2px solid orange !important;
+    background-color: white !important;
+    box-shadow: 0 0 5px orange;
+}
+
