@@ -19,7 +19,6 @@ from sklearn.model_selection import train_test_split, TimeSeriesSplit
 from statsmodels.tsa.ar_model import AutoReg, ar_select_order
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import arma_order_select_ic
-from arch import arch_model
 from sklearn.linear_model import LinearRegression, ElasticNet
 from sklearn.ensemble import RandomForestRegressor
 from statsmodels.stats.outliers_influence import variance_inflation_factor
