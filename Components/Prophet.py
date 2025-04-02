@@ -11,12 +11,6 @@ df = df.pct_chg
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
-df = df.reset_index()  
-df = df.rename(columns={'index': 'ds', 'pct_chg': 'y'})  
-# print(df.head())
-
-print(df.shape)
-
 pred = []
 
 for index in range(1, 51):
