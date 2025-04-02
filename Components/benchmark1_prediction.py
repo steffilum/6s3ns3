@@ -1,8 +1,9 @@
-from package_imports import *
+from Components.package_imports import *
+import datetime
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
-def benchmark1_prediction(date = "2020-01-01"):
+def benchmark1_prediction(date = datetime.date.today()):
     train = get_most_recent_series_of_date("GDP", date, fred)
     train = pct_chg(train)
 
@@ -20,6 +21,11 @@ def benchmark1_prediction(date = "2020-01-01"):
         row = pd.DataFrame({"pct_chg": mean, "Indicator": "Forecast"}, index = [quarter])
         train = pd.concat([train, row])
 
+    
     train.index = pd.to_datetime(train.index).to_period('Q')
+    train["quarters"] = train.index.astype(str)
 
     return train
+
+
+# print((benchmark1_prediction()))

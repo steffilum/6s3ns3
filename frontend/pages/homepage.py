@@ -4,7 +4,8 @@ import dash_bootstrap_components as dbc
 import os
 from pages.news import df_articles, generate_card_scroll
 from shared.default_pagelayout import get_default_layout 
-from data.fakedata1 import get_gdp_growth_rate, get_forecast_graph, gdp_growth_df, quarters
+from integration.model1 import get_forecast, get_forecast_graph, monthyear, get_quarter
+from datetime import datetime
 
 
 
@@ -20,7 +21,7 @@ homepage_content = html.Div(
     id="main-content",
     style={
         "position": "absolute",
-        "top": "120px",
+        "top": "60px",
         "left": "65px",
         "width": "300px",
         "height": "600px",
@@ -53,7 +54,7 @@ homepage_content = html.Div(
             }
         ),
         html.Label(
-            "Select a Quarter to Forecast GDP Growth Rate",
+            "Select a Month to forecast next Quarter GDP Growth Rate",
             style={
                 "color": "rgba(206, 203, 203)",
                 "fontWeight": "600",
@@ -63,7 +64,7 @@ homepage_content = html.Div(
                 "position": "absolute",
                 "left": "350px", 
                 "top": "400px",
-                "width": "500px"
+                "width": "700px"
             }
         ),
         # label for start
@@ -101,7 +102,8 @@ homepage_content = html.Div(
         html.Div(
             children = [
                 html.H1(
-                    "GDP Forecast for Next Quarter:",
+                    id = 'gdp-forecast-title',
+                    children = ["GDP Forecast for: "],
                     style={
                         "color": "rgba(206, 203, 203)",
                         "fontWeight": "600",
@@ -130,14 +132,14 @@ homepage_content = html.Div(
             children =[
             dcc.Graph(
                 id = 'gdp-forecast-graph',
-                figure = get_forecast_graph("1950Q1", "2023Q4"),
+                figure = get_forecast_graph(),
                 config = {"displayModeBar": False},
                 style={
                     "position": "absolute",
                     "left": "316px",
                     "top": "70px",
                     "width": "900px",
-                    "height": "320px",
+                    "height": "620px",
                     "backgroundColor": 'transparent'
                 }
             )
@@ -152,19 +154,24 @@ homepage_content = html.Div(
                     "top": "490px",
                     "width": "800px"}, 
             children = [
-                dcc.RangeSlider(
-                    id = 'quarter-range-slider',
+                dcc.Slider(
+                    id = 'myear-slider',
                     min = 0, 
-                    max = len(quarters) -1, 
+                    max = len(monthyear()) -1, 
                     step = 1, 
-                    value = [0, len(quarters) - 1],
-                    marks={i: q for i, q in enumerate(quarters) if i % 20 == 0}
-                )
+                    value = len(monthyear()) - 1,
+                    marks={
+                        i: {'label': month, 'style': {'color': 'grey', 'fontSize': '12px'}}
+                        for i, month in enumerate(monthyear())
+                        if i % 24 == 0
+                    },
+                    tooltip={"always_visible": False, "placement": "bottom"}
+                    )
             ]
         ), 
-            # Container for displaying selected quarter
+            # Container for displaying selected month year
             html.Div(
-                id="selected-quarter-display",
+                id="myear-display",
                 style={
                     "color": "grey",
                     "fontSize": "16px",
@@ -172,7 +179,7 @@ homepage_content = html.Div(
                     "fontFamily": "Montserrat, sans-serif",
                     "textAlign": "center", 
                     "position": "absolute",
-                    "left": "236px",
+                    "left": "188px",
                     "top": "430px",
                     "width": "500px"
         }
@@ -181,9 +188,27 @@ homepage_content = html.Div(
     
     ]
 )
+# Wrap the entire page content in a loading indicator
+loading_content = html.Div(
+      
+
+    dcc.Loading(
+        id="page-loading",
+        type="circle",  
+        children=homepage_content, 
+        style={
+            "display": "flex",
+            "justifyContent": "center",
+            "alignItems": "center",
+            "height": "100vh" 
+        }
+
+    )
+)
+
 
 # Plug that content into your default layout
-layout = get_default_layout(main_content=homepage_content)
+layout = get_default_layout(main_content=loading_content)
 
 
 # Callback to update the GDP forecast value
@@ -239,45 +264,50 @@ layout = get_default_layout(main_content=homepage_content)
    #             return get_forecast_graph(start_quarter, end_quarter)
 
 @dash.callback(
-    Output('selected-quarter-display', 'children'),
+    Output('myear-display', 'children'),
     Output('gdp-forecast', 'children'),
     Output('gdp-forecast', 'style'),
     Output('gdp-forecast-graph', 'figure'),
-    Input('quarter-range-slider', 'value')
+    Output('gdp-forecast-title', 'children'),
+    Input('myear-slider', 'value')
 )
+def update_all(selected_index):
+    
+    selected_date = monthyear()[selected_index]
 
-def update_all(selected_range):
-    start_idx, end_idx = selected_range
-    start_quarter = quarters[start_idx]
-    end_quarter = quarters[end_idx]
 
+    # Build display text
     display_text = html.Span([
-        html.Span("Selected Quarters: ", style={"color": "grey"}),
-        html.Span(f"{start_quarter} to {end_quarter}", style={"color": "white", 'fontWeight': '700'})
+        html.Span("Selected Time: ", style={"color": "grey"}),
+        html.Span(selected_date, style={"color": "white", "fontWeight": "700"})
     ])
-
+    
+    # Define a base style for forecast text
     base_style = {
         "color": "grey",
         "fontWeight": "600",
         "fontSize": "28px",
         "fontFamily": "Montserrat, sans-serif"
     }
+    
+    
 
-    if end_quarter not in gdp_growth_df['Quarter'].values:
-        forecast_value = "No data found"
-        forecast_style = base_style
-    else:
-        value = get_gdp_growth_rate(end_quarter)
-        if value < 0:
-            forecast_value = f"{value:.2f}%"
+    value = get_forecast(selected_date)
+    if value < 0:
+            forecast_value = f"{value:.3f}%"
             forecast_style = {**base_style, "color": "red"}
-        elif value > 0:
-            forecast_value = f"{value:.2f}%"
+    elif value > 0:
+            forecast_value = f"{value:.3f}%"
             forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
-        else:
-            forecast_value = f"{value:.2f}%"
+    else:
+            forecast_value = f"{value:.3f}%"
             forecast_style = {**base_style, "color": "white"}
+    
+    # Update the forecast graph.
+    figure = get_forecast_graph(selected_date)
+    
+    # Update the title
+    forecast_title = f"GDP Forecast for {get_quarter(selected_date)}:"
 
-    figure = get_forecast_graph(start_quarter, end_quarter)
 
-    return display_text, forecast_value, forecast_style, figure
+    return display_text, forecast_value, forecast_style, figure, forecast_title
