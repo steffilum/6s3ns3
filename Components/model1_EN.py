@@ -11,7 +11,7 @@ df = df.pct_chg
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
-# X, y = load_data_bridge(given_date=given_date)
+X, y = load_data_bridge(given_date=given_date)
 
 # vif_data = pd.DataFrame()
 # vif_data["Feature"] = X.columns
@@ -27,15 +27,15 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 # condition_number = np.linalg.cond(X.values)
 # print(f"Condition number: {condition_number}")
 
-#use this date instead for cv
+# # use this date instead for cv
 # given_date = "2007-09-01"
 
-# 30 chosen due to insufficient data
+# # 30 chosen due to insufficient data
 # test, _ = train_test_split(test, train_size=30, shuffle=False)
 
 # rmse = []
 # for alpha in [0.0001, 0.001, 0.01, 0.1, 1]:
-#     for l1_ratio in [0.01, 0.1, 0.5, 0.9, .99]:
+#     for l1_ratio in [0.1, 0.25, 0.5, 0.75, .9]:
 #         pred = []
 #         for index in range(1, 31):
 #             date = pd.to_datetime(given_date)
@@ -52,7 +52,7 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 #         print(f'Alpha {alpha} L1_wt {l1_ratio} {mean_squared_error(pred, test, squared=False)}')
 # rmse = np.array(rmse).reshape(5, 5)
 # print(rmse)
-#Best is alpha = 1, L1_wt = .5
+# #Best is alpha = .1, L1_wt = .75
 
 # # Evaluation on test set
 # pred = []
@@ -65,7 +65,7 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 #     X_train = sm.add_constant(X_train)    
 #     X_test = X_train.iloc[-1, :]
 #     X_train = X_train.iloc[:-1, :]
-#     model = sm.OLS(y_train, X_train).fit_regularized(alpha=1, L1_wt=0) #since the pred val look too small, decreasing l1 weight to prevent sparsity increase rmse
+#     model = sm.OLS(y_train, X_train).fit_regularized(alpha=.1, L1_wt=.75) #since the pred val look too small, decreasing l1 weight to prevent sparsity increase rmse
 #     pred.append(model.predict(X_test)[0])
 #     print(f"Iteration {index}")
 
@@ -76,10 +76,10 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 # #evaluation
 # eval(pred, test)
 
-# model = ElasticNet(alpha=.25, l1_ratio=.25)
-# model.fit(X.iloc[:-1, :], y)
-# coef_df = pd.DataFrame({
-#     "Feature": X.iloc[:-1, :].columns,  # Get feature names
-#     "Coefficient": model.coef_   # Get coefficients
-# })
-# print(coef_df)
+model = ElasticNet(alpha=.1, l1_ratio=.75)
+model.fit(X.iloc[:-1, :], y)
+coef_df = pd.DataFrame({
+    "Feature": X.iloc[:-1, :].columns,  # Get feature names
+    "Coefficient": model.coef_   # Get coefficients
+})
+print(coef_df)

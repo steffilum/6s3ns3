@@ -20,11 +20,21 @@ print(df.shape)
 pred = []
 
 for index in range(1, 51):
-    train = df.iloc[:291-index]
-    print(train.tail())
+    date = pd.to_datetime(given_date)
+    new_date = date - pd.DateOffset(months=3*index)
+    new_date_str = new_date.strftime('%Y-%m-%d')
+    with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'rb') as f:
+        X_train, y_train = pickle.load(f)
+    df = X_train.iloc[:-1, :].copy()
+    df['y'] = y_train
+    df.reset_index(inplace = True)
+    df.rename(columns = {'index':'ds'}, inplace = True)
     model = Prophet()
-    model.fit(train)
-    future = model.make_future_dataframe(periods=1, freq='Q')
+    for col in X_train.columns:
+        model.add_regressor(col)
+    model.fit(df)
+    future = model.make_future_dataframe(periods=1, freq='QS')
+    future = future.merge(X_train, how = 'left', left_on='ds', right_index=True)
     forecast = model.predict(future).iloc[-1, :]
     array = forecast.iloc[[0,-1]]
     pred.append(array)
@@ -32,9 +42,8 @@ for index in range(1, 51):
 pred = pd.DataFrame(pred)
 pred['ds'] = pd.to_datetime(pred['ds'])
 pred = pred.set_index('ds')
-pred.index = pred.index + pd.DateOffset(days=1)
-print(pred)
 pred.sort_index(inplace=True)
+pred = pred.squeeze()
 
 eval(test, pred, plot=True)
 
