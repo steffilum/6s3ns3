@@ -97,7 +97,7 @@ def get_default_layout(main_content=None):
                         dcc.Link("CPI", href="/cpi", className="dropdown-item-bold"),
                         dcc.Link("Housing Starts", href="/housing_starts", className="dropdown-item-bold"),
                         dcc.Link("Industrial Production", href="/industrial_production", className="dropdown-item-bold"), 
-                        dcc.Link("Unemployment Rate", href="/unemployment_rate", className="dropdown-item-bold"),
+                        dcc.Link("Unemployment Rate", href="/unemployment", className="dropdown-item-bold"),
                     ]
                 )
             ),
