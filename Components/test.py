@@ -28,4 +28,7 @@ date = pd.to_datetime(given_date)
 # print(pct_chg_fed_defence.tail(20))
 
 # print(quart_pct_chg_biz_equip("2001-01-01", 'M').tail(30))
-print(load_data_midas(given_date))
+# print(load_data_midas(given_date))
+
+with open(f'Components/test_data_bridge/data_iteration_{"2015-03-01"}.pkl', 'rb') as f:
+    print(pickle.load(f))
