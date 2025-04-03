@@ -3,7 +3,7 @@ from data_load import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
-given_date = "2001-01-01"
+given_date = "2020-03-01"
 
 date = pd.to_datetime(given_date)
 
@@ -28,4 +28,4 @@ date = pd.to_datetime(given_date)
 # print(pct_chg_fed_defence.tail(20))
 
 # print(quart_pct_chg_biz_equip("2001-01-01", 'M').tail(30))
-print(load_data_bridge(given_date))
+print(load_data_midas(given_date))
