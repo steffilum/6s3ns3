@@ -4,6 +4,7 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 from shared.default_pagelayout import get_default_layout 
+import requests
 
 # Register the Model 1 page
 dash.register_page(__name__, path="/model1", name="Model 1")
@@ -59,11 +60,19 @@ layout = get_default_layout(main_content=model1_content)
     Input('end-year-input', 'value')
 )
 def update_graph(end_year):
-    if end_year not in df['Year'].values:
-        return px.line(df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
-    
-    end_index = df[df['Year'] == end_year].index[0] + 1
-    filtered_df = df.iloc[:end_index]
-    fig = px.line(filtered_df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
+
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post("http://127.0.0.1:5000/mean_model_user_input", headers = headers, data = json.dumps({"date": end_year}))
+    data = response.json()
+
+    fig = px.line(pd.DataFrame.from_dict(data), x = "quarters", y = "pct_chg", color = "Indicator", title = "Real GDP Percentage Change Over Time")
     return fig
+
+    # if end_year not in df['Year'].values:
+    #     return px.line(df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
+    
+    # end_index = df[df['Year'] == end_year].index[0] + 1
+    # filtered_df = df.iloc[:end_index]
+    # fig = px.line(filtered_df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
+    # return fig
 
