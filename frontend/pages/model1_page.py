@@ -5,6 +5,7 @@ import plotly.express as px
 import pandas as pd
 from shared.default_pagelayout import get_default_layout 
 import requests
+import json
 
 # Register the Model 1 page
 dash.register_page(__name__, path="/model1", name="Model 1")

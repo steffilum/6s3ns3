@@ -1,5 +1,7 @@
 from Components.package_imports import *
 import datetime
+import certifi
+os.environ['SSL_CERT_FILE'] = certifi.where()
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
@@ -24,6 +26,8 @@ def benchmark1_prediction(date = datetime.date.today()):
     
     train.index = pd.to_datetime(train.index).to_period('Q')
     train["quarters"] = train.index.astype(str)
+
+    train = train.reset_index(drop = True)
 
     return train
 
