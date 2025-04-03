@@ -1,4 +1,5 @@
 from .imports import *
+
 # differences a dataframe by adding a lag
 # takes in a series with a time index and value
 # returns a df with time index, value and lag value but w 1 less obs
@@ -24,22 +25,6 @@ def get_most_recent_series_of_date(series_key, end_date, fred):
     df = df.dropna()
     df = df.astype("float")
     return df
-
-#returns the best aic given a stationary time series to use in an ar model
-#takes in a df
-#returns the best lags to use in an ar model
-def best_aic(df, max_lag_to_try):
-    best_aic = float("inf")
-    best_lag = None
-
-    for lag in range(0, max_lag_to_try+1):  
-        model = AutoReg(df, lags=lag).fit()
-        aic = model.aic
-    
-        if aic < best_aic:
-            best_aic = aic
-            best_lag = lag
-    return best_lag
 
 #chooses the best arma model by using oos forecasting
 #inputs df a time series stationary, max p and q to test and test size
