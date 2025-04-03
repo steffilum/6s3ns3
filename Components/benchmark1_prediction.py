@@ -31,5 +31,4 @@ def benchmark1_prediction(date = datetime.date.today()):
 
     return train
 
-
 # print((benchmark1_prediction()))
