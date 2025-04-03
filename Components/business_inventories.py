@@ -11,30 +11,25 @@ pct_chg_business_inventories = transform_series(df, 5).dropna()
 pct_chg_business_inventories.plot()
 plt.show()
 
-# pct_chg_business_inventories = pct_chg_business_inventories.diff().dropna()
-# pct_chg_business_inventories.plot()
-# plt.show()
-
-print("ADF Test Result: ", adfuller(pct_chg_business_inventories))
+print("ADF Test Result: ", adfuller(pct_chg_business_inventories, regression = 'c'))
 
 plot_acf_pacf(pct_chg_business_inventories)
-plt.show() # guess p = 2, q = 1
-
-# best_p, best_q = best_arma(pct_chg_business_inventories, max_p = 2, max_q = 1, test_size = 10, trend = "n")
-# print(best_p, best_q) 
-
-# model = ARIMA(pct_chg_business_inventories, order=(2, 0, 1), trend = 'n', freq = 'MS')
-# model = model.fit(start_params = np.full(2+1+1, .01))
-
-# fig, ax = plt.subplots()
-# ax.plot(model.fittedvalues, label = "fitted")
-# ax.plot(pct_chg_business_inventories, label = "actual")
-# ax.legend(loc="upper left")
 # plt.show()
 
-# plot_acf_pacf(model.resid)
-# plt.plot(model.resid)
-# plt.show()
+# best_p, best_q = best_arma(pct_chg_business_inventories, max_p=7, start_q=3, max_q= 9, test_size = 10, trend = "c")
+
+model = ARIMA(pct_chg_business_inventories, order=(5, 0, 8), trend = 'c', freq = 'MS')
+model = model.fit(start_params = np.full(20, .01))
+
+fig, ax = plt.subplots()
+ax.plot(model.fittedvalues, label = "fitted")
+ax.plot(pct_chg_business_inventories, label = "actual")
+ax.legend(loc="upper left")
+plt.show()
+
+plot_acf_pacf(model.resid)
+plt.plot(model.resid)
+plt.show()
 
 # start_date_pred = pct_chg_business_inventories.index[-1]+ pd.offsets.MonthBegin(1)
 # end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time

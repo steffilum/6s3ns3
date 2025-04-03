@@ -7,32 +7,28 @@ df = get_most_recent_series_of_date("IPBUSEQ", given_date, fred)
 df = df[df.index<=pd.to_datetime("2006-06-01")]
 
 pct_chg_business_equipment = transform_series(df, 5).dropna()
-# pct_chg_business_equipment.plot()
-# plt.show()
+pct_chg_business_equipment.plot()
+plt.show()
 
-pct_chg_business_equipment = pct_chg_business_equipment.diff().dropna()
-# pct_chg_business_equipment.plot()
-# plt.show()
+print("ADF Test Result: ", adfuller(pct_chg_business_equipment))
 
-print("ADF Test Result: ", adfuller(pct_chg_business_equipment)) # small p-value, stationary 
+plot_acf_pacf(pct_chg_business_equipment)
+plt.show() 
 
-# plot_acf_pacf(pct_chg_business_equipment)
-# plt.show() # guess p = 5, q = 1
+best_p, best_q = best_arma(pct_chg_business_equipment, max_p = 5, start_q=5, max_q = 8, test_size = 10, trend = "c")
 
-# best_p, best_q = best_arma(pct_chg_business_equipment, max_p = 5, max_q = 1, test_size = 10, trend = "n")
+model = ARIMA(pct_chg_business_equipment, order=(5, 0, 8), trend = 'c', freq = 'MS')
+model = model.fit(start_params = np.full(20, .01))
 
-model = ARIMA(pct_chg_business_equipment, order=(5, 0, 1), trend = 'n', freq = 'MS')
-model = model.fit(start_params = np.full(5+1+1, .01))
+fig, ax = plt.subplots()
+ax.plot(model.fittedvalues, label = "fitted")
+ax.plot(pct_chg_business_equipment, label = "actual")
+ax.legend(loc="upper left")
+plt.show()
 
-# fig, ax = plt.subplots()
-# ax.plot(model.fittedvalues, label = "fitted")
-# ax.plot(pct_chg_business_equipment, label = "actual")
-# ax.legend(loc="upper left")
-# plt.show()
-
-#  plot_acf_pacf(model.resid)
-# plt.plot(model.resid)
-# plt.show()
+plot_acf_pacf(model.resid)
+plt.plot(model.resid)
+plt.show()
 
 start_date_pred = pct_chg_business_equipment.index[-1]+ pd.offsets.MonthBegin(1)
 end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time

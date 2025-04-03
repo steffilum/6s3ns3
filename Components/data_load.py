@@ -27,8 +27,8 @@ def quart_pct_chg_biz_equip(date = "2020-01-01", period = 'Q'):
         df = df[df.index<pd.Timestamp(date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
     else:
         df = get_most_recent_series_of_date("IPBUSEQ", date, fred)
-    pct_chg_business_equipment = transform_series(df, 5).dropna().diff().dropna()*100
-    model = ARIMA(pct_chg_business_equipment, order=(5, 0, 1), trend = 'n', freq = 'MS').fit(start_params = np.full(5+1+1, .01), method_kwargs={'maxiter':200})
+    pct_chg_business_equipment = transform_series(df, 5).dropna()*100
+    model = ARIMA(pct_chg_business_equipment, order=(5, 0, 8), trend = 'c', freq = 'MS').fit(start_params = np.full(5+1+1, .01), method_kwargs={'maxiter':200})
     start_date_pred = pct_chg_business_equipment.index[-1]+ pd.offsets.MonthBegin(1)
     end_date_pred = pd.Period(date, freq='Q').end_time.to_period(freq='M').start_time
     pred = model.predict(start = start_date_pred, end = end_date_pred)
@@ -44,8 +44,8 @@ def quart_pct_chg_biz_equip(date = "2020-01-01", period = 'Q'):
 def quart_pct_chg_business_inventories(date = "2020-01-01", period = 'Q'):
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("BUSINV", date, fred)
-    pct_chg_business_inventories = transform_series(df, 5).dropna().diff().dropna()*100
-    model = ARIMA(pct_chg_business_inventories, order=(2, 0, 1), trend = 'n', freq = 'MS').fit(start_params = np.full(2+1+1, .01))
+    pct_chg_business_inventories = transform_series(df, 5).dropna()*100
+    model = ARIMA(pct_chg_business_inventories, order=(5, 0, 8), trend = 'c', freq = 'MS').fit(start_params = np.full(20, .01))
     start_date_pred = pct_chg_business_inventories.index[-1]+ pd.offsets.MonthBegin(1)
     end_date_pred = pd.Period(date, freq='Q').end_time.to_period(freq='M').start_time
     pred = model.predict(start = start_date_pred, end = end_date_pred)
@@ -137,8 +137,8 @@ def quart_pct_chg_housing_units_started(given_date = "2020-01-01", period = 'Q')
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("HOUST", given_date, fred)
     df = df[df.index<pd.Timestamp(given_date).to_period('M').start_time - pd.offsets.MonthBegin(1)]
-    pct_chg_housing_units_started = transform_series(df, 4).diff().dropna()*100
-    model = ARIMA(pct_chg_housing_units_started, order=(1, 0, 1), trend = 'n', freq = 'MS').fit(start_params = np.full(1+1+1, .01))
+    pct_chg_housing_units_started = transform_series(df, 4)*100
+    model = ARIMA(pct_chg_housing_units_started, order=(3, 0, 16), trend = 'c', freq = 'MS').fit(start_params = np.full(1+1+1, .01))
     start_date_pred = pct_chg_housing_units_started.index[-1]+ pd.offsets.MonthBegin(1)
     end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
     pred = model.predict(start = start_date_pred, end = end_date_pred)
