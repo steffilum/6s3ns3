@@ -14,7 +14,7 @@ from statsmodels.tsa.stattools import adfuller
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.stats.diagnostic import het_arch
 
-from sklearn.model_selection import train_test_split, TimeSeriesSplit
+from sklearn.model_selection import train_test_split
 
 from statsmodels.tsa.ar_model import AutoReg, ar_select_order
 from statsmodels.tsa.arima.model import ARIMA
