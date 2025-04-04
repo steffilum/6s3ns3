@@ -29,14 +29,22 @@ model1_content = html.Div(
 
             # Input fields on the right
             html.Div([
-                html.Label("End year:", style={"margin-right": "25px", "text-align": "left", "color": "white", "fontSize": "16px", "marginBottom": "5px"}),
-                dcc.Input(
-                    id='end-year-input',
-                    type='text',
-                    placeholder='End year (e.g., 2025Q1)',
-                    value='2025Q1',
-                    style={"margin-right": "25px", "width": "150px", "height": "40px", "padding": "5px", "fontSize": "16px"}
-                )
+                # year dropdown
+                html.Label("Select year:", style={"margin-right": "25px", "text-align": "left", "color": "white", "fontSize": "16px", "marginBottom": "5px"}),
+                dcc.Dropdown(
+                    id='year-dropdown',
+                    options=[{'label' : str(year), 'value': str(year)} for year in range(2000,2026)],
+                    value='2025', # default value
+                    style={ "width": "150px", "height": "40px", "fontSize": "16px"}
+                ),
+                # month dropdown
+                html.Label("Select Month:", style={"margin-right": "25px", "text-align": "left", "color": "white", "fontSize": "16px", "marginBottom": "5px"}),
+                dcc.Dropdown(
+                    id='month-dropdown',
+                    options=[{'label' : str(month), 'value': str(month)} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
+                    value='Dec', #default value
+                    style={ "width": "150px", "height": "40px", "fontSize": "16px"}
+                ),
             ], style={"display": "flex", "flexDirection": "column", "alignItems": "center", "marginLeft": "20px"})
         ], style={"margin-left": "75px", "display": "flex", "alignItems": "center", "justifyContent": "center"}),
 
@@ -56,14 +64,17 @@ layout = get_default_layout(main_content=model1_content)
 # Callback to update the graph
 @dash.callback(
     Output('model1-graph', 'figure'),
-    Input('end-year-input', 'value')
+    [Input('year-dropdown', 'value'),
+     Input('month-dropdown', 'value')]
 )
-def update_graph(end_year):
-    if end_year not in df['Year'].values:
+def update_graph(year, month):
+    # Create a target year from the selected year and month
+    target_year = f"{year}Q{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].index(month) + 1}"
+    
+    if target_year not in df['Year'].values:
         return px.line(df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
     
-    end_index = df[df['Year'] == end_year].index[0] + 1
+    end_index = df[df['Year'] == target_year].index[0] + 1
     filtered_df = df.iloc[:end_index]
     fig = px.line(filtered_df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
     return fig
-
