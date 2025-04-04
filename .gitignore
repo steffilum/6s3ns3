@@ -1,9 +1,12 @@
 .env
-*.pyc
 .DS_Store
 .venv
 venv/
 # Ignore Python bytecode files
 *.pyc
 __pycache__/
-*.pyo
+
+# Ignore VS Code settings
+.vscode/
+
+
