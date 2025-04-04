@@ -5,7 +5,31 @@ fred = Fred(api_key = os.getenv("API_KEY"))
 
 given_date = "2020-03-01"
 
-date = pd.to_datetime(given_date)
+# date = pd.to_datetime(given_date)
+
+# df = get_most_recent_series_of_date("GDP", given_date, fred)
+# df = pct_chg(df)
+
+# df = df.pct_chg
+
+# _, test = train_test_split(df, test_size=50, shuffle=False)
+
+X, y = load_data_midas_nohouse(given_date=given_date)
+
+X, _, y, _ = train_test_split(X.iloc[:-1, :], y, test_size=50, shuffle=False)
+
+vif_data = pd.DataFrame()
+vif_data["Feature"] = X.columns
+vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+print(vif_data)
+
+combined = pd.concat([X, y], axis = 1)
+corr_matrix = combined.corr()
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+plt.show()
+
+condition_number = np.linalg.cond(X.values)
+print(f"Condition number: {condition_number}")
 
 # while True:
 #     date = date - pd.offsets.MonthBegin(1)
@@ -29,6 +53,8 @@ date = pd.to_datetime(given_date)
 
 # print(quart_pct_chg_biz_equip("2001-01-01", 'M').tail(30))
 # print(load_data_midas(given_date))
-
-with open(f'Components/test_data_bridge/data_iteration_{"2015-03-01"}.pkl', 'rb') as f:
-    print(pickle.load(f))
+# print(load_data_bridge(given_date))
+# 2000-01-01
+# 2000-03-01 
+# 2019-10-01
+# 2019-12-01
