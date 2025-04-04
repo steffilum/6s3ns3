@@ -7,8 +7,8 @@ df = get_most_recent_series_of_date("HOUST", get_date, fred)
 df = df[df.index<=pd.to_datetime("2006-06-01")]
 
 pct_chg_housing_units_started = transform_series(df, 4)
-# pct_chg_housing_units_started.plot()
-# plt.show()
+pct_chg_housing_units_started.plot()
+plt.show()
 # pct_chg_housing_units_started = pct_chg_housing_units_started.diff().dropna() ## recommended transformation seems to be inadequate in making the data series stationary, so additional differencing required
 # pct_chg_housing_units_started.plot()
 # plt.show()
