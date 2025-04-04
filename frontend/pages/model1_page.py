@@ -4,8 +4,6 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 from shared.default_pagelayout import get_default_layout 
-import requests
-import json
 
 # Register the Model 1 page
 dash.register_page(__name__, path="/model1", name="Model 1")
@@ -31,14 +29,22 @@ model1_content = html.Div(
 
             # Input fields on the right
             html.Div([
-                html.Label("End year:", style={"margin-right": "25px", "text-align": "left", "color": "white", "fontSize": "16px", "marginBottom": "5px"}),
-                dcc.Input(
-                    id='end-year-input',
-                    type='text',
-                    placeholder='End year (e.g., 2025Q1)',
-                    value='2025Q1',
-                    style={"margin-right": "25px", "width": "150px", "height": "40px", "padding": "5px", "fontSize": "16px"}
-                )
+                # year dropdown
+                html.Label("Select year:", style={"margin-right": "25px", "text-align": "left", "color": "white", "fontSize": "16px", "marginBottom": "5px"}),
+                dcc.Dropdown(
+                    id='year-dropdown',
+                    options=[{'label' : str(year), 'value': str(year)} for year in range(2000,2026)],
+                    value='2025', # default value
+                    style={ "width": "150px", "height": "40px", "fontSize": "16px"}
+                ),
+                # month dropdown
+                html.Label("Select Month:", style={"margin-right": "25px", "text-align": "left", "color": "white", "fontSize": "16px", "marginBottom": "5px"}),
+                dcc.Dropdown(
+                    id='month-dropdown',
+                    options=[{'label' : str(month), 'value': str(month)} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
+                    value='Dec', #default value
+                    style={ "width": "150px", "height": "40px", "fontSize": "16px"}
+                ),
             ], style={"display": "flex", "flexDirection": "column", "alignItems": "center", "marginLeft": "20px"})
         ], style={"margin-left": "75px", "display": "flex", "alignItems": "center", "justifyContent": "center"}),
 
@@ -58,22 +64,17 @@ layout = get_default_layout(main_content=model1_content)
 # Callback to update the graph
 @dash.callback(
     Output('model1-graph', 'figure'),
-    Input('end-year-input', 'value')
+    [Input('year-dropdown', 'value'),
+     Input('month-dropdown', 'value')]
 )
-def update_graph(end_year):
-
-    headers = {'Content-Type': 'application/json'}
-    response = requests.post("http://127.0.0.1:5000/mean_model_user_input", headers = headers, data = json.dumps({"date": end_year}))
-    data = response.json()
-
-    fig = px.line(pd.DataFrame.from_dict(data), x = "quarters", y = "pct_chg", color = "Indicator", title = "Real GDP Percentage Change Over Time")
-    return fig
-
-    # if end_year not in df['Year'].values:
-    #     return px.line(df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
+def update_graph(year, month):
+    # Create a target year from the selected year and month
+    target_year = f"{year}Q{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].index(month) + 1}"
     
-    # end_index = df[df['Year'] == end_year].index[0] + 1
-    # filtered_df = df.iloc[:end_index]
-    # fig = px.line(filtered_df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
-    # return fig
-
+    if target_year not in df['Year'].values:
+        return px.line(df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
+    
+    end_index = df[df['Year'] == target_year].index[0] + 1
+    filtered_df = df.iloc[:end_index]
+    fig = px.line(filtered_df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
+    return fig
