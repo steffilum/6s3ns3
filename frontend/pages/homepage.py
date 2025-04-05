@@ -5,7 +5,7 @@ import os
 from pages.news import df_articles, generate_card_scroll
 from shared.default_pagelayout import get_default_layout 
 from integration.model1 import get_forecast, get_forecast_graph, monthyear, get_quarter
-from datetime import datetime
+from shared.myear_dropdown import myear_dropdown
 
 
 
@@ -54,7 +54,7 @@ homepage_content = html.Div(
             }
         ),
         html.Label(
-            "Select a Month to forecast next Quarter GDP Growth Rate",
+            "Select a Month and Year to forecast next Quarter GDP Growth Rate",
             style={
                 "color": "rgba(206, 203, 203)",
                 "fontWeight": "600",
@@ -64,39 +64,10 @@ homepage_content = html.Div(
                 "position": "absolute",
                 "left": "350px", 
                 "top": "400px",
-                "width": "700px"
+                "width": "900px"
             }
         ),
-        # label for start
-        # html.Label(
-            # "Start Quarter",
-               # style={
-                # "color": "white",
-                # "fontWeight": "400",
-                # "fontSize": "18px",
-                # "marginBottom": "20px",
-                # "fontFamily": "Montserrat, sans-serif", 
-                # "position": "absolute",
-                # "left": "350px", 
-                # "top": "550px", 
-                # "width": "200px"
-            # }
-        # ),
-        # Range input
-        # dcc.Input(
-            # id = 'start-quarter-picker',
-            # type = 'text',
-            # placeholder='Enter Quarter (e.g. 1950Q1)',
-            # value='1950Q1',  # Default value
-            # style={"width": "150px", "height": "40px", "position": "absolute", "left": "350px", 'top': '500px'}
-        # ),
-        # dcc.Input(
-            # id = 'end-quarter-picker',
-            # type = 'text',
-            # placeholder='Enter Quarter (e.g. 2025Q1)',
-            # value = '2023Q4',
-            # style={"width": "150px", "height": "40px", "position": "absolute", "left": "1050px", 'top': '500'}
-        # ),
+       
        
         # Container for Forecast label and value
         html.Div(
@@ -146,31 +117,7 @@ homepage_content = html.Div(
             ]
 
         ), 
-        # Range Slider for selecting the quarter
-        html.Div( 
-             style = {
-                    "position": "absolute",
-                    "left": "330px",
-                    "top": "490px",
-                    "width": "800px"}, 
-            children = [
-                dcc.Slider(
-                    id = 'myear-slider',
-                    min = 0, 
-                    max = len(monthyear()) -1, 
-                    step = 1, 
-                    value = len(monthyear()) - 1,
-                    marks={
-                        i: {'label': month, 'style': {'color': 'grey', 'fontSize': '12px'}}
-                        for i, month in enumerate(monthyear())
-                        if i % 24 == 0
-                    },
-                    tooltip={"always_visible": False, "placement": "bottom"}
-                    )
-            ]
-        ), 
-            # Container for displaying selected month year
-            html.Div(
+        html.Div(
                 id="myear-display",
                 style={
                     "color": "grey",
@@ -179,19 +126,25 @@ homepage_content = html.Div(
                     "fontFamily": "Montserrat, sans-serif",
                     "textAlign": "center", 
                     "position": "absolute",
-                    "left": "188px",
+                    "left": "189px",
                     "top": "430px",
                     "width": "500px"
         }
 ),
-
-    
+         # Dropdown for selecting the month/year
+        html.Div( 
+            style={"position": "absolute",
+                    "left": "347px",
+                    "top": "470px"}, 
+            children=[
+                myear_dropdown()
     ]
 )
+    ]
+)
+
 # Wrap the entire page content in a loading indicator
 loading_content = html.Div(
-      
-
     dcc.Loading(
         id="page-loading",
         type="circle",  
@@ -211,78 +164,26 @@ loading_content = html.Div(
 layout = get_default_layout(main_content=loading_content)
 
 
-# Callback to update the GDP forecast value
-# @dash.callback(
-    # Output('gdp-forecast', 'children'),
-    # Output('gdp-forecast', 'style'),
-    # Input('end-quarter-picker', 'value'),
-    # Input('start-quarter-picker', 'value')
-# )
-
-# def update_gdp_forecast(selected_quater):
-    # base_style = {
-        # "color": "grey",
-        # "fontWeight": "600",
-        # "fontSize": "28px",
-        # "fontFamily": "Montserrat, sans-serif"
-    # # }
-    # if selected_quater not in gdp_growth_df['Quarter'].values:
-    #     return "No data found", base_style
-    
-    # value = get_gdp_growth_rate(selected_quater)
-    # if value < 0:
-    #     return f"{value:.2f}%", {**base_style, "color": "red"}
-    # if value > 0:
-    #     return f"{value:.2f}%", {**base_style, "color": "rgb(0, 200, 83)"}
-    # else: 
-    #     return f"{value:.2f}%", {**base_style, "color": "white"}
-
-
-
-# @dash.callback(
-#     Output('gdp-forecast-graph', 'figure'),
-#     Input('start-quarter-picker', 'value'), 
-#     Input('end-quarter-picker', 'value')
-# )
-
-# def update_gdp_forecast_graph(selected_start, selected_end):
-#     if selected_start not in gdp_growth_df['Quarter'].values or selected_end not in gdp_growth_df['Quarter'].values:
-#         return get_forecast_graph("1950Q1", "2023Q4")
-#     else: 
-#         return get_forecast_graph(selected_start, selected_end)
-
-
-#            @dash.callback(
- #               Output('gdp-forecast-graph', 'figure'),
- #               Input('quarter-range-slider', 'value')
- #           )
-
- #           def update_range(selected_range):
-  #              start_idx, end_idx = selected_range
-  #              start_quarter = quarters[start_idx]
-   #             end_quarter = quarters[end_idx]
-   #             return get_forecast_graph(start_quarter, end_quarter)
-
 @dash.callback(
     Output('myear-display', 'children'),
     Output('gdp-forecast', 'children'),
     Output('gdp-forecast', 'style'),
     Output('gdp-forecast-graph', 'figure'),
     Output('gdp-forecast-title', 'children'),
-    Input('myear-slider', 'value')
+    Input('year-dropdown', 'value'),
+    Input('month-dropdown', 'value')
 )
-def update_all(selected_index):
+def update_all(selected_year, selected_month):
+    # Combine selected month and year into a single date string.
+    selected_date = f"{selected_month} {selected_year}"
     
-    selected_date = monthyear()[selected_index]
-
-
-    # Build display text
+    # Build display text.
     display_text = html.Span([
         html.Span("Selected Time: ", style={"color": "grey"}),
         html.Span(selected_date, style={"color": "white", "fontWeight": "700"})
     ])
     
-    # Define a base style for forecast text
+    # Base style for the forecast text.
     base_style = {
         "color": "grey",
         "fontWeight": "600",
@@ -290,24 +191,22 @@ def update_all(selected_index):
         "fontFamily": "Montserrat, sans-serif"
     }
     
-    
-
+    # Get forecast value using the combined date string.
     value = get_forecast(selected_date)
     if value < 0:
-            forecast_value = f"{value:.3f}%"
-            forecast_style = {**base_style, "color": "red"}
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "red"}
     elif value > 0:
-            forecast_value = f"{value:.3f}%"
-            forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
     else:
-            forecast_value = f"{value:.3f}%"
-            forecast_style = {**base_style, "color": "white"}
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "white"}
     
     # Update the forecast graph.
     figure = get_forecast_graph(selected_date)
     
-    # Update the title
+    # Update the title.
     forecast_title = f"GDP Forecast for {get_quarter(selected_date)}:"
-
-
+    
     return display_text, forecast_value, forecast_style, figure, forecast_title
