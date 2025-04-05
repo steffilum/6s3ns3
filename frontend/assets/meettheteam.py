@@ -8,7 +8,7 @@ team_members = [
     {"name": "Steffi Lum", "title": "Front-End", "img": "/assets/member3.jpg"},
     {"name": "Josiah Lee", "title": "Back-End", "img": "/assets/member4.jpg"},
     {"name": "Quek Hong Rui", "title": "Back-End", "img": "/assets/member5.jpg"},
-    {"name": "Riley Teo", "title": "Back-End", "img": "/assets/member6.jpg"},
+    {"name": "Riley Teo", "title": "Back-End", "img": "/assets/pictures/riley.jpg"},
 ]
 
 # Create the layout
