@@ -71,7 +71,7 @@ layout = get_default_layout(main_content=model3_content)
 )
 def update_graph(year, month):
     # ## DO NOT DELETE -- CODE FOR INTEGRATION
-    # response = requests.post("http://127.0.0.1:5000/mean_model_user_input", 
+    # response = requests.post("http://127.0.0.1:5000/midas_model_prediction", 
     #                          headers = {'Content-Type': 'application/json'}, 
     #                          data = json.dumps({"year": year, "month": month}))
     # data = response.json()
