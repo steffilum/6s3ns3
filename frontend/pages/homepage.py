@@ -5,8 +5,7 @@ import os
 from pages.news import df_articles, generate_card_scroll
 from shared.default_pagelayout import get_default_layout 
 from integration.model1 import get_forecast, get_forecast_graph, monthyear, get_quarter
-from datetime import datetime
-import calendar
+from shared.myear_dropdown import myear_dropdown
 
 
 
@@ -133,37 +132,17 @@ homepage_content = html.Div(
         }
 ),
          # Dropdown for selecting the month/year
-        html.Div(
-            style={
-                "position": "absolute",
-                "left": "347px",
-                "top": "470px",   
-                "display": "flex",
-                "flexDirection": "row",
-                "gap": "10px",   
-                "alignItems": "center"
-        },
+        html.Div( 
+            style={"position": "absolute",
+                    "left": "347px",
+                    "top": "470px"}, 
             children=[
-                
-                dcc.Dropdown(
-                    id='month-dropdown',
-                    options=[{'label': m, 'value': m} for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                                                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
-                    value= calendar.month_abbr[datetime.now().month],
-                    className="myear-dropdown"
-                ),
-                dcc.Dropdown(
-                    id='year-dropdown',
-                    options=[{'label': str(year), 'value': str(year)} for year in range(datetime.now().year, 1999, -1)],
-                    value=str(datetime.now().year),
-                    className="myear-dropdown"
-                ),
+                myear_dropdown()
+    ]
+)
     ]
 )
 
-    
-    ]
-)
 # Wrap the entire page content in a loading indicator
 loading_content = html.Div(
     dcc.Loading(
