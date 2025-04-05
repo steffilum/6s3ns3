@@ -4,6 +4,8 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 from shared.default_pagelayout import get_default_layout 
+import requests
+import json
 
 # Register the Model 1 page
 dash.register_page(__name__, path="/model1", name="Model 1")
@@ -68,6 +70,17 @@ layout = get_default_layout(main_content=model1_content)
      Input('month-dropdown', 'value')]
 )
 def update_graph(year, month):
+    # ## DO NOT DELETE -- CODE FOR INTEGRATION
+    # response = requests.post("http://127.0.0.1:5000/mean_model_user_input", 
+    #                          headers = {'Content-Type': 'application/json'}, 
+    #                          data = json.dumps({"year": year, "month": month}))
+    # data = response.json()
+
+    # ## Tentative Graph Plotting Code
+
+    # fig = px.line(pd.DataFrame.from_dict(data), x = "quarters", y = "pct_chg", color = "Indicator", title = "Real GDP Percentage Change Over Time")
+    # return fig
+ 
     # Create a target year from the selected year and month
     target_year = f"{year}Q{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].index(month) + 1}"
     
