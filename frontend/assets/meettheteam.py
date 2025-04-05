@@ -3,7 +3,7 @@ from dash import html
 
 # Define your 6 team members
 team_members = [
-    {"name": "Jason Low", "title": "Front-End", "img": "./assets/pictures/jason.jpg"},
+    {"name": "Jason Low", "title": "Front-End", "img": "./assets/pictures/jason.JPG"},
     {"name": "Shani Hiew", "title": "Front-End", "img": "/assets/member2.jpg"},
     {"name": "Steffi Lum", "title": "Front-End", "img": "/assets/member3.jpg"},
     {"name": "Josiah Lee", "title": "Back-End", "img": "/assets/member4.jpg"},
