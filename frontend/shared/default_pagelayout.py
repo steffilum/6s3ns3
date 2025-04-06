@@ -82,6 +82,7 @@ def get_default_layout(main_content=None):
                         dcc.Link("Model 2", href="/model2", className="dropdown-item-bold"),
                         dcc.Link("Model 3", href="/model3", className="dropdown-item-bold"),
                         dcc.Link("Model 4", href="/model4", className="dropdown-item-bold"),
+                        dcc.Link("Model 5", href="/model5", className="dropdown-item-bold"),
                         dcc.Link("Compare Models", href="/comparemodels", className="dropdown-item-comparemodels")
                     ]
                 )
