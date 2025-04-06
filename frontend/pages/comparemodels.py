@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from scipy.stats import norm
 from shared.default_pagelayout import get_default_layout
+from shared.myear_dropdown import myear_dropdown
 
 #link page to homepage
 dash.register_page(__name__, path="/comparemodels", name="Compare Models")
@@ -170,19 +171,25 @@ def apply_transparent_background(fig):
 comparemodels_content = html.Div(id="main-content",children=[
    html.H1("Compare NowCast Models", style={'text-align': 'center', 'color':'white'}),
    html.Br(),
-   html.H4("Select a Quarter to Forecast GDP Growth Rate", style={'text-align': 'center', 'color':'white'}),
+   html.H4("Select a Month and Year to forecast next Quarter GDP Growth Rate", style={'text-align': 'center', 'color':'white'}),
    
    # Start and end date inputs
-   html.Div([
-       dcc.Input(id="start_date", type="number", placeholder="Enter Start Date"), #can use regex output later on
-       dcc.Input(id="end_date", type="number", placeholder="Enter End Date"),
-   ], style={'text-align': 'center', 'margin-bottom': '20px'}),
+  # html.Div([
+       #dcc.Input(id="start_date", type="number", placeholder="Enter Start Date"), #can use regex output later on
+       #dcc.Input(id="end_date", type="number", placeholder="Enter End Date"),
+   #], style={'text-align': 'center', 'margin-bottom': '20px'}),
+
+   html.Div([myear_dropdown()], style={
+        'width': '12%',          # set a width less than 100%
+        'margin': '0 auto',       # center the element horizontally
+        'margin-bottom': '20px'
+    }),
 
    # Dropdown and Graph for Model 1
    html.Div([
        dcc.Dropdown(
            id="model_title1",
-           options=[{'label': f'Model {i}', 'value': f'Model {i}'} for i in range(1, 5)],
+           options=[{'label': f'Model {i}', 'value': f'Model {i}'} for i in range(1, 6)],
            value = "Model 1",
            placeholder="Select Model 1",
            style=get_dropdown_style()
@@ -197,7 +204,7 @@ comparemodels_content = html.Div(id="main-content",children=[
    html.Div([
        dcc.Dropdown(
            id="model_title2",
-           options=[{'label': f'Model {i}', 'value': f'Model {i}'} for i in range(1, 5)],
+           options=[{'label': f'Model {i}', 'value': f'Model {i}'} for i in range(1, 6)],
            value = "Model 2",
            placeholder="Select Model 2",
            style=get_dropdown_style()
@@ -266,8 +273,8 @@ layout = get_default_layout(main_content= comparemodels_content)
    [Output('graph_1', 'figure'),
     Output('forecast_output_1', 'children')],
    [Input('model_title1', 'value'),
-    Input('start_date', 'value'),
-    Input('end_date', 'value')]
+    Input('year-dropdown', 'value'),
+    Input('month-dropdown', 'value')]
 )
 def update_graph_and_forecast_1(model_name, start_date, end_date):
    if model_name:
@@ -296,8 +303,8 @@ def update_graph_and_forecast_1(model_name, start_date, end_date):
    [Output('graph_2', 'figure'),
     Output('forecast_output_2', 'children')],
    [Input('model_title2', 'value'),
-    Input('start_date', 'value'),
-    Input('end_date', 'value')]
+    Input('year-dropdown', 'value'),
+    Input('month-dropdown', 'value')]
 )
 def update_graph_and_forecast_2(model_name, start_date, end_date):
    if model_name:
@@ -332,7 +339,7 @@ def format_forecast(forecast):
    [Input('model_title1', 'value'),
     Input('evaluation_metric', 'value')]
 )
-def update_eval_metric(model, metric):
+def update_eval_metric_1(model, metric):
    if model and metric:
        # Fetch the appropriate evaluation metric value based on selection
        if metric == 'rmse':
@@ -361,7 +368,7 @@ def update_eval_metric(model, metric):
    [Input('model_title2', 'value'),
     Input('evaluation_metric', 'value')]
 )
-def update_eval_metric(model, metric):
+def update_eval_metric_2(model, metric):
    if model and metric:
        # Fetch the appropriate evaluation metric value based on selection
        if metric == 'rmse':
@@ -390,7 +397,7 @@ def update_eval_metric(model, metric):
 )
 
 
-def update_confidence_interval_graph(selected_model, selected_metric):
+def update_confidence_interval_graph_1(selected_model, selected_metric):
    # Default initialization in case of an error
    y_true, y_pred = None, None
    # Choose the correct true and predicted values based on the selected model
@@ -481,7 +488,7 @@ def update_confidence_interval_graph(selected_model, selected_metric):
 )
 
 
-def update_confidence_interval_graph(selected_model, selected_metric):
+def update_confidence_interval_graph_2(selected_model, selected_metric):
    # Default initialization in case of an error
    y_true, y_pred = None, None
    # Choose the correct true and predicted values based on the selected model
