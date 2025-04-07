@@ -2,12 +2,19 @@ import dash
 from dash import html, dcc, Input, Output, State
 import dash_bootstrap_components as dbc
 import os
+import sys 
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 from pages.news import df_articles, generate_card_scroll
 from shared.default_pagelayout import get_default_layout 
-from integration.model1 import get_forecast, get_forecast_graph, monthyear, get_quarter
+# from integration.model1 import get_forecast, get_forecast_graph, monthyear, get_quarter
 from shared.myear_dropdown import myear_dropdown
 import json
 import requests
+from Components.package_imports import *
+import plotly.express as px
+import plotly.graph_objects as go
 
 # Set working directory to current file location
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -102,7 +109,7 @@ homepage_content = html.Div(
             children =[
             dcc.Graph(
                 id = 'gdp-forecast-graph',
-                figure = get_forecast_graph(),
+                figure = go.Figure(),
                 config = {"displayModeBar": False},
                 style={
                     "position": "absolute",
@@ -174,77 +181,22 @@ layout = get_default_layout(main_content=loading_content)
 )
 def update_all(selected_year, selected_month):
 
-    ## --------------------------- INTEGRATION CODE --------------------------------------
+    # --------------------------- INTEGRATION CODE --------------------------------------
 
-    # response = requests.post("http://127.0.0.1:5000/midas_model_prediction", 
-    #                          headers = {'Content-Type': 'application/json'}, 
-    #                          data = json.dumps({"year": selected_year, "month": selected_month}))
-    # data = response.json()
-    # data = pd.DataFrame.from_dict(data)
+    response = requests.post("http://127.0.0.1:5000/midas_model_prediction", 
+                             headers = {'Content-Type': 'application/json'}, 
+                             data = json.dumps({"year": selected_year, "month": selected_month}))
+    data = response.json()
+    data = pd.DataFrame.from_dict(data)
+    data = data.reset_index().rename(columns = {"index": "Quarter"})
 
-    # selected_date = f"{selected_month} {selected_year}"
-
-    # display_text = html.Span([
-    #     html.Span("Selected Time: ", style={"color": "grey"}),
-    #     html.Span(selected_date, style={"color": "white", "fontWeight": "700"})
-    # ])
-
-    # base_style = {
-    #     "color": "grey",
-    #     "fontWeight": "600",
-    #     "fontSize": "28px",
-    #     "fontFamily": "Montserrat, sans-serif"
-    # }
-    
-    # value = data["pct_chg"].iloc[-1] ## get predicted GDP for the quarter of the selected date
-    # value = round(value, 3)
-    # if value < 0:
-    #     forecast_value = f"{value:.3f}%"
-    #     forecast_style = {**base_style, "color": "red"}
-    # elif value > 0:
-    #     forecast_value = f"{value:.3f}%"
-    #     forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
-    # else:
-    #     forecast_value = f"{value:.3f}%"
-    #     forecast_style = {**base_style, "color": "white"}
-    
-    # fig = px.line(data, 
-    #               x = "quarters", 
-    #               y = "pct_chg", 
-    #               title = f"Forecast GDP Growth Rate",
-    #               labels = {"pct_chg": "GDP Growth Rate (%)", "quarters": "Year"}, 
-    #               template = "plotly_dark")
-    
-    # fig.update_layout(
-    #     paper_bgcolor='rgba(0,0,0,0)',  # Transparent outer background
-    #     plot_bgcolor='rgba(0,0,0,0)',   # Transparent plotting area
-    #     margin=dict(l=0, r=0, t=50, b=50),
-    #     title = {
-    #         "text": f"GDP Growth Rate up till {selected_date}",
-    #         "font": {
-    #             "color": "grey",
-    #             "family": "Montserrat, sans-serif"
-    #         }
-    #     }, 
-    #     height=280
-    # )
-    
-    # forecast_title = data["quarters"].iloc[-1]
-
-    # return display_text, forecast_value, forecast_style, figure, forecast_title
-
-    ## --------------------- INTEGRATION CODE --------------------------------------------
-
-    # Combine selected month and year into a single date string.
     selected_date = f"{selected_month} {selected_year}"
-    
-    # Build display text.
+
     display_text = html.Span([
         html.Span("Selected Time: ", style={"color": "grey"}),
         html.Span(selected_date, style={"color": "white", "fontWeight": "700"})
     ])
-    
-    # Base style for the forecast text.
+
     base_style = {
         "color": "grey",
         "fontWeight": "600",
@@ -252,8 +204,8 @@ def update_all(selected_year, selected_month):
         "fontFamily": "Montserrat, sans-serif"
     }
     
-    # Get forecast value using the combined date string.
-    value = get_forecast(selected_date)
+    value = data["Predicted GDP"].iloc[-1] ## get predicted GDP for the quarter of the selected date
+    value = round(value, 3)
     if value < 0:
         forecast_value = f"{value:.3f}%"
         forecast_style = {**base_style, "color": "red"}
@@ -264,10 +216,66 @@ def update_all(selected_year, selected_month):
         forecast_value = f"{value:.3f}%"
         forecast_style = {**base_style, "color": "white"}
     
-    # Update the forecast graph.
-    figure = get_forecast_graph(selected_date)
+    fig = px.line(data, 
+                  x = "Quarter", 
+                  y = "Predicted GDP", 
+                  title = f"Forecast GDP Growth Rate",
+                  labels = {"Predicted GDP": "GDP Growth Rate (%)", "Quarter": "Year"}, 
+                  template = "plotly_dark")
     
-    # Update the title.
-    forecast_title = f"GDP Forecast for {get_quarter(selected_date)}:"
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',  # Transparent outer background
+        plot_bgcolor='rgba(0,0,0,0)',   # Transparent plotting area
+        margin=dict(l=0, r=0, t=50, b=50),
+        title = {
+            "text": f"GDP Growth Rate up till {selected_date}",
+            "font": {
+                "color": "grey",
+                "family": "Montserrat, sans-serif"
+            }
+        }, 
+        height=280
+    )
     
-    return display_text, forecast_value, forecast_style, figure, forecast_title
+    forecast_title = data["Quarter"].iloc[-1]
+
+    return display_text, forecast_value, forecast_style, fig, forecast_title
+
+    ## --------------------- INTEGRATION CODE --------------------------------------------
+
+    # # Combine selected month and year into a single date string.
+    # selected_date = f"{selected_month} {selected_year}"
+    
+    # # Build display text.
+    # display_text = html.Span([
+    #     html.Span("Selected Time: ", style={"color": "grey"}),
+    #     html.Span(selected_date, style={"color": "white", "fontWeight": "700"})
+    # ])
+    
+    # # Base style for the forecast text.
+    # base_style = {
+    #     "color": "grey",
+    #     "fontWeight": "600",
+    #     "fontSize": "28px",
+    #     "fontFamily": "Montserrat, sans-serif"
+    # }
+    
+    # # Get forecast value using the combined date string.
+    # value = get_forecast(selected_date)
+    # if value < 0:
+    #     forecast_value = f"{value:.3f}%"
+    #     forecast_style = {**base_style, "color": "red"}
+    # elif value > 0:
+    #     forecast_value = f"{value:.3f}%"
+    #     forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
+    # else:
+    #     forecast_value = f"{value:.3f}%"
+    #     forecast_style = {**base_style, "color": "white"}
+    
+    # # Update the forecast graph.
+    # figure = get_forecast_graph(selected_date)
+    
+    # # Update the title.
+    # forecast_title = f"GDP Forecast for {get_quarter(selected_date)}:"
+    
+    # return display_text, forecast_value, forecast_style, figure, forecast_title

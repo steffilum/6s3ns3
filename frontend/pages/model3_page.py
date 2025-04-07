@@ -70,23 +70,30 @@ layout = get_default_layout(main_content=model3_content)
      Input('month-dropdown', 'value')]
 )
 def update_graph(year, month):
-    # ## DO NOT DELETE -- CODE FOR INTEGRATION
-    # response = requests.post("http://127.0.0.1:5000/midas_model_prediction", 
-    #                          headers = {'Content-Type': 'application/json'}, 
-    #                          data = json.dumps({"year": year, "month": month}))
-    # data = response.json()
+    ## DO NOT DELETE -- CODE FOR INTEGRATION
+    response = requests.post("http://127.0.0.1:5000/midas_model_prediction", 
+                             headers = {'Content-Type': 'application/json'}, 
+                             data = json.dumps({"year": year, "month": month}))
+    data = response.json()
+    data = pd.DataFrame.from_dict(data)
+    data = data.reset_index().rename(columns = {"index": "Quarter"})
 
-    # ## Tentative Graph Plotting Code
+    ## Tentative Graph Plotting Code
 
-    # fig = px.line(pd.DataFrame.from_dict(data), x = "quarters", y = "pct_chg", color = "Indicator", title = "Real GDP Percentage Change Over Time")
-    # return fig
-    # Create a target year from the selected year and month
-    target_year = f"{year}Q{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].index(month) + 1}"
+    fig = px.line(data, 
+                  x = "Quarter", 
+                  y = ["Actual GDP", "Predicted GDP"], 
+                  color_discrete_sequence = ["black", "red"])
     
-    if target_year not in df['Year'].values:
-        return px.line(df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
-    
-    end_index = df[df['Year'] == target_year].index[0] + 1
-    filtered_df = df.iloc[:end_index]
-    fig = px.line(filtered_df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
     return fig
+
+    # Create a target year from the selected year and month
+    # target_year = f"{year}Q{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].index(month) + 1}"
+    
+    # if target_year not in df['Year'].values:
+    #     return px.line(df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
+    
+    # end_index = df[df['Year'] == target_year].index[0] + 1
+    # filtered_df = df.iloc[:end_index]
+    # fig = px.line(filtered_df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
+    # return fig
