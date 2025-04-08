@@ -116,13 +116,46 @@ homepage_content = html.Div(
                     "left": "316px",
                     "top": "70px",
                     "width": "900px",
-                    "height": "620px",
+                    "height": "700px",
                     "backgroundColor": 'transparent'
                 }
             )
             ]
 
         ), 
+        # Add button to go explore the model
+      html.Div(
+            children=[
+                dcc.Link(
+                    dbc.Button(
+                        "Explore Model",
+                        id="explore-button",
+                        size="sm",
+                        style={
+                            "backgroundColor": "grey",
+                            "color": "white",
+                            "border": "none",
+                            "padding": "4px 8px",
+                            "fontSize": "14px",
+                            "display": "flex",
+                            "justifyContent": "center",  
+                            "alignItems": "center",      
+                            "textAlign": "center",      
+                            "width": "120px",
+                            "borderRadius": "8px"
+                        }
+                    ),
+                    href="/model3",  
+                    style={
+                        "position": "absolute",
+                        "top": "70px",
+                        "left": "650px",
+                        "zIndex": "1000",
+                        "textDecoration": "none"
+                    }
+                )
+            ]
+        ),
         html.Div(
                 id="myear-display",
                 style={
@@ -169,6 +202,7 @@ loading_content = html.Div(
 # Plug that content into your default layout
 layout = get_default_layout(main_content=loading_content)
 
+api_url = 'http://127.0.0.1:5000/'
 
 @dash.callback(
     Output('myear-display', 'children'),
@@ -179,17 +213,20 @@ layout = get_default_layout(main_content=loading_content)
     Input('year-dropdown', 'value'),
     Input('month-dropdown', 'value')
 )
+
+
 def update_all(selected_year, selected_month):
 
     # --------------------------- INTEGRATION CODE --------------------------------------
-
-    response = requests.post("http://127.0.0.1:5000/midas_model_prediction", 
+    
+    response = requests.post(f"{api_url}/midas_model_prediction", 
                              headers = {'Content-Type': 'application/json'}, 
                              data = json.dumps({"year": selected_year, "month": selected_month}))
     data = response.json()
     data = pd.DataFrame.from_dict(data)
     data = data.reset_index().rename(columns = {"index": "Quarter"})
-
+    data = data[data["Quarter"].str[:4].astype(int) >= 2000]
+    # print(data)
     selected_date = f"{selected_month} {selected_year}"
 
     display_text = html.Span([
@@ -223,9 +260,26 @@ def update_all(selected_year, selected_month):
                   labels = {"Predicted GDP": "GDP Growth Rate (%)", "Quarter": "Year"}, 
                   template = "plotly_dark")
     
+    # Force a legend entry for the first trace
+    fig.data[0].name = "Predicted GDP"
+    fig.data[0].showlegend = True           
+    
+    # Add the actual GDP line as a dotted orange line.
+    fig.add_trace(go.Scatter(
+        x=data["Quarter"],
+        y=data["Actual GDP"],
+        mode="lines",
+        name="Actual GDP",
+        line=dict(
+            color="orange"
+    ))
+    )
+
+    
     fig.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)',  # Transparent outer background
-        plot_bgcolor='rgba(0,0,0,0)',   # Transparent plotting area
+        showlegend=True,
+        paper_bgcolor='rgba(0,0,0,0)', 
+        plot_bgcolor='rgba(0,0,0,0)',   
         margin=dict(l=0, r=0, t=50, b=50),
         title = {
             "text": f"GDP Growth Rate up till {selected_date}",
@@ -234,10 +288,11 @@ def update_all(selected_year, selected_month):
                 "family": "Montserrat, sans-serif"
             }
         }, 
-        height=280
+        height=280,
+        xaxis=dict(range = [data["Quarter"].iloc[68], data["Quarter"].iloc[-1]])
     )
-    
-    forecast_title = data["Quarter"].iloc[-1]
+ 
+    forecast_title = f"Forecast for {data['Quarter'].iloc[-1]}"
 
     return display_text, forecast_value, forecast_style, fig, forecast_title
 
