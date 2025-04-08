@@ -11,7 +11,7 @@ df = df.pct_chg
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
-X, y = load_data_midas(given_date=given_date)
+# X, y = load_data_midas(given_date=given_date)
 
 # vif_data = pd.DataFrame()
 # vif_data["Feature"] = X.columns
