@@ -28,7 +28,7 @@ def quart_pct_chg_biz_equip(date = "2020-01-01", period = 'Q'):
     else:
         df = get_most_recent_series_of_date("IPBUSEQ", date, fred)
     pct_chg_business_equipment = transform_series(df, 5).dropna()*100
-    model = ARIMA(pct_chg_business_equipment, order=(5, 0, 8), trend = 'c', freq = 'MS').fit(start_params = np.full(20, .01), method_kwargs={'maxiter':200})
+    model = ARIMA(pct_chg_business_equipment, order=(5, 0, 8), trend = 'c', freq = 'MS').fit(method_kwargs={'maxiter':200})
     start_date_pred = pct_chg_business_equipment.index[-1]+ pd.offsets.MonthBegin(1)
     end_date_pred = pd.Period(date, freq='Q').end_time.to_period(freq='M').start_time
     pred = model.predict(start = start_date_pred, end = end_date_pred)
