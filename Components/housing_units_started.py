@@ -2,9 +2,9 @@ from package_imports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
-get_date = "2006-12-01"
+get_date = "2007-12-01"
 df = get_most_recent_series_of_date("HOUST", get_date, fred)
-df = df[df.index<=pd.to_datetime("2006-06-01")]
+df = df[df.index<=pd.to_datetime("2007-06-01")]
 
 pct_chg_housing_units_started = transform_series(df, 4)
 pct_chg_housing_units_started.plot()

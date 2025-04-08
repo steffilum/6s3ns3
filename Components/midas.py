@@ -34,7 +34,7 @@ for index in range(1, 51):
     new_date = date - pd.DateOffset(months=3*index)
     new_date_str = new_date.strftime('%Y-%m-%d')
     with open(f'Components/test_data_midas/data_iteration_{new_date_str}.pkl', 'rb') as f:
-        X_train, y_train = pickle.load(f, allow_pickle = True)
+        X_train, y_train = pickle.load(f)
     X_train = sm.add_constant(X_train)    
     X_test = X_train.iloc[-1, :]
     X_train = X_train.iloc[:-1, :]
