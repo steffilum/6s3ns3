@@ -31,4 +31,4 @@ seaborn==0.12.2
 arch==5.2.0
 midaspy @ git+https://github.com/Yoseph-Zuskin/midaspy.git@191108ea02954558c1a2e1d938ebce7f9a1d16a3
 plotly==5.10.0
-Prophet==0.1.2
+prophet==1.1.5
