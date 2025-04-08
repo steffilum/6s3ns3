@@ -289,7 +289,7 @@ def update_all(selected_year, selected_month):
             }
         }, 
         height=280,
-        xaxis=dict(range = [data["Quarter"].iloc[68], data["Quarter"].iloc[-1]])
+        # xaxis=dict(range = [data["Quarter"].iloc[68], data["Quarter"].iloc[-1]])
     )
  
     forecast_title = f"Forecast for {data['Quarter'].iloc[-1]}"
