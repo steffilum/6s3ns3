@@ -65,4 +65,4 @@ pred = pd.Series(pred, index = test.index)
 #evaluation
 eval(pred, test)
 
-print((test>=0).sum())
+# pred.to_csv('Components/Predictions/rf_bridge.csv')

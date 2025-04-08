@@ -49,5 +49,7 @@ pred = pd.Series(pred, index = test.index)
 #evaluation
 eval(pred, test)
 
+# pred.to_csv('Components/Predictions/midas.csv')
+
 # model = sm.OLS(y, X).fit()
 # print(model.summary())

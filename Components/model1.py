@@ -49,8 +49,10 @@ pred.reverse()
 pred = pd.Series(pred, index = test.index)
 
 #evaluation
-eval(pred, test)
+# eval(pred, test)
 
-model = sm.OLS(y, X.iloc[:-1, :]).fit()
-print(model.summary())
-print(model.predict(X.iloc[:-1, :])[0])
+pred.to_csv('Components/Predictions/model1.csv')
+
+# model = sm.OLS(y, X.iloc[:-1, :]).fit()
+# print(model.summary())
+# print(model.predict(X.iloc[:-1, :])[0])

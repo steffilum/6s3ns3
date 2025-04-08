@@ -64,3 +64,5 @@ pred = pd.Series(pred, index = test.index)
 
 #evaluation
 eval(pred, test)
+
+# pred.to_csv('Components/Predictions/rf_midas.csv')
