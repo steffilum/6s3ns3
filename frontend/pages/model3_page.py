@@ -11,54 +11,82 @@ import json
 dash.register_page(__name__, path="/model3", name="Model 3")
 
 # Sample data for the graph
-years = [f"{year}Q{q}" for year in range(1950, 2026) for q in range(1, 5)]
-values = [1000 * (1.03 ** (int(year.split('Q')[0]) - 1950)) for year in years]  # Simulated Real GDP growth
+# years = [f"{year}Q{q}" for year in range(1950, 2026) for q in range(1, 5)]
+# values = [1000 * (1.03 ** (int(year.split('Q')[0]) - 1950)) for year in years]  # Simulated Real GDP growth
 
-df = pd.DataFrame({"Year": years, "Real GDP": values})
+# df = pd.DataFrame({"Year": years, "Real GDP": values})
 
 # Content for Model 3 page
 model3_content = html.Div(
     id="main-content",
+    style={
+        "height": "100vh",           # Full height of the viewport    
+        "overflowY": "scroll",          # Enable vertical scrolling
+        "paddingTop": "25px",         # some space at the top
+        "paddingBottom": "200px"        # some space at the bottom
+    },     
     children=[
-        html.Br(), 
         # Header "Model 3"
-        html.H1("Model 3", style={"margin-left": "75px", "color": "white", "marginBottom": "20px"}),
+        html.H1("Mixed Data Sampling (MIDAS) Model", style={"text-align": "center","color": "white", "marginBottom": "20px"}),
 
-        # Container for the graph and input fields
+        # Graph Centered
+        dcc.Graph(id='model3-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
+
+        html.Br(), 
+
+        # Dropdowns for year and month
         html.Div([
-            # Graph on the left
-            dcc.Graph(id='model3-graph', style={"margin-left": "50px", "flex": "3", "height": "500px"}),
-
-            # Input fields on the right
+            # Year dropdown
             html.Div([
-                # year dropdown
-                html.Label("Select year:", style={"margin-right": "25px", "text-align": "left", "color": "white", "fontSize": "16px", "marginBottom": "5px"}),
+                html.Label("Select Year:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
                 dcc.Dropdown(
                     id='year-dropdown',
-                    options=[{'label' : str(year), 'value': str(year)} for year in range(2000,2026)],
-                    value='2025', # default value
-                    style={ "width": "150px", "height": "40px", "fontSize": "16px"}
+                    options=[{'label': str(year), 'value': str(year)} for year in range(2000, 2026)],
+                    value='2025',
+                    style={"color":"black", "width": "150px", "fontSize": "16px"}
                 ),
-                # month dropdown
-                html.Label("Select Month:", style={"margin-right": "25px", "text-align": "left", "color": "white", "fontSize": "16px", "marginBottom": "5px"}),
+            ], style={"margin": "10px"}),
+
+            # Month dropdown
+            html.Div([
+                html.Label("Select Month:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
                 dcc.Dropdown(
                     id='month-dropdown',
-                    options=[{'label' : str(month), 'value': str(month)} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
-                    value='Dec', #default value
-                    style={ "width": "150px", "height": "40px", "fontSize": "16px"}
+                    options=[{'label': month, 'value': month} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
+                    value='Dec',
+                    style={"color": "black", "width": "150px", "fontSize": "16px"}
                 ),
-            ], style={"display": "flex", "flexDirection": "column", "alignItems": "center", "marginLeft": "20px"})
-        ], style={"margin-left": "75px", "display": "flex", "alignItems": "center", "justifyContent": "center"}),
+            ], style={"margin": "10px"})
+        ], style={"display": "flex", "justifyContent": "center", "alignItems": "center"}),
 
-        # Header "Model Description"
-        html.H2("Model Description", style={"margin-left": "75px", "color": "white", "marginTop": "30px"}),
+        html.Br(),
 
-        # Description text
-        html.P("This model represents a sample visualization of economic trends over time. The graph above updates dynamically based on the selected year range.",
-               style={"margin-left": "75px", "color": "white", "textAlign": "left", "width": "100%"}
+        # Model Description
+        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px"}),
+
+        html.P("MIDAS models, like bridge models, are also used to address the mismatch in data frequency between economic indicators and target variables such as GDP. \
+               However, our MIDAS model forecast directly incorporates the higher-frequency monthly economic indicators into the forecasting process without requiring an \
+               aggregation to a quarterly frequency. Instead of predicting future monthly data, our MIDAS model uses the available monthly data within the current quarter as \
+               direct inputs. For example, to forecast GDP for 2025:Q2 in May 2025 the model would use the available April 2025 data and forecasted monthly values of indicators for May and June of 2025. \
+               The final regression model structure estimates the quarterly GDP by using monthly indicator values as separate regressors, in conjunction with quarterly government spending on defence and a lag of quarterly GDP. ",
+        style={"color": "white", "width": "80%", "margin": "0 auto", "marginBottom": "10px"}
+        ),
+
+        html.P("While evidence has shown that the removal of restrictions on model parameters (compared to the bridge model) would improve the performance of the model \
+               as it allows the model to discover optimal parameters on its own, the increased flexibility of using disaggregated monthly data comes with a risk of having \
+               spurious relationships and hence resulting in multicollinearity and the model would be biased.",
+        style={"color": "white", "width": "80%", "margin": "0 auto", "marginBottom": "10px"}
+        ),
+
+        html.P("We would do the same but instead of aggregation, we would just create new regressors for the months of the quarter it is in. \
+               Evidence says that the removal of the restriction would allow our model to perform better as we allow the model to figure out the optimal parameters itself. \
+               Granted this would cause our model to find alternative relationships that may be spurious. EG maybe the real rs is that x1 has a coefficient of 5 \
+               but the addition of another regressor correlated to x1 may reduce the coefficient of x1 making the model biased.",
+        style={"color": "white", "width": "80%", "margin": "0 auto"}
         )
     ]
 )
+
 
 # Plug that content into your default layout
 layout = get_default_layout(main_content=model3_content)
@@ -84,6 +112,13 @@ def update_graph(year, month):
                   x = "Quarter", 
                   y = ["Actual GDP", "Predicted GDP"], 
                   color_discrete_sequence = ["black", "red"])
+    
+    # customisation
+    fig.update_layout(
+        legend_title_text = "Legend",
+        xaxis_title_text = "Year and Quarter",
+        yaxis_title= "GDP Growth"
+    )
     
     return fig
 

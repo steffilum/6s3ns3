@@ -14,51 +14,63 @@ os.environ['SSL_CERT_FILE'] = certifi.where()
 dash.register_page(__name__, path="/model2", name="Model 2")
 
 # Sample data for the graph
-years = [f"{year}Q{q}" for year in range(1950, 2026) for q in range(1, 5)]
-values = [1000 * (1.03 ** (int(year.split('Q')[0]) - 1950)) for year in years]  # Simulated Real GDP growth
+# years = [f"{year}Q{q}" for year in range(1950, 2026) for q in range(1, 5)]
+# values = [1000 * (1.03 ** (int(year.split('Q')[0]) - 1950)) for year in years]  # Simulated Real GDP growth
 
-df = pd.DataFrame({"Year": years, "Real GDP": values})
+# df = pd.DataFrame({"Year": years, "Real GDP": values})
 
 # Content for Model 2 page
 model2_content = html.Div(
     id="main-content",
+    style={
+        "height": "100vh",           # Full height of the viewport    
+        "overflowY": "scroll",          # Enable vertical scrolling
+        "paddingTop": "25px",         # some space at the top
+        "paddingBottom": "200px"        # some space at the bottom
+    },     
     children=[
-        html.Br(), 
         # Header "Model 2"
-        html.H1("Model 2", style={"margin-left": "75px", "color": "white", "marginBottom": "20px"}),
+        html.H1("ARFT04 Benchmark Model", style={"text-align": "center","color": "white", "marginBottom": "20px"}),
 
-        # Container for the graph and input fields
+        # Graph Centered
+        dcc.Graph(id='model2-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
+
+        html.Br(), 
+
+        # Dropdowns for year and month
         html.Div([
-            # Graph on the left
-            dcc.Graph(id='model2-graph', style={"margin-left": "50px", "flex": "3", "height": "500px"}),
-
-            # Input fields on the right
+            # Year dropdown
             html.Div([
-                # year dropdown
-                html.Label("Select year:", style={"margin-right": "25px", "text-align": "left", "color": "white", "fontSize": "16px", "marginBottom": "5px"}),
+                html.Label("Select Year:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
                 dcc.Dropdown(
                     id='year-dropdown',
-                    options=[{'label' : str(year), 'value': str(year)} for year in range(2000,2026)],
-                    value='2025', # default value
-                    style={ "width": "150px", "height": "40px", "fontSize": "16px"}
+                    options=[{'label': str(year), 'value': str(year)} for year in range(2000, 2026)],
+                    value='2025',
+                    style={"color":"black", "width": "150px", "fontSize": "16px"}
                 ),
-                # month dropdown
-                html.Label("Select Month:", style={"margin-right": "25px", "text-align": "left", "color": "white", "fontSize": "16px", "marginBottom": "5px"}),
+            ], style={"margin": "10px"}),
+
+            # Month dropdown
+            html.Div([
+                html.Label("Select Month:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
                 dcc.Dropdown(
                     id='month-dropdown',
-                    options=[{'label' : str(month), 'value': str(month)} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
-                    value='Dec', #default value
-                    style={ "width": "150px", "height": "40px", "fontSize": "16px"}
+                    options=[{'label': month, 'value': month} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
+                    value='Dec',
+                    style={"color": "black", "width": "150px", "fontSize": "16px"}
                 ),
-            ], style={"display": "flex", "flexDirection": "column", "alignItems": "center", "marginLeft": "20px"})
-        ], style={"margin-left": "75px", "display": "flex", "alignItems": "center", "justifyContent": "center"}),
+            ], style={"margin": "10px"})
+        ], style={"display": "flex", "justifyContent": "center", "alignItems": "center"}),
 
-        # Header "Model Description"
-        html.H2("Model Description", style={"margin-left": "75px", "color": "white", "marginTop": "30px"}),
+        html.Br(),
 
-        # Description text
-        html.P("This model represents a sample visualization of economic trends over time. The graph above updates dynamically based on the selected year range.",
-               style={"margin-left": "75px", "color": "white", "textAlign": "left", "width": "100%"}
+        # Model Description
+        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px"}),
+
+        html.P("This is a common benchmark used in US GDP prediction and was extensively researched by Marcellino (2014) where he compared various linear and \
+               non-linear models. The ARF in the name indicates that the model is autoregressive, T represents the addition of a trend term and 04 represents \
+               the number of lags in the AR model. As mentioned in the paper, ARFT04 has the lowest mse in forecasting quarterly GDP(h=1, 2, 4).",
+        style={"color": "white", "width": "80%", "margin": "0 auto"}
         )
     ]
 )
@@ -85,6 +97,13 @@ def update_graph(year, month):
                   x = "Quarter", 
                   y = ["Actual GDP", "Predicted GDP"], 
                   color_discrete_sequence = ["black", "red"])
+    
+    # customisation
+    fig.update_layout(
+        legend_title_text = "Legend",
+        xaxis_title_text = "Year and Quarter",
+        yaxis_title= "GDP Growth"
+    )
     
     return fig
 
