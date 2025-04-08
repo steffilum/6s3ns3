@@ -27,3 +27,6 @@ pred = pd.Series(pred, index = test.index)
 
 #evaluation
 eval(pred, test, plot=True)
+
+# pred.to_csv('Components/Predictions/benchmark1.csv')
+# test.to_csv('Components/Predictions/test.csv')

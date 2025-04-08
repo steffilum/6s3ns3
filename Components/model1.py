@@ -57,3 +57,5 @@ eval(pred, test)
 # print(model.predict(X.iloc[:-1, :])[0])
 # residuals = model.resid
 # print(X.iloc[:-1, :].apply(lambda x: x.corr(residuals)))
+
+# pred.to_csv('Components/Predictions/model1.csv')

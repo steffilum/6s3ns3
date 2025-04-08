@@ -46,8 +46,10 @@ for index in range(1, 51):
 
 # pred = pd.Series(pred, index = test.index)
 
-# #evaluation
-# eval(pred, test)
+#evaluation
+eval(pred, test)
+
+# pred.to_csv('Components/Predictions/midas.csv')
 
 model = sm.OLS(y, X.iloc[:-1, :]).fit()
 print(model.summary())

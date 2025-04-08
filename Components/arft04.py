@@ -35,3 +35,4 @@ pred.index = pred.index.to_timestamp()
 
 eval(test, pred, plot=True)
 
+# pred.to_csv('Components/Predictions/arft04.csv')

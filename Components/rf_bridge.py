@@ -55,7 +55,7 @@ for index in range(1, 51):
     X_validate = X_train.iloc[-1, :].values.reshape(1, -1) 
     regressor = RandomForestRegressor(n_estimators=500, n_jobs=4)
     regressor.fit(X_train, y_train)
-    prediction = regressor.predict(X_validate)
+    prediction = regressor.predict(X_validate)[0]
     pred.append(prediction)
     print(f"Iteration {index}")
 
@@ -65,3 +65,5 @@ pred = pd.Series(pred, index = test.index)
 
 #evaluation
 eval(pred, test)
+
+# pred.to_csv('Components/Predictions/rf_bridge.csv')
