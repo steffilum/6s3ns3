@@ -32,7 +32,7 @@ model3_content = html.Div(
     },     
     children=[
         # Header "Model 3"
-        html.H1("Mixed Data Sampling (MIDAS) Model", style={"text-align": "center","color": "white", "marginBottom": "20px"}),
+        html.H1("Mixed Data Sampling (MIDAS) Model", style={"text-align": "center","color": "white", "marginBottom": "20px", "fontWeight": "600"}),
 
         # Graph Centered
         dcc.Graph(id='model3-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
@@ -82,7 +82,7 @@ model3_content = html.Div(
         html.Br(),
 
         # Model Description
-        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px"}),
+        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px", "fontWeight": "600"}),
 
         html.P("MIDAS models, like bridge models, are also used to address the mismatch in data frequency between economic indicators and target variables such as GDP. \
                However, our MIDAS model forecast directly incorporates the higher-frequency monthly economic indicators into the forecasting process without requiring an aggregation to a quarterly frequency. \

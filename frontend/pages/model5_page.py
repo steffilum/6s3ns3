@@ -32,7 +32,7 @@ model5_content = html.Div(
     },     
     children=[
         # Header "Model 5"
-        html.H1("Random Forest (RF) Model", style={"text-align": "center","color": "white", "marginBottom": "20px"}),
+        html.H1("Random Forest (RF) Model", style={"text-align": "center","color": "white", "marginBottom": "20px", "fontWeight": "600"}),
 
         # Graph Centered
         dcc.Graph(id='model5-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
@@ -82,7 +82,7 @@ model5_content = html.Div(
         html.Br(),
 
         # Model Description
-        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px"}),
+        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px", "fontWeight": "600"}),
 
         html.P("RF is a supervised machine learning algorithm that creates multiple decision trees and aggregates the predictions of the trees to produce a final prediction. \
                The number of trees was chosen by conducting an expanding window validation procedure for 30 observations prior to 2007:Q3, where our test data starts. \

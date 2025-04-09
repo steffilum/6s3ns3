@@ -32,7 +32,7 @@ model4_content = html.Div(
     },     
     children=[
         # Header "Model 4"
-        html.H1("Bridge Model", style={"text-align": "center","color": "white", "marginBottom": "20px"}),
+        html.H1("Bridge Model", style={"text-align": "center","color": "white", "marginBottom": "20px", "fontWeight": "600"}),
 
         # Graph Centered
         dcc.Graph(id='model4-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
@@ -83,7 +83,7 @@ model4_content = html.Div(
         html.Br(),
 
         # Model Description
-        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px"}),
+        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px", "fontWeight": "600"}),
 
         html.P("Bridge Models are used to address the mismatch in data frequency between economic indicators and target variables like GDP. ",
         style={"color": "white", "width": "80%", "margin": "0 auto", "marginBottom": "10px"}
