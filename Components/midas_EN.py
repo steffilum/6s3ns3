@@ -11,7 +11,7 @@ df = df.pct_chg
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
-X, y = load_data_midas(given_date=given_date)
+# X, y = load_data_midas(given_date=given_date)
 
 # vif_data = pd.DataFrame()
 # vif_data["Feature"] = X.columns
@@ -76,10 +76,12 @@ pred = pd.Series(pred, index = test.index)
 #evaluation
 eval(pred, test)
 
-model = ElasticNet(alpha=.1, l1_ratio=.9)
-model.fit(X.iloc[:-1, :], y)
-coef_df = pd.DataFrame({
-    "Feature": X.iloc[:-1, :].columns,  # Get feature names
-    "Coefficient": model.coef_   # Get coefficients
-})
-print(coef_df)
+# pred.to_csv('Components/Predictions/midas_EN.csv')
+
+# model = ElasticNet(alpha=.1, l1_ratio=.9)
+# model.fit(X.iloc[:-1, :], y)
+# coef_df = pd.DataFrame({
+#     "Feature": X.iloc[:-1, :].columns,  # Get feature names
+#     "Coefficient": model.coef_   # Get coefficients
+# })
+# print(coef_df)

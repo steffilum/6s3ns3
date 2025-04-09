@@ -38,3 +38,4 @@ print(test)
 
 eval(test, pred, plot=True)
 
+# pred.to_csv('Components/Predictions/arft04.csv')

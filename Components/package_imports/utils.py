@@ -133,3 +133,28 @@ def transform_series(x, tcode):
         return x.pct_change()
     else:
         raise ValueError(f"unknown `tcode` {tcode}")
+    
+
+
+# takes in multiple data frames contating the test data, predictions from the first model and second model
+# returns the dmstat, pvalue HAC SE and the mean loss diff
+def dm_test(test, pred1, pred2):
+    test = np.asarray(test).flatten()
+    pred1 = np.asarray(pred1).flatten()
+    pred2 = np.asarray(pred2).flatten()
+    e1 = pred1-test
+    e2= pred2-test
+    d = e1**2 - e2**2
+
+    lags = int(50**.33)
+    mean = np.mean(d)
+    
+    resid = d-mean
+    model = sm.OLS(resid, np.ones(50))
+    model = model.fit(cov_tyoe = 'HAC', cov_kwds={'maxlags':lags, 'kernel':'newey-west'})
+    se = model.bse[0]
+
+    dm_stat = mean/se
+    p_value = 2 * (1 - scipy.stats.norm.cdf(abs(dm_stat)))
+
+    return dm_stat, p_value, se, mean

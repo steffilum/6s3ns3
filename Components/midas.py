@@ -34,7 +34,8 @@ for index in range(1, 51):
     new_date = date - pd.DateOffset(months=3*index)
     new_date_str = new_date.strftime('%Y-%m-%d')
     with open(f'Components/test_data_midas/data_iteration_{new_date_str}.pkl', 'rb') as f:
-        X_train, y_train = pickle.load(f, allow_pickle = True)
+        X_train, y_train = pickle.load(f)
+    # X_train = X_train.drop(["SAHM_m1", "SAHM_m2", "SAHM_m3"], axis = 1)
     X_train = sm.add_constant(X_train)    
     X_test = X_train.iloc[-1, :]
     X_train = X_train.iloc[:-1, :]
@@ -42,12 +43,17 @@ for index in range(1, 51):
     pred.append(model.predict(X_test)[0])
     print(f"Iteration {index}: {new_date_str}")
 
-pred.reverse()
+# pred.reverse()
 
-pred = pd.Series(pred, index = test.index)
+# pred = pd.Series(pred, index = test.index)
 
 #evaluation
 eval(pred, test)
 
-# model = sm.OLS(y, X).fit()
+# pred.to_csv('Components/Predictions/midas.csv')
+
+# model = sm.OLS(y, X.iloc[:-1, :]).fit()
 # print(model.summary())
+# print(model.predict(X.iloc[:-1, :])[0])
+# residuals = model.resid
+# print(X.iloc[:-1, :].apply(lambda x: x.corr(residuals)))
