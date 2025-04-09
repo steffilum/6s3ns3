@@ -3,11 +3,11 @@ from data_load import *
 
 given_date = "2025-04-01"
 
-for index in range(100, 304):
+for index in range(1, 304):
     date = pd.to_datetime(given_date)
     new_date = date - pd.DateOffset(months=index)
     new_date_str = new_date.strftime('%Y-%m-%d')
-    X_train, y_train = load_data_bridge(new_date_str)
+    X_train, y_train = load_data_midas(new_date_str)
 
 # for index in range(1, 51):
 #     date = pd.to_datetime(given_date)
