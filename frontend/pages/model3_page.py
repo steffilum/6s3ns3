@@ -65,24 +65,11 @@ model3_content = html.Div(
         html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px"}),
 
         html.P("MIDAS models, like bridge models, are also used to address the mismatch in data frequency between economic indicators and target variables such as GDP. \
-               However, our MIDAS model forecast directly incorporates the higher-frequency monthly economic indicators into the forecasting process without requiring an \
-               aggregation to a quarterly frequency. Instead of predicting future monthly data, our MIDAS model uses the available monthly data within the current quarter as \
-               direct inputs. For example, to forecast GDP for 2025:Q2 in May 2025 the model would use the available April 2025 data and forecasted monthly values of indicators for May and June of 2025. \
-               The final regression model structure estimates the quarterly GDP by using monthly indicator values as separate regressors, in conjunction with quarterly government spending on defence and a lag of quarterly GDP. ",
+               However, our MIDAS model forecast directly incorporates the higher-frequency monthly economic indicators into the forecasting process without requiring an aggregation to a quarterly frequency. \
+               This allows the model more freedom to set the relationship between monthly lags instead of taking a fixed aggregation. \
+               The final regression model structure estimates the quarterly GDP by using monthly indicator values as separate regressors, in conjunction with quarterly government spending on defence and a lag of quarterly GDP. \
+               Like the bridge model, OLS is also used to determine the coefficients of the regression model.",
         style={"color": "white", "width": "80%", "margin": "0 auto", "marginBottom": "10px"}
-        ),
-
-        html.P("While evidence has shown that the removal of restrictions on model parameters (compared to the bridge model) would improve the performance of the model \
-               as it allows the model to discover optimal parameters on its own, the increased flexibility of using disaggregated monthly data comes with a risk of having \
-               spurious relationships and hence resulting in multicollinearity and the model would be biased.",
-        style={"color": "white", "width": "80%", "margin": "0 auto", "marginBottom": "10px"}
-        ),
-
-        html.P("We would do the same but instead of aggregation, we would just create new regressors for the months of the quarter it is in. \
-               Evidence says that the removal of the restriction would allow our model to perform better as we allow the model to figure out the optimal parameters itself. \
-               Granted this would cause our model to find alternative relationships that may be spurious. EG maybe the real rs is that x1 has a coefficient of 5 \
-               but the addition of another regressor correlated to x1 may reduce the coefficient of x1 making the model biased.",
-        style={"color": "white", "width": "80%", "margin": "0 auto"}
         )
     ]
 )
