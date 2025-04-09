@@ -2,43 +2,60 @@ from package_imports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
-get_date = "2007-12-01"
-df = get_most_recent_series_of_date("HOUST", get_date, fred)
-df = df[df.index<=pd.to_datetime("2007-06-01")]
+# given_date = "2020-03-01"
 
-pct_chg_housing_units_started = transform_series(df, 4)
+# date = pd.to_datetime(given_date)
 
-import numpy as np
-import pymc3 as pm
-import arviz as az
+# df = get_most_recent_series_of_date("GDP", given_date, fred)
+# df = pct_chg(df)
 
-# Fit Bayesian ARMA(1,1) with PyMC3
-with pm.Model() as arma_model:
-    # Priors
-    phi = pm.Normal("phi", mu=0, sigma=0.5)  # AR(1)
-    theta = pm.Normal("theta", mu=0, sigma=0.5)  # MA(1)
-    sigma = pm.InverseGamma("sigma", alpha=2, beta=1)  # Noise
-    
-    # Likelihood
-    likelihood = pm.AR(
-        "y", 
-        ar=[1, -phi],  # Lag polynomial: 1 - phi*L
-        ma=[1, theta], # Lag polynomial: 1 + theta*L
-        sigma=sigma,
-        observed=df
-    )
-    
-    # Sample
-    trace = pm.sample(2000, tune=1000, chains=4)
+# df = df.pct_chg
 
-# Summary
-az.summary(trace, var_names=["phi", "theta", "sigma"])
+# _, test = train_test_split(df, test_size=50, shuffle=False)
 
-# Plot posteriors
-az.plot_posterior(trace, var_names=["phi", "theta"])
+# X, y = load_data_midas_nohouse(given_date=given_date)
 
-# Forecast next step
-with arma_model:
-    pm.sample_posterior_predictive(trace, extend_inferencedata=True)
-    forecasts = az.extract(trace.posterior_predictive)["y"].values
-    print(np.percentile(forecasts[:, -1], [2.5, 97.5]))  # 95% PI
+# X, _, y, _ = train_test_split(X.iloc[:-1, :], y, test_size=50, shuffle=False)
+
+# vif_data = pd.DataFrame()
+# vif_data["Feature"] = X.columns
+# vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+# print(vif_data)
+
+# combined = pd.concat([X, y], axis = 1)
+# corr_matrix = combined.corr()
+# sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+# plt.show()
+
+# condition_number = np.linalg.cond(X.values)
+# print(f"Condition number: {condition_number}")
+
+# while True:
+#     date = date - pd.offsets.MonthBegin(1)
+#     df = get_most_recent_series_of_date("UNRATE", date, fred)
+#     if df.empty:
+#         print(date)
+#         break
+#     else: print(f'{date} OK')
+
+# df = get_most_recent_series_of_date("IPBUSEQ", date, fred)
+# print(df)
+# X, y = load_data_midas(given_date=given_date)
+# print(X.Import_m1)
+# for i in X.values:
+#     print(i)
+
+# df = get_most_recent_series_of_date("BOPTIMP", "2010-05-01", fred)
+# pct_chg_fed_defence = transform_series(df, 5).dropna()*100
+# pct_chg_fed_defence = pct_chg_fed_defence[pct_chg_fed_defence.index<pd.to_datetime(given_date) - pd.offsets.MonthBegin(1)]
+# print(pct_chg_fed_defence.tail(20))
+
+# print(quart_pct_chg_biz_equip("2001-01-01", 'M').tail(30))
+# print(load_data_midas(given_date))
+# print(load_data_bridge(given_date))
+# 2000-01-01
+# 2000-03-01 
+# 2019-10-01
+# 2019-12-01
+
+print(load_data_bridge("2025-04-01"))

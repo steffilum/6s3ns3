@@ -76,10 +76,12 @@ pred = pd.Series(pred, index = test.index)
 #evaluation
 eval(pred, test)
 
-model = ElasticNet(alpha=.1, l1_ratio=.9)
-model.fit(X.iloc[:-1, :], y)
-coef_df = pd.DataFrame({
-    "Feature": X.iloc[:-1, :].columns,  # Get feature names
-    "Coefficient": model.coef_   # Get coefficients
-})
-print(coef_df)
+# pred.to_csv('Components/Predictions/model1_EN.csv')
+
+# model = ElasticNet(alpha=.1, l1_ratio=.9)
+# model.fit(X.iloc[:-1, :], y)
+# coef_df = pd.DataFrame({
+#     "Feature": X.iloc[:-1, :].columns,  # Get feature names
+#     "Coefficient": model.coef_   # Get coefficients
+# })
+# print(coef_df)

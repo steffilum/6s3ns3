@@ -1,23 +1,19 @@
 from package_imports import *
 from data_load import *
 
-given_date = "2020-03-01"
+given_date = "2025-04-01"
 
-# for index in range(1, 81):
-#     date = pd.to_datetime(given_date)
-#     new_date = date - pd.DateOffset(months=3*index)
-#     new_date_str = new_date.strftime('%Y-%m-%d')
-#     X_train, y_train = load_data_bridge(new_date_str)
-#     with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'wb') as f:
-#         pickle.dump((X_train, y_train), f)
+for index in range(100, 304):
+    date = pd.to_datetime(given_date)
+    new_date = date - pd.DateOffset(months=index)
+    new_date_str = new_date.strftime('%Y-%m-%d')
+    X_train, y_train = load_data_bridge(new_date_str)
 
 # for index in range(1, 51):
 #     date = pd.to_datetime(given_date)
 #     new_date = date - pd.DateOffset(months=3*index)
 #     new_date_str = new_date.strftime('%Y-%m-%d')
 #     X_train, y_train = load_data_bridge_nohouse(new_date_str)
-#     with open(f'Components/test_data_bridge_nohouse/data_iteration_{new_date_str}.pkl', 'wb') as f:
-#         pickle.dump((X_train, y_train), f)
 
 
 # with open('Components/test_data_midas/data_iteration_2019-09-01.pkl', 'rb') as f:

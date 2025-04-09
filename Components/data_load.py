@@ -6,7 +6,7 @@ def quart_pct_chg_pce(given_date = "2020-01-01", period = 'Q'):
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("PCE", given_date, fred)
     pct_chg_pce = transform_series(df, 5).dropna()*100
-    model = ARIMA(pct_chg_pce, order=(4, 0, 3), trend = 'c', freq = 'MS').fit(start_params = np.full(4+3+6+1, .01), method_kwargs={'maxiter':200})
+    model = ARIMA(pct_chg_pce, order=(4, 0, 3), trend = 'c', freq = 'MS').fit(method_kwargs={'maxiter':300})
     start_date_pred = pct_chg_pce.index[-1]+ pd.offsets.MonthBegin(1)
     end_date_pred = pd.Period(given_date, freq='Q').end_time.to_period(freq='M').start_time
     pred = model.predict(start = start_date_pred, end = end_date_pred)
@@ -28,7 +28,7 @@ def quart_pct_chg_biz_equip(date = "2020-01-01", period = 'Q'):
     else:
         df = get_most_recent_series_of_date("IPBUSEQ", date, fred)
     pct_chg_business_equipment = transform_series(df, 5).dropna()*100
-    model = ARIMA(pct_chg_business_equipment, order=(5, 0, 8), trend = 'c', freq = 'MS').fit(start_params = np.full(20, .01), method_kwargs={'maxiter':200})
+    model = ARIMA(pct_chg_business_equipment, order=(5, 0, 8), trend = 'c', freq = 'MS').fit(method_kwargs={'maxiter':200})
     start_date_pred = pct_chg_business_equipment.index[-1]+ pd.offsets.MonthBegin(1)
     end_date_pred = pd.Period(date, freq='Q').end_time.to_period(freq='M').start_time
     pred = model.predict(start = start_date_pred, end = end_date_pred)
@@ -219,6 +219,7 @@ def load_data_bridge(given_date = "2020-01-01"):
     file = f'Components/test_data_bridge/data_iteration_{given_date}.pkl'
     if os.path.exists(file):
         with open(file, 'rb') as f:
+            print("Bridge Data Loaded") 
             return pickle.load(f)        
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("GDP", given_date, fred)
@@ -250,6 +251,8 @@ def load_data_bridge(given_date = "2020-01-01"):
     #diff from midas due to aggregation of data
     df = df[df.index>="1993-01-01"]
     print("Bridge Data Loaded") 
+    with open(f'Components/test_data_bridge/data_iteration_{given_date}.pkl', 'wb') as f:
+        pickle.dump((compiled, df), f)
     return compiled, df
 
 def load_data_bridge_nohouse(given_date = "2020-01-01"):
@@ -303,6 +306,7 @@ def load_data_midas(given_date = "2020-01-01"):
     file = f'Components/test_data_midas/data_iteration_{given_date}.pkl'
     if os.path.exists(file):
         with open(file, 'rb') as f:
+            print("MIDAS Data Loaded") 
             return pickle.load(f)   
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("GDP", given_date, fred)
@@ -340,6 +344,8 @@ def load_data_midas(given_date = "2020-01-01"):
     compiled.columns.values[-2:] = ['Defence', 'Lag_GDP']
     df = df[df.index>="1993-04-01"]
     print("MIDAS data Loaded")  
+    with open(f'Components/test_data_midas/data_iteration_{given_date}.pkl', 'wb') as f:
+        pickle.dump((compiled, df), f)
     return compiled, df
 
 def load_data_midas_nohouse(given_date = "2020-01-01"):
