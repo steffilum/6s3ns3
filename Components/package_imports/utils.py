@@ -135,6 +135,9 @@ def transform_series(x, tcode):
         raise ValueError(f"unknown `tcode` {tcode}")
     
 
+
+# takes in multiple data frames contating the test data, predictions from the first model and second model
+# returns the dmstat, pvalue HAC SE and the mean loss diff
 def dm_test(test, pred1, pred2):
     test = np.asarray(test).flatten()
     pred1 = np.asarray(pred1).flatten()
