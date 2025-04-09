@@ -49,7 +49,7 @@ for index in range(1, 51):
     date = pd.to_datetime(given_date)
     new_date = date - pd.DateOffset(months=3*index)
     new_date_str = new_date.strftime('%Y-%m-%d')
-    with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'rb') as f:
+    with open(f'Components/test_data_midas/data_iteration_{new_date_str}.pkl', 'rb') as f:
         X_train, y_train = pickle.load(f)
     X_train = X_train.iloc[:-1, :]
     X_validate = X_train.iloc[-1, :].values.reshape(1, -1) 
