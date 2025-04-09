@@ -41,3 +41,4 @@ pred = pred.squeeze()
 
 eval(test, pred, plot=True)
 
+pred.to_csv('Components/Predictions/Prophet.csv')
