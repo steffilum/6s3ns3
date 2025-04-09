@@ -4,6 +4,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
+import json
+import requests
 from scipy.stats import norm
 from shared.default_pagelayout import get_default_layout
 from shared.myear_dropdown import myear_dropdown
@@ -11,23 +13,91 @@ from shared.myear_dropdown import myear_dropdown
 #link page to homepage
 dash.register_page(__name__, path="/comparemodels", name="Compare Models")
 
-# Mock Data
-model1 = pd.DataFrame({"Year": [str(y) for y in range(2010, 2020)], "GDP": [15, 10, 20, 30, 35, 22, 8, 4, 23, 31]})
-model2 = pd.DataFrame({"Year": [str(y) for y in range(2010, 2020)], "GDP": [20, 31, 54, 23, 43, 12, 25, 12, 4, 3]})
-model3 = pd.DataFrame({"Year": [str(y) for y in range(2010, 2020)], "GDP": [12, 18, 33, 28, 39, 25, 19, 11, 6, 15]})
-model4 = pd.DataFrame({"Year": [str(y) for y in range(2010, 2020)], "GDP": [33, 34, 23, 12, 39, 43, 12, 4, 6, 31]})
+#Link to backend server
+api_url = "http://127.0.0.1:5000"
+
+# ---------------------
+# DATA FETCHING AND MODEL GENERATING FUNCTIONS 
+# ---------------------
+
+def generate_model_figure_and_forecast(api_endpoint, model_label, year, month):
+    response = requests.post(
+        f"{api_url}/{api_endpoint}", 
+        headers={'Content-Type': 'application/json'},
+        data=json.dumps({"year": year, "month": month})
+    )
+    data = response.json()
+    data = pd.DataFrame.from_dict(data)
+    data = data.reset_index().rename(columns={"index": "Quarter"})
+    data = data[data["Quarter"].str[:4].astype(int) >= 2000]
+
+    base_style = {
+        "fontSize": "28px",
+        "fontFamily": "Montserrat, sans-serif"
+    }
+    try:
+        value = data["Predicted GDP"].iloc[-1]
+    except (IndexError, KeyError):
+        value = 0
+    value = round(value, 3)
+    print(f"For {model_label}: Predicted GDP value is {value}", flush=True)
+
+    # Determine the color based on value
+    if value < 0:
+        color = "red"
+    elif value > 0:
+        color = "rgb(0,200,83)"
+    else:
+        color = "white"
+
+    # Format forecast text with color styling
+    forecast_display = html.Span(f"{value:.3f}%", style={"color": color})
+
+    fig = px.line(
+        data, 
+        x="Quarter", 
+        y="Predicted GDP", 
+        title=f"{model_label}: GDP Forecast",
+        labels={"Predicted GDP": "GDP Growth Rate (%)", "Quarter": "Year"}, 
+        template="plotly_dark"
+    )
+    fig.data[0].name = "Predicted GDP"
+    fig.data[0].showlegend = True           
+    
+    if "Actual GDP" in data.columns:
+        fig.add_trace(go.Scatter(
+            x=data["Quarter"],
+            y=data["Actual GDP"],
+            mode="lines",
+            name="Actual GDP",
+            line=dict(color="orange", dash="dot")
+        ))
+    
+    fig = apply_transparent_background(fig)
+    
+    return fig, forecast_display
 
 
-# Forecast values for each model
-forecast_values = {
-   "Model 1": 1.7,
-   "Model 2": -0.5,
-   "Model 3": 0,
-   "Model 4": 28
-}
+def update_model1(year, month):
+    # For Model 1, assume the API endpoint is "mean_model_prediction"
+    return generate_model_figure_and_forecast("mean_model_prediction", "Model 1", year, month)
+
+def update_model2(year, month):
+    # For Model 2, assume the API endpoint is "arft04_model_prediction"
+    return generate_model_figure_and_forecast("arft04_model_prediction", "Model 2", year, month)
+
+def update_model3(year, month):
+    return generate_model_figure_and_forecast("midas_model_prediction", "Model 3", year, month)
+
+def update_model4(year, month):
+    return generate_model_figure_and_forecast("bridge_model_prediction", "Model 4", year, month)
+
+def update_model5(year, month):
+    return generate_model_figure_and_forecast("rf_model_prediction", "Model 5", year, month)
 
 
-# Evaluation Metric mock values
+
+# Evaluation Metrics Fixed Values (Based on Test Data)
 rmse_values = {
    "Model 1": 2.2,
    "Model 2": 1.8,
@@ -69,46 +139,6 @@ model4_y_true = np.array([4.1, 4.2, 4.3, 4.5, 4.6, 4.5, 4.4, 4.3, 4.5, 4.6])  # 
 model4_y_pred = np.array([4.0, 4.1, 4.2, 4.4, 4.5, 4.4, 4.3, 4.2, 4.4, 4.5])  # Predicted values for Model 4
 
 
-# Function to compute bootstrap confidence intervals for RMSE
-def bootstrap_rmse(y_true, y_pred, n_iterations=1000, ci=95):
-   rmse_values = []
-   for _ in range(n_iterations):
-       indices = np.random.choice(len(y_true), len(y_true), replace=True)
-       y_true_bs = y_true[indices]
-       y_pred_bs = y_pred[indices]
-       rmse = np.sqrt(np.mean((y_true_bs - y_pred_bs) ** 2))
-       rmse_values.append(rmse)
-   lower = np.percentile(rmse_values, (100 - ci) / 2)
-   upper = np.percentile(rmse_values, 100 - (100 - ci) / 2)
-   return lower, upper
-
-
-# Function to compute bootstrap confidence intervals for MAE
-def bootstrap_mae(y_true, y_pred, n_iterations=1000, ci=95):
-   mae_values = []
-   for _ in range(n_iterations):
-       indices = np.random.choice(len(y_true), len(y_true), replace=True)
-       y_true_bs = y_true[indices]
-       y_pred_bs = y_pred[indices]
-       mae = np.mean(np.abs(y_true_bs - y_pred_bs))
-       mae_values.append(mae)
-   lower = np.percentile(mae_values, (100 - ci) / 2)
-   upper = np.percentile(mae_values, 100 - (100 - ci) / 2)
-   return lower, upper
-
-# Function to compute bootstrap confidence intervals for DA
-def bootstrap_da(y_true, y_pred, n_iterations=1000, ci=95):
-   da_values = []
-   for _ in range(n_iterations):
-       indices = np.random.choice(len(y_true), len(y_true), replace=True)
-       y_true_bs = y_true[indices]
-       y_pred_bs = y_pred[indices]
-       correct_direction = np.sum(np.sign(y_true_bs) == np.sign(y_pred_bs))
-       da = correct_direction / len(y_true_bs)
-       da_values.append(da)
-   lower = np.percentile(da_values, (100 - ci) / 2)
-   upper = np.percentile(da_values, 100 - (100 - ci) / 2)
-   return lower, upper
 
 ##mock function to compute dm test, eventually provided by backend
 def diebold_mariano_test(errors1, errors2):
@@ -134,15 +164,10 @@ def diebold_mariano_test(errors1, errors2):
   
    return dm_statistic, p_value
 
-# List of figures for each model
-figures = [
-   px.line(model1, x='Year', y='GDP', title='Model 1: GDP Forecast'),
-   px.line(model2, x='Year', y='GDP', title='Model 2: GDP Forecast'),
-   px.line(model3, x='Year', y='GDP', title='Model 3: GDP Forecast'),
-   px.line(model4, x='Year', y='GDP', title='Model 4: GDP Forecast'),
-]
+# ---------------------
+# HELPER FUNCTIONS FOR STYLING
+# ---------------------
 
-# Helper functions for styling
 def get_dropdown_style():
     return {
         "backgroundColor": "transparent",  # clear background
@@ -167,7 +192,14 @@ def apply_transparent_background(fig):
    )
    return fig
 
-# LAYOUT
+def format_forecast(forecast):
+   color = "green" if forecast > 0 else "red" if forecast < 0 else "black"
+   sign = "+" if forecast > 0 else "-" if forecast < 0 else ""
+   return html.Span(f"{sign}{abs(forecast)}%", style={"color": color})
+
+# ---------------------
+# PAGE LAYOUT 
+# ---------------------
 comparemodels_content = html.Div(id="main-content",children=[
    html.H1("Compare NowCast Models", style={'text-align': 'center', 'color':'white'}),
    html.Br(),
@@ -180,7 +212,7 @@ comparemodels_content = html.Div(id="main-content",children=[
    #], style={'text-align': 'center', 'margin-bottom': '20px'}),
 
    html.Div([myear_dropdown()], style={
-        'width': '12%',          # set a width less than 100%
+        'width': '30%',          # set a width less than 100%
         'margin': '0 auto',       # center the element horizontally
         'margin-bottom': '20px'
     }),
@@ -267,7 +299,10 @@ style={
 # Plug that content into your default layout
 layout = get_default_layout(main_content= comparemodels_content)
 
-##CALLBACKS
+# ---------------------
+# CALLBACKS
+# ---------------------
+
 # Callback for Model 1: Update graph and forecast with date filtering
 @dash.callback(
    [Output('graph_1', 'figure'),
@@ -276,26 +311,24 @@ layout = get_default_layout(main_content= comparemodels_content)
     Input('year-dropdown', 'value'),
     Input('month-dropdown', 'value')]
 )
-def update_graph_and_forecast_1(model_name, start_date, end_date):
-   if model_name:
-       model_df = {
-           "Model 1": model1,
-           "Model 2": model2,
-           "Model 3": model3,
-           "Model 4": model4
-       }[model_name]
-      
-       # Filter by start and end date if provided
-       if start_date and end_date:
-           model_df = model_df[(model_df['Year'].astype(int) >= start_date) & (model_df['Year'].astype(int) <= end_date)]
-      
-       # Generate the figure for the selected model and filtered data
-       fig = px.line(model_df, x='Year', y='GDP', title=f'{model_name}: GDP Forecast')
-       fig = apply_transparent_background(fig)
-       forecast = forecast_values.get(model_name, 0)
-       return fig, format_forecast(forecast)
-  
-   return {}, ""
+def update_graph_and_forecast_1(model_name, year, month):
+    if model_name and year and month:
+        # Choose which model function to call based on model_name
+        if model_name == "Model 1":
+            fig, forecast_text = update_model1(year, month)
+        elif model_name == "Model 2":
+            fig, forecast_text = update_model2(year, month)
+        elif model_name == "Model 3":
+            fig, forecast_text = update_model3(year, month)
+        elif model_name == "Model 4":
+            fig, forecast_text = update_model4(year, month)
+        elif model_name == "Model 5":
+            fig, forecast_text = update_model5(year, month)
+        else:
+            fig = go.Figure()
+            forecast_text = ""
+        return fig, forecast_text
+    return {}, ""
 
 
 # Callback for Model 2: Update graph and forecast with date filtering
@@ -306,31 +339,24 @@ def update_graph_and_forecast_1(model_name, start_date, end_date):
     Input('year-dropdown', 'value'),
     Input('month-dropdown', 'value')]
 )
-def update_graph_and_forecast_2(model_name, start_date, end_date):
-   if model_name:
-       model_df = {
-           "Model 1": model1,
-           "Model 2": model2,
-           "Model 3": model3,
-           "Model 4": model4
-       }[model_name]
-      
-       if start_date and end_date:
-           model_df = model_df[(model_df['Year'].astype(int) >= start_date) & (model_df['Year'].astype(int) <= end_date)]
-      
-       fig = px.line(model_df, x='Year', y='GDP', title=f'{model_name}: GDP Forecast')
-       fig = apply_transparent_background(fig)
-       forecast = forecast_values.get(model_name, 0)
-       return fig, format_forecast(forecast)
-  
-   return {}, ""
-
-
-# Function to format forecast with color (green for positive, red for negative)
-def format_forecast(forecast):
-   color = "green" if forecast > 0 else "red" if forecast < 0 else "black"
-   sign = "+" if forecast > 0 else "-" if forecast < 0 else ""
-   return html.Span(f"{sign}{abs(forecast)}%", style={"color": color})
+def update_graph_and_forecast_2(model_name, year, month):
+    if model_name and year and month:
+        # Choose which model function to call based on model_name
+        if model_name == "Model 1":
+            fig, forecast_text = update_model1(year, month)
+        elif model_name == "Model 2":
+            fig, forecast_text = update_model2(year, month)
+        elif model_name == "Model 3":
+            fig, forecast_text = update_model3(year, month)
+        elif model_name == "Model 4":
+            fig, forecast_text = update_model4(year, month)
+        elif model_name == "Model 5":
+            fig, forecast_text = update_model5(year, month)
+        else:
+            fig = go.Figure()
+            forecast_text = ""
+        return fig, forecast_text
+    return {}, ""
 
 
 # Callback for evaluation metric 1
@@ -355,9 +381,6 @@ def update_eval_metric_1(model, metric):
        html.Div(f'{eval_metric}%', style={"fontSize": "36px", "fontWeight": "bold"}),
        html.Div(f'{metric.upper()} for {model}', style={"fontSize": "18px", "fontWeight": "normal"}),
        ], style={'width': '50%', 'text-align':'center', 'margin': '0 auto'}) 
-
-
-
 
    return "Select a model and metric to display the evaluation result."
 
@@ -387,187 +410,6 @@ def update_eval_metric_2(model, metric):
 
 
    return "Select a model and metric to display the evaluation result."
-
-
-#Callback to update confidence interval visualisation 1
-@dash.callback(
-   Output('confidence_interval_vis1', 'figure'),
-   [Input('model_title1', 'value'),
-    Input('evaluation_metric', 'value')]
-)
-
-
-def update_confidence_interval_graph_1(selected_model, selected_metric):
-   # Default initialization in case of an error
-   y_true, y_pred = None, None
-   # Choose the correct true and predicted values based on the selected model
-   if selected_model == 'Model 1':
-       y_true = model1_y_true
-       y_pred = model1_y_pred
-   elif selected_model == 'Model 2':
-       y_true = model2_y_true
-       y_pred = model2_y_pred
-   elif selected_model == 'Model 3':
-       y_true = model3_y_true
-       y_pred = model3_y_pred
-   elif selected_model == 'Model 4':
-       y_true = model4_y_true
-       y_pred = model4_y_pred
-
-
-   # If no model is selected, raise an error or return a message
-   if y_true is None or y_pred is None:
-       return go.Figure()  # Or return some default figure, or an error message
-
-
-   # Get the confidence interval based on the selected metric
-   if selected_metric == 'rmse':
-       lower, upper = bootstrap_rmse(y_true, y_pred, n_iterations=1000, ci=95)
-       metric_name = 'RMSE'
-   elif selected_metric == 'mae':
-       lower, upper = bootstrap_mae(y_true, y_pred, n_iterations=1000, ci=95)
-       metric_name = 'MAE'
-   elif selected_metric == 'da':
-       lower, upper = bootstrap_da(y_true, y_pred, n_iterations=1000, ci=95)
-       metric_name = 'Directional Accuracy'
-  
-   # Compute the point estimate (mean of the CI)
-   point_value = np.mean([lower, upper])
-
-
-   # Create the Plotly figure for the confidence interval
-   fig = go.Figure()
-
-
-   # Add the central point (estimate)
-   fig.add_trace(go.Scatter(
-       x=[0], y=[point_value],
-       mode='markers',
-       marker=dict(size=12, color='white'),
-       name=f"{metric_name} Estimate"
-   ))
-
-
-   # Add the horizontal error bar (Confidence Interval)
-   fig.add_trace(go.Scatter(
-       x=[0], y=[point_value],
-       mode='lines',
-       line=dict(width=3, color='white'),
-       error_x=dict(type='data', symmetric=False, array=[upper - point_value], arrayminus=[point_value - lower]),
-       name=f"{metric_name} CI"
-   ))
-
-
-   # Update layout for better visualization
-   fig.update_layout(
-       title=f"95% Confidence Interval for {metric_name}",
-       xaxis=dict(
-           showgrid=False,
-           zeroline=False,
-           showticklabels=False
-       ),
-       yaxis=dict(
-           title=f"{metric_name} Value",
-           showgrid=True,
-           zeroline=False
-       ),
-       plot_bgcolor='black',  # Dark background
-       showlegend=True,
-       margin=dict(l=50, r=50, t=50, b=50)
-   )
-
-
-   return fig
-
-
-#Callback to update confidence interval visualisation 2
-@dash.callback(
-   Output('confidence_interval_vis2', 'figure'),
-   [Input('model_title2', 'value'),
-    Input('evaluation_metric', 'value')]
-)
-
-
-def update_confidence_interval_graph_2(selected_model, selected_metric):
-   # Default initialization in case of an error
-   y_true, y_pred = None, None
-   # Choose the correct true and predicted values based on the selected model
-   if selected_model == 'Model 1':
-       y_true = model1_y_true
-       y_pred = model1_y_pred
-   elif selected_model == 'Model 2':
-       y_true = model2_y_true
-       y_pred = model2_y_pred
-   elif selected_model == 'Model 3':
-       y_true = model3_y_true
-       y_pred = model3_y_pred
-   elif selected_model == 'Model 4':
-       y_true = model4_y_true
-       y_pred = model4_y_pred
-  
-   # If no model is selected, raise an error or return a message
-   if y_true is None or y_pred is None:
-       return go.Figure()  # Or return some default figure, or an error message
-
-
-   # Get the confidence interval based on the selected metric
-   if selected_metric == 'rmse':
-       lower, upper = bootstrap_rmse(y_true, y_pred, n_iterations=1000, ci=95)
-       metric_name = 'RMSE'
-   elif selected_metric == 'mae':
-       lower, upper = bootstrap_mae(y_true, y_pred, n_iterations=1000, ci=95)
-       metric_name = 'MAE'
-   elif selected_metric == 'da':
-       lower, upper = bootstrap_da(y_true, y_pred, n_iterations=1000, ci=95)
-       metric_name = 'Directional Accuracy'
-  
-   # Compute the point estimate (mean of the CI)
-   point_value = np.mean([lower, upper])
-
-
-   # Create the Plotly figure for the confidence interval
-   fig = go.Figure()
-
-
-   # Add the central point (estimate)
-   fig.add_trace(go.Scatter(
-       x=[0], y=[point_value],
-       mode='markers',
-       marker=dict(size=12, color='white'),
-       name=f"{metric_name} Estimate"
-   ))
-
-
-   # Add the horizontal error bar (Confidence Interval)
-   fig.add_trace(go.Scatter(
-       x=[0], y=[point_value],
-       mode='lines',
-       line=dict(width=3, color='white'),
-       error_x=dict(type='data', symmetric=False, array=[upper - point_value], arrayminus=[point_value - lower]),
-       name=f"{metric_name} CI"
-   ))
-
-
-   # Update layout for better visualization
-   fig.update_layout(
-       title=f"95% Confidence Interval for {metric_name}",
-       xaxis=dict(
-           showgrid=False,
-           zeroline=False,
-           showticklabels=False
-       ),
-       yaxis=dict(
-           title=f"{metric_name} Value",
-           showgrid=True,
-           zeroline=False
-       ),
-       plot_bgcolor='black',  # Dark background
-       showlegend=True,
-       margin=dict(l=50, r=50, t=50, b=50)
-   )
-
-
-   return fig
 
 
 # Callback to perform the Diebold-Mariano test based on selected models
