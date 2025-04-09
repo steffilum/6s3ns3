@@ -216,7 +216,9 @@ def sahms(date = "2020-01-01", period = 'Q'):
 
 
 def load_data_bridge(given_date = "2020-01-01"):
-    file = f'Components/test_data_bridge/data_iteration_{given_date}.pkl'
+    root_dir = os.path.abspath(os.getcwd())
+    file = os.path.join(root_dir, "Components", "test_data_bridge", f"data_iteration_{given_date}.pkl")
+    # file = f'Components/test_data_bridge/data_iteration_{given_date}.pkl'
     if os.path.exists(file):
         with open(file, 'rb') as f:
             return pickle.load(f)        
@@ -300,7 +302,10 @@ def load_data_rf_monthly(given_date = "2020-01-01"):
     return X, y 
 
 def load_data_midas(given_date = "2020-01-01"):
-    file = f'Components/test_data_midas/data_iteration_{given_date}.pkl'
+
+    root_dir = os.path.abspath(os.getcwd())
+    file = os.path.join(root_dir, "Components", "test_data_midas", f"data_iteration_{given_date}.pkl")
+    # file = f'Components/test_data_midas/data_iteration_{given_date}.pkl'
     if os.path.exists(file):
         with open(file, 'rb') as f:
             return pickle.load(f)   

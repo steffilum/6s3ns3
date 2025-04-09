@@ -30,7 +30,7 @@ model5_content = html.Div(
         html.H1("Random Forest (RF) Model", style={"text-align": "center","color": "white", "marginBottom": "20px"}),
 
         # Graph Centered
-        dcc.Graph(id='model1-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
+        dcc.Graph(id='model5-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
 
         html.Br(), 
 

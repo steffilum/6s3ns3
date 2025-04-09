@@ -9,7 +9,7 @@ def arft04_benchmark_prediction_df(date):
     y.index = pd.to_datetime(y.index).to_period('Q')
     model =  AutoReg(y, lags = 4, trend = 'ct').fit()
 
-    df = y.to_frame().rename(columns = {0: "Actual GDP"})
+    df = y.to_frame().rename(columns = {0: "Actual GDP", "pct_chg": "Actual GDP"})
     predicted_gdp_values =  pd.concat([model.fittedvalues, model.predict(len(y), end = len(y))]).to_frame().rename(columns = {0: "Predicted GDP"})
     df = pd.concat([df, predicted_gdp_values], axis = 1)
     df = df.to_timestamp()

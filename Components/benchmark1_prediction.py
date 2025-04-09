@@ -10,7 +10,7 @@ def mean_benchmark_prediction_df(date):
     X, y = load_data_bridge(date)
     mean_value = y.mean()
     start_of_this_quarter_date = pd.Period(date, freq='Q').start_time
-    y = y.to_frame().rename(columns = {0: "Actual GDP"})
+    y = y.to_frame().rename(columns = {0: "Actual GDP", "pct_chg": "Actual GDP"})
     y["Predicted GDP"] = mean_value
     y = pd.concat([y, pd.DataFrame({"Actual GDP": [np.nan], "Predicted GDP": [mean_value]}, index = [start_of_this_quarter_date])])
     y.index = pd.to_datetime(y.index).to_period('Q')
