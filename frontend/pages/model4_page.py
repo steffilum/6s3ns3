@@ -73,25 +73,13 @@ model4_content = html.Div(
         ),
 
         html.P("Our bridge model forecast is constructed by aggregating the 11 economic indicators that were selected as proxies for each subcomponent of GDP. \
-               Since most of these indicators are monthly data, we make one- to three- step-ahead predictions depending on the input month within the quarter. \
-               For example, if the input month is the first of the quarter, we will forecast 3 months ahead; for the second month, 2 months ahead; and for the last month; only one month ahead. \
-               We aggregate each of the monthly actuals and/or forecasts to produce a quarterly value. These are calculated in each of the economic indicators code files. \
-               The resulting quarterly data, along with the addition of a lag of quarterly GDP, are then used as regressors in our bridge model. \
-               The bridge model itself is a linear regression that estimates the quarter GDP using ordinary least squares (OLS)...",
+               We assume that predictions are made at the start of each month. Since most of these indicators are monthly data, \
+               we make two- to four- step-ahead predictions depending on the input month within the quarter. For example, if the input month is the first of the quarter, \
+               we will forecast four months ahead; for the second month, three months ahead; and for the last month; two month ahead. \
+               We aggregate each of the monthly actuals and/or forecasts to produce a quarterly value. The resulting quarterly data, along with the addition of a lag of quarterly GDP, \
+               are then used as regressors in our bridge model. The bridge model itself is a linear regression that estimates the quarter GDP using ordinary least squares (OLS). \
+               The final model structure thus combines high-frequency indicator data and past GDP performance to produce a timely forecast of current-quarter GDP.",
         style={"color": "white", "width": "80%", "margin": "0 auto", "marginBottom": "10px"}
-        ),
-
-        html.P("Our first constructed model would attempt to follow the GDPNow model as mentioned in the GDPNow working paper where they used a bridge model for the nowcasting of GDP. \
-               Firstly, we identify the main components in GDP, mainly C, I, G, X and M as well as other indicators like Sahm’s rule. \
-               Then we would aggregate them up to quarterly percentage changes and subsequently use a larger OLS as our bridge models. \
-               For each of our components, we would transform our data based on the recommendation on FRED if available, we would then test for stationarity with a constant. \
-               If stationary, we would assume an ARMA model and plot the ACF and PACF in order to try to find a range of optimal parameters. Next, we would do a grid search to find the optimal values of p and q in the model. \
-               Subsequently, we would predict the required data until the end of the quarter to be forecasted subsequently we would aggregate the data into the quarters to link in our larger model. ",
-        style={"color": "white", "width": "80%", "margin": "0 auto", "marginBottom": "10px"}
-        ),
-
-         html.P("In the larger model we simply use OLS of all the predictors including a lag of GDP to account for the effect of GDP last quarter to today.",
-        style={"color": "white", "width": "80%", "margin": "0 auto"}
         )
     ]
 )
