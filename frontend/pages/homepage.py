@@ -203,7 +203,7 @@ loading_content = html.Div(
 layout = get_default_layout(main_content=loading_content)
 
 api_url = 'http://127.0.0.1:5000/'
-deployment_url2 = 'https://sixs3ns3-backend-test.onrender.com/' # For deployment
+# deployment_url2 = 'https://sixs3ns3-backend-test.onrender.com/' # For deployment
 
 @dash.callback(
     Output('myear-display', 'children'),
@@ -220,7 +220,7 @@ def update_all(selected_year, selected_month):
 
     # --------------------------- INTEGRATION CODE --------------------------------------
     
-    response = requests.post(f"{deployment_url2}/midas_model_prediction", 
+    response = requests.post(f"{api_url}/midas_model_prediction", 
                              headers = {'Content-Type': 'application/json'}, 
                              data = json.dumps({"year": selected_year, "month": selected_month}))
     data = response.json()
