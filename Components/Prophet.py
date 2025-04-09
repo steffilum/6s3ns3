@@ -39,6 +39,7 @@ pred = pred.set_index('ds')
 pred.sort_index(inplace=True)
 pred = pred.squeeze()
 
-eval(test, pred, plot=True)
+eval(test, pred, plot=False)
 
-pred.to_csv('Components/Predictions/Prophet.csv')
+# pred.to_csv('Components/Predictions/Prophet.csv')
+
