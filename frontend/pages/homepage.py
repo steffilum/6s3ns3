@@ -116,7 +116,7 @@ homepage_content = html.Div(
                     "left": "316px",
                     "top": "70px",
                     "width": "900px",
-                    "height": "700px",
+                    "height": "280px",
                     "backgroundColor": 'transparent'
                 }
             )
@@ -288,8 +288,7 @@ def update_all(selected_year, selected_month):
                 "color": "grey",
                 "family": "Montserrat, sans-serif"
             }
-        }, 
-        height=280,
+        }
         # xaxis=dict(range = [data["Quarter"].iloc[68], data["Quarter"].iloc[-1]])
     )
  
