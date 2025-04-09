@@ -203,6 +203,7 @@ loading_content = html.Div(
 layout = get_default_layout(main_content=loading_content)
 
 api_url = 'http://127.0.0.1:5000/'
+# deployment_url2 = 'https://sixs3ns3-backend-test.onrender.com/' # For deployment
 
 @dash.callback(
     Output('myear-display', 'children'),
@@ -289,7 +290,7 @@ def update_all(selected_year, selected_month):
             }
         }, 
         height=280,
-        xaxis=dict(range = [data["Quarter"].iloc[68], data["Quarter"].iloc[-1]])
+        # xaxis=dict(range = [data["Quarter"].iloc[68], data["Quarter"].iloc[-1]])
     )
  
     forecast_title = f"Forecast for {data['Quarter'].iloc[-1]}"

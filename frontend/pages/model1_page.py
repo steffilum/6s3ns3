@@ -4,10 +4,12 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 from shared.default_pagelayout import get_default_layout 
+from shared.myear_dropdown import myear_dropdown
 import requests
 import json
 import certifi
 import os
+import plotly.graph_objects as go
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
 # Register the Model 1 page
@@ -30,57 +32,112 @@ model1_content = html.Div(
     },     
     children=[
         # Header "Model 1"
-        html.H1("Prevailing Mean Benchmark Model", style={"text-align": "center","color": "white", "marginBottom": "20px"}),
+        html.H1("Prevailing Mean Benchmark Model", style={"text-align": "center","color": "white", "marginBottom": "20px", "fontWeight": "600"}),
 
         # Graph Centered
         dcc.Graph(id='model1-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
 
         html.Br(), 
 
+        # Container showing forecast value
+        html.Div( children = [
+           html.H1(
+                    id = 'model1-forecast-title',
+                    children = ["GDP Forecast for: "],
+                    style={
+                    "color": "rgba(206, 203, 203)",
+                    "fontWeight": "600",
+                    "fontSize": "22px",
+                    "fontFamily": "Montserrat, sans-serif",
+                    "textAlign": "center"}
+            ), 
+            html.H2(
+                    id = 'model1-forecast', children="", 
+                    style={
+                    "color": "white",
+                    "fontWeight": "600",
+                    "fontSize": "18px",
+                    "fontFamily": "Montserrat, sans-serif",
+                    "textAlign": "center"
+                }
+
+            )
+        ], 
+         style={
+            "display": "flex",
+            "flexDirection": "column",
+            "alignItems": "center",    
+            "justifyContent": "center",  
+            "width": "100%",
+        }
+        ),
+        html.Br(),
         # Dropdowns for year and month
         html.Div([
-            # Year dropdown
-            html.Div([
-                html.Label("Select Year:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
-                dcc.Dropdown(
-                    id='year-dropdown',
-                    options=[{'label': str(year), 'value': str(year)} for year in range(2000, 2026)],
-                    value='2025',
-                    style={"color":"black", "width": "150px", "fontSize": "16px"}
-                ),
-            ], style={"margin": "10px"}),
+            # # Year dropdown
+            # html.Div([
+            #     html.Label("Select Year:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
+            #     dcc.Dropdown(
+            #         id='year-dropdown',
+            #         options=[{'label': str(year), 'value': str(year)} for year in range(2000, 2026)],
+            #         value='2025',
+            #         style={"color":"black", "width": "150px", "fontSize": "16px"}
+            #     ),
+            # ], style={"margin": "10px"}),
 
-            # Month dropdown
-            html.Div([
-                html.Label("Select Month:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
-                dcc.Dropdown(
-                    id='month-dropdown',
-                    options=[{'label': month, 'value': month} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
-                    value='Dec',
-                    style={"color": "black", "width": "150px", "fontSize": "16px"}
-                ),
-            ], style={"margin": "10px"})
+            # # Month dropdown
+            # html.Div([
+            #     html.Label("Select Month:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
+            #     dcc.Dropdown(
+            #         id='month-dropdown',
+            #         options=[{'label': month, 'value': month} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
+            #         value='Dec',
+            #         style={"color": "black", "width": "150px", "fontSize": "16px"}
+            #     ),
+            # ], style={"margin": "10px"})
+            myear_dropdown()
         ], style={"display": "flex", "justifyContent": "center", "alignItems": "center"}),
 
         html.Br(),
 
         # Model Description
-        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px"}),
+        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px", 
+                                            "fontWeight": '600'}),
 
         html.P("This model takes the prevailing arithmetic mean of GDP for all past quarters and that would be the prediction for GDP in the next quarter. \
                We can see that the predictions tend to fall above the real values in evaluation test data, likely due to the fact GDP growth figures are greater \
                in periods of growth during the industrial revolution as compared to more steady growth in the 2000s. One main con of this model would be the inability to predict recessions as they are few and far between.",
-        style={"color": "white", "width": "80%", "margin": "0 auto"}
+        style={"color": "lightgrey", "width": "80%", "margin": "0 auto"}
         )
     ]
 )
 
+# Wrap the entire page content in a loading indicator
+loading_content = html.Div(
+    dcc.Loading(
+        id="page-loading",
+        type="circle",  
+        children=model1_content, 
+        style={
+            "display": "flex",
+            "justifyContent": "center",
+            "alignItems": "center",
+            "height": "100vh" 
+        }
+
+    )
+)
+
+
 # Plug that content into your default layout
-layout = get_default_layout(main_content=model1_content)
+layout = get_default_layout(main_content=loading_content)
 
 # Callback to update the graph
 @dash.callback(
     Output('model1-graph', 'figure'),
+    Output('model1-forecast', 'children'),
+    Output('model1-forecast', 'style'),
+    Output('model1-forecast-title', 'children'),
     [Input('year-dropdown', 'value'),
      Input('month-dropdown', 'value')]
 )
@@ -92,20 +149,70 @@ def update_graph(year, month):
     data = response.json()
     data = pd.DataFrame.from_dict(data)
     data = data.reset_index().rename(columns = {"index": "Quarter"})
+    data = data[data["Quarter"].str[:4].astype(int) >= 2000] # show from 2000 onwards
+    selected_date = f"{month} {year}"
 
     fig = px.line(data, 
                   x = "Quarter", 
-                  y = ["Actual GDP", "Predicted GDP"], 
-                  color_discrete_sequence = ["black", "red"])
+                  y = "Predicted GDP", 
+                  title = f"Forecast GDP Growth Rate",
+                  labels = {"Predicted GDP": "GDP Growth Rate (%)", "Quarter": "Year"}, 
+                  template = "plotly_dark")
     
-    # customisation
-    fig.update_layout(
-        legend_title_text = "Legend",
-        xaxis_title_text = "Year and Quarter",
-        yaxis_title= "GDP Growth"
+    # Force a legend entry for the first trace
+    fig.data[0].name = "Predicted GDP"
+    fig.data[0].showlegend = True           
+    
+    # Add the actual GDP line as a dotted orange line.
+    fig.add_trace(go.Scatter(
+        x=data["Quarter"],
+        y=data["Actual GDP"],
+        mode="lines",
+        name="Actual GDP",
+        line=dict(
+            color="orange"
+    ))
     )
+
+    fig.update_layout(
+        showlegend=True,
+        paper_bgcolor='rgba(0,0,0,0)', 
+        plot_bgcolor='rgba(0,0,0,0)',   
+        margin=dict(l=0, r=0, t=50, b=50),
+        title = {
+            "text": f"GDP Growth Rate up till {selected_date}",
+            "font": {
+                "color": "grey",
+                "family": "Montserrat, sans-serif"
+            }
+        }
+    )
+
+
+    base_style = {
+        "color": "grey",
+        "fontWeight": "600",
+        "fontSize": "28px",
+        "fontFamily": "Montserrat, sans-serif"
+    }
+
+    value = data["Predicted GDP"].iloc[-1]  # Get predicted GDP
+    value = round(value, 3)
+
+    if value < 0:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "red"}
+    elif value > 0:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
+    else:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "white"}
+
+    forecast_title = f"Forecast for {data['Quarter'].iloc[-1]}" 
     
-    return fig
+    
+    return fig, forecast_value, forecast_style, forecast_title
 
     # ## Tentative Graph Plotting Code
 
