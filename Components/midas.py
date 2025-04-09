@@ -11,7 +11,7 @@ df = df.pct_chg
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
-# X, y = load_data_midas(given_date=given_date)
+X, y = load_data_midas_nohouse(given_date=given_date)
 
 # vif_data = pd.DataFrame()
 # vif_data["Feature"] = X.columns
@@ -43,14 +43,17 @@ for index in range(1, 51):
     pred.append(model.predict(X_test)[0])
     print(f"Iteration {index}: {new_date_str}")
 
-pred.reverse()
+# pred.reverse()
 
-pred = pd.Series(pred, index = test.index)
+# pred = pd.Series(pred, index = test.index)
 
 #evaluation
 eval(pred, test)
 
 # pred.to_csv('Components/Predictions/midas.csv')
 
-# model = sm.OLS(y, X).fit()
-# print(model.summary())
+model = sm.OLS(y, X.iloc[:-1, :]).fit()
+print(model.summary())
+print(model.predict(X.iloc[:-1, :])[0])
+residuals = model.resid
+print(X.iloc[:-1, :].apply(lambda x: x.corr(residuals)))

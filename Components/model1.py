@@ -8,6 +8,7 @@ df = get_most_recent_series_of_date("GDP", given_date, fred)
 df = pct_chg(df)
 
 df = df.pct_chg
+print(df)
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
@@ -54,6 +55,11 @@ eval(pred, test)
 
 # pred.to_csv('Components/Predictions/model1.csv')
 
+
 # model = sm.OLS(y, X.iloc[:-1, :]).fit()
 # print(model.summary())
 # print(model.predict(X.iloc[:-1, :])[0])
+# residuals = model.resid
+# print(X.iloc[:-1, :].apply(lambda x: x.corr(residuals)))
+
+# pred.to_csv('Components/Predictions/model1.csv')

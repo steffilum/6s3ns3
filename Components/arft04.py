@@ -30,11 +30,8 @@ for index in range(1, 51):
 # print(model.params)
 
 pred.reverse()
-print(pred)
 pred = pd.concat(pred)
 pred.index = pred.index.to_timestamp()
-print(pred)
-print(test)
 
 eval(test, pred, plot=True)
 

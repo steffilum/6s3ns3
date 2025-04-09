@@ -1,5 +1,4 @@
 from package_imports import *
-from data_load import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
