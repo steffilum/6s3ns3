@@ -74,27 +74,6 @@ model1_content = html.Div(
         html.Br(),
         # Dropdowns for year and month
         html.Div([
-            # # Year dropdown
-            # html.Div([
-            #     html.Label("Select Year:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
-            #     dcc.Dropdown(
-            #         id='year-dropdown',
-            #         options=[{'label': str(year), 'value': str(year)} for year in range(2000, 2026)],
-            #         value='2025',
-            #         style={"color":"black", "width": "150px", "fontSize": "16px"}
-            #     ),
-            # ], style={"margin": "10px"}),
-
-            # # Month dropdown
-            # html.Div([
-            #     html.Label("Select Month:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
-            #     dcc.Dropdown(
-            #         id='month-dropdown',
-            #         options=[{'label': month, 'value': month} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
-            #         value='Dec',
-            #         style={"color": "black", "width": "150px", "fontSize": "16px"}
-            #     ),
-            # ], style={"margin": "10px"})
             myear_dropdown()
         ], style={"display": "flex", "justifyContent": "center", "alignItems": "center"}),
 

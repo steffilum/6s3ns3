@@ -4,8 +4,13 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 from shared.default_pagelayout import get_default_layout 
+from shared.myear_dropdown import myear_dropdown
 import requests
 import json
+import certifi
+import os
+import plotly.graph_objects as go
+os.environ['SSL_CERT_FILE'] = certifi.where()
 
 # Register the Model 5 page
 dash.register_page(__name__, path="/model5", name="Model 5")
@@ -34,29 +39,44 @@ model5_content = html.Div(
 
         html.Br(), 
 
+        # Container showing forecast value
+        html.Div( children = [
+           html.H1(
+                    id = 'model5-forecast-title',
+                    children = ["GDP Forecast for: "],
+                    style={
+                    "color": "rgba(206, 203, 203)",
+                    "fontWeight": "600",
+                    "fontSize": "22px",
+                    "fontFamily": "Montserrat, sans-serif",
+                    "textAlign": "center"}
+            ), 
+            html.H2(
+                    id = 'model5-forecast', children="", 
+                    style={
+                    "color": "white",
+                    "fontWeight": "600",
+                    "fontSize": "18px",
+                    "fontFamily": "Montserrat, sans-serif",
+                    "textAlign": "center"
+                }
+
+            )
+        ], 
+         style={
+            "display": "flex",
+            "flexDirection": "column",
+            "alignItems": "center",    
+            "justifyContent": "center",  
+            "width": "100%",
+        }
+        ),
+        
+        html.Br(),
+
         # Dropdowns for year and month
         html.Div([
-            # Year dropdown
-            html.Div([
-                html.Label("Select Year:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
-                dcc.Dropdown(
-                    id='year-dropdown',
-                    options=[{'label': str(year), 'value': str(year)} for year in range(2000, 2026)],
-                    value='2025',
-                    style={"color":"black", "width": "150px", "fontSize": "16px"}
-                ),
-            ], style={"margin": "10px"}),
-
-            # Month dropdown
-            html.Div([
-                html.Label("Select Month:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
-                dcc.Dropdown(
-                    id='month-dropdown',
-                    options=[{'label': month, 'value': month} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
-                    value='Dec',
-                    style={"color": "black", "width": "150px", "fontSize": "16px"}
-                ),
-            ], style={"margin": "10px"})
+            myear_dropdown()
         ], style={"display": "flex", "justifyContent": "center", "alignItems": "center"}),
 
         html.Br(),
@@ -64,18 +84,40 @@ model5_content = html.Div(
         # Model Description
         html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px"}),
 
-        html.P("Random forest was developed by Ho (1995) and Breiman...",
+        html.P("RF is a supervised machine learning algorithm that creates multiple decision trees and aggregates the predictions of the trees to produce a final prediction. \
+               The number of trees was chosen by conducting an expanding window validation procedure for 30 observations prior to 2007:Q3, where our test data starts. \
+               This window was chosen due to limited data availability and to also include the 2001 recession. By training the model on past economic data, \
+               RF can learn the patterns that may not be identifiable through traditional linear regression methods.",
         style={"color": "white", "width": "80%", "margin": "0 auto", "marginBottom": "10px"}
         )
     ]
 )
 
+# Wrap the entire page content in a loading indicator
+loading_content = html.Div(
+    dcc.Loading(
+        id="page-loading",
+        type="circle",  
+        children=model5_content, 
+        style={
+            "display": "flex",
+            "justifyContent": "center",
+            "alignItems": "center",
+            "height": "100vh" 
+        }
+
+    )
+)
+
 # Plug that content into your default layout
-layout = get_default_layout(main_content=model5_content)
+layout = get_default_layout(main_content=loading_content)
 
 # Callback to update the graph
 @dash.callback(
     Output('model5-graph', 'figure'),
+    Output('model5-forecast', 'children'),
+    Output('model5-forecast', 'style'),
+    Output('model5-forecast-title', 'children'),
     [Input('year-dropdown', 'value'),
      Input('month-dropdown', 'value')]
 )
@@ -87,22 +129,71 @@ def update_graph(year, month):
     data = response.json()
     data = pd.DataFrame.from_dict(data)
     data = data.reset_index().rename(columns = {"index": "Quarter"})
-
-    ## Tentative Graph Plotting Code
+    data = data[data["Quarter"].str[:4].astype(int) >= 2000] # show from 2000 onwards
+    selected_date = f"{month} {year}"
 
     fig = px.line(data, 
                   x = "Quarter", 
-                  y = ["Actual GDP", "Predicted GDP"], 
-                  color_discrete_sequence = ["black", "red"])
+                  y = "Predicted GDP", 
+                  title = f"Forecast GDP Growth Rate",
+                  labels = {"Predicted GDP": "GDP Growth Rate (%)", "Quarter": "Year"}, 
+                  template = "plotly_dark")
     
-    # customisation
-    fig.update_layout(
-        legend_title_text = "Legend",
-        xaxis_title_text = "Year and Quarter",
-        yaxis_title= "GDP Growth"
+    # Force a legend entry for the first trace
+    fig.data[0].name = "Predicted GDP"
+    fig.data[0].showlegend = True           
+    
+    # Add the actual GDP line as a dotted orange line.
+    fig.add_trace(go.Scatter(
+        x=data["Quarter"],
+        y=data["Actual GDP"],
+        mode="lines",
+        name="Actual GDP",
+        line=dict(
+            color="orange"
+    ))
     )
+
+    fig.update_layout(
+        showlegend=True,
+        paper_bgcolor='rgba(0,0,0,0)', 
+        plot_bgcolor='rgba(0,0,0,0)',   
+        margin=dict(l=0, r=0, t=50, b=50),
+        title = {
+            "text": f"GDP Growth Rate up till {selected_date}",
+            "font": {
+                "color": "grey",
+                "family": "Montserrat, sans-serif"
+            }
+        }
+    )
+
+
+    base_style = {
+        "color": "grey",
+        "fontWeight": "600",
+        "fontSize": "28px",
+        "fontFamily": "Montserrat, sans-serif"
+    }
+
+    value = data["Predicted GDP"].iloc[-1]  # Get predicted GDP
+    value = round(value, 3)
+
+    if value < 0:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "red"}
+    elif value > 0:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
+    else:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "white"}
+
+    forecast_title = f"Forecast for {data['Quarter'].iloc[-1]}" 
     
-    return fig
+    
+    return fig, forecast_value, forecast_style, forecast_title
+
     # # Create a target year from the selected year and month
     # target_year = f"{year}Q{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].index(month) + 1}"
     

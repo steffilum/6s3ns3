@@ -4,12 +4,13 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 from shared.default_pagelayout import get_default_layout 
+from shared.myear_dropdown import myear_dropdown
 import requests
 import json
-import os
 import certifi
+import os
+import plotly.graph_objects as go
 os.environ['SSL_CERT_FILE'] = certifi.where()
-
 
 # Register the Model 4 page
 dash.register_page(__name__, path="/model4", name="Model 4")
@@ -38,30 +39,46 @@ model4_content = html.Div(
 
         html.Br(), 
 
+        # Container showing forecast value
+        html.Div( children = [
+           html.H1(
+                    id = 'model4-forecast-title',
+                    children = ["GDP Forecast for: "],
+                    style={
+                    "color": "rgba(206, 203, 203)",
+                    "fontWeight": "600",
+                    "fontSize": "22px",
+                    "fontFamily": "Montserrat, sans-serif",
+                    "textAlign": "center"}
+            ), 
+            html.H2(
+                    id = 'model4-forecast', children="", 
+                    style={
+                    "color": "white",
+                    "fontWeight": "600",
+                    "fontSize": "18px",
+                    "fontFamily": "Montserrat, sans-serif",
+                    "textAlign": "center"
+                }
+
+            )
+        ], 
+         style={
+            "display": "flex",
+            "flexDirection": "column",
+            "alignItems": "center",    
+            "justifyContent": "center",  
+            "width": "100%",
+        }
+        ),
+        
+        html.Br(),
+
         # Dropdowns for year and month
         html.Div([
-            # Year dropdown
-            html.Div([
-                html.Label("Select Year:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
-                dcc.Dropdown(
-                    id='year-dropdown',
-                    options=[{'label': str(year), 'value': str(year)} for year in range(2000, 2026)],
-                    value='2025',
-                    style={"color":"black", "width": "150px", "fontSize": "16px"}
-                ),
-            ], style={"margin": "10px"}),
-
-            # Month dropdown
-            html.Div([
-                html.Label("Select Month:", style={"color": "white", "fontSize": "16px", "marginBottom": "5px"}),
-                dcc.Dropdown(
-                    id='month-dropdown',
-                    options=[{'label': month, 'value': month} for month in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']],
-                    value='Dec',
-                    style={"color": "black", "width": "150px", "fontSize": "16px"}
-                ),
-            ], style={"margin": "10px"})
+            myear_dropdown()
         ], style={"display": "flex", "justifyContent": "center", "alignItems": "center"}),
+
 
         html.Br(),
 
@@ -84,13 +101,32 @@ model4_content = html.Div(
     ]
 )
 
+# Wrap the entire page content in a loading indicator
+loading_content = html.Div(
+    dcc.Loading(
+        id="page-loading",
+        type="circle",  
+        children=model4_content, 
+        style={
+            "display": "flex",
+            "justifyContent": "center",
+            "alignItems": "center",
+            "height": "100vh" 
+        }
+
+    )
+)
+
 
 # Plug that content into your default layout
-layout = get_default_layout(main_content=model4_content)
+layout = get_default_layout(main_content=loading_content)
 
 # Callback to update the graph
 @dash.callback(
     Output('model4-graph', 'figure'),
+    Output('model4-forecast', 'children'),
+    Output('model4-forecast', 'style'),
+    Output('model4-forecast-title', 'children'),
     [Input('year-dropdown', 'value'),
      Input('month-dropdown', 'value')]
 )
@@ -102,20 +138,71 @@ def update_graph(year, month):
     data = response.json()
     data = pd.DataFrame.from_dict(data)
     data = data.reset_index().rename(columns = {"index": "Quarter"})
+    data = data[data["Quarter"].str[:4].astype(int) >= 2000] # show from 2000 onwards
+    selected_date = f"{month} {year}"
 
     fig = px.line(data, 
                   x = "Quarter", 
-                  y = ["Actual GDP", "Predicted GDP"], 
-                  color_discrete_sequence = ["black", "red"])
+                  y = "Predicted GDP", 
+                  title = f"Forecast GDP Growth Rate",
+                  labels = {"Predicted GDP": "GDP Growth Rate (%)", "Quarter": "Year"}, 
+                  template = "plotly_dark")
     
-    # customisation
-    fig.update_layout(
-        legend_title_text = "Legend",
-        xaxis_title_text = "Year and Quarter",
-        yaxis_title= "GDP Growth"
+    # Force a legend entry for the first trace
+    fig.data[0].name = "Predicted GDP"
+    fig.data[0].showlegend = True           
+    
+    # Add the actual GDP line as a dotted orange line.
+    fig.add_trace(go.Scatter(
+        x=data["Quarter"],
+        y=data["Actual GDP"],
+        mode="lines",
+        name="Actual GDP",
+        line=dict(
+            color="orange"
+    ))
     )
+
+    fig.update_layout(
+        showlegend=True,
+        paper_bgcolor='rgba(0,0,0,0)', 
+        plot_bgcolor='rgba(0,0,0,0)',   
+        margin=dict(l=0, r=0, t=50, b=50),
+        title = {
+            "text": f"GDP Growth Rate up till {selected_date}",
+            "font": {
+                "color": "grey",
+                "family": "Montserrat, sans-serif"
+            }
+        }
+    )
+
+
+    base_style = {
+        "color": "grey",
+        "fontWeight": "600",
+        "fontSize": "28px",
+        "fontFamily": "Montserrat, sans-serif"
+    }
+
+    value = data["Predicted GDP"].iloc[-1]  # Get predicted GDP
+    value = round(value, 3)
+
+    if value < 0:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "red"}
+    elif value > 0:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
+    else:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "white"}
+
+    forecast_title = f"Forecast for {data['Quarter'].iloc[-1]}" 
     
-    return fig
+    
+    return fig, forecast_value, forecast_style, forecast_title
+
 
     # Create a target year from the selected year and month
     # target_year = f"{year}Q{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].index(month) + 1}"
