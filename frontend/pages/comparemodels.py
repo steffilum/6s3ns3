@@ -66,7 +66,6 @@ def generate_model_figure_and_forecast(api_endpoint, model_label, year, month):
         data, 
         x="Quarter", 
         y="Predicted GDP", 
-        title=f"{model_label}: GDP Forecast",
         labels={"Predicted GDP": "GDP Growth Rate (%)", "Quarter": "Year"}, 
         template="plotly_dark"
     )
@@ -106,27 +105,29 @@ def update_model5(year, month):
 
 # Evaluation Metrics Fixed Values (Based on Test Data)
 rmse_values = {
-   "Model 1": 2.2,
-   "Model 2": 1.8,
-   "Model 3": 5.0,
-   "Model 4": 6.7,
-   "Model 5": 3.2
+   "Model 1": 0.811495,
+   "Model 2": 0.719911,
+   "Model 3": 0.65465,
+   "Model 4": 0.616918,
+   "Model 5": 0.661384
 }
 
 
 mae_values = {
-   "Model 1": 3.4,
-   "Model 2": 1.1,
-   "Model 3": 0.9,
-   "Model 4": 2.5
+   "Model 1": 0.52913,
+   "Model 2": 0.505932,
+   "Model 3": 0.462518,
+   "Model 4": 0.443277,
+   "Model 5": 0.470836
 }
 
 
 da_values = {
-   "Model 1": 8.7,
-   "Model 2": 2.4,
-   "Model 3": 0.02,
-   "Model 4": 10.7
+   "Model 1": 0.92,
+   "Model 2": 0.92,
+   "Model 3": 0.94,
+   "Model 4": 0.94,
+   "Model 5": 0.96
 }
 
 model_labels = {
@@ -168,51 +169,63 @@ def format_forecast(forecast):
 # PAGE LAYOUT 
 # ---------------------
 comparemodels_content = html.Div(id="main-content",children=[
-   html.H1("Compare NowCast Models", style={'text-align': 'center', 'color':'white'}),
+   html.H1("Compare NowCast Models", style={'text-align': 'center', 'color':'white', 'fontWeight':'600'}),
    html.Br(),
    html.H4("Select a Month and Year to forecast next Quarter GDP Growth Rate", style={'text-align': 'center', 'color':'white'}),
 
    html.Div([myear_dropdown()], style={
-        'width': '23%',          # set a width less than 100%
+        'width': '25%',          # set a width less than 100%
         'margin': '0 auto',       # center the element horizontally
-        'margin-bottom': '20px'
+        'margin-bottom': '20px',
+        'display': 'flex',
+        'justifyContent': 'center',
+        'alignItems': 'center'
     }),
 
-   # Dropdown and Graph for Model 1
-   html.Div([
-       dcc.Dropdown(
-           id="model_title1",
-           options= model_labels,
-           value = "Model 1",
-           placeholder="Select Model 1",
-           style=get_dropdown_style(),
-           className="comparemodels-dropdown"
-       ),
-       html.H4("GDP Forecast Next Quarter:", style={'color':'white'}),
-       html.Div(id='forecast_output_1', style={"fontWeight": "bold", "fontSize": "24px"}),
-       dcc.Graph(id='graph_1'),
-   ], style={'display': 'inline-block', 'width': '48%'}),
+    html.Br(),
 
+    html.Div([
+        # Dropdown and Graph for Model 1
+        html.Div([
+            dcc.Dropdown(
+                id="model_title1",
+                options=model_labels,
+                value="Model 1",
+                placeholder="Select Model 1",
+                className="comparemodels-dropdown",
+                clearable=False
+            ),
+            html.Br(),
+            html.H4("GDP Forecast Next Quarter:", style={'color': 'white'}),
+            html.Div(id='forecast_output_1', style={"fontWeight": "bold", "fontSize": "24px"}),
+            dcc.Graph(id='graph_1'),
+        ], style={'display': 'inline-block', 'width': '45%'}),
+        
+        # Dropdown and Graph for Model 2
+        html.Div([
+            dcc.Dropdown(
+                id="model_title2",
+                options=model_labels,
+                value="Model 2",
+                placeholder="Select Model 2",
+                className="comparemodels-dropdown",
+                clearable=False
+            ),
+            html.Br(),
+            html.H4("GDP Forecast Next Quarter:", style={'color': 'white'}),
+            html.Div(id='forecast_output_2', style={"fontWeight": "bold", "fontSize": "24px"}),
+            dcc.Graph(id='graph_2'),
+        ], style={'display': 'inline-block', 'width': '45%', 'marginLeft': '5%'})
+    ], style={
+        'display': 'flex',
+        'justifyContent': 'center',
+        'alignItems': 'center'
+    }),
 
-   # Dropdown and Graph for Model 2
-   html.Div([
-       dcc.Dropdown(
-           id="model_title2",
-           options= model_labels,
-           value = "Model 2",
-           placeholder="Select Model 2",
-           style=get_dropdown_style(),
-           className="comparemodels-dropdown"
-       ),
-       html.H4("GDP Forecast Next Quarter:", style={'color':'white'}),
-       html.Div(id='forecast_output_2', style={"fontWeight": "bold", "fontSize": "24px"}),
-       dcc.Graph(id='graph_2'),
-   ], style={'display': 'inline-block', 'width': '48%', 'marginLeft': '2%'}),
-
+    html.Br(),
 
    # Evaluation Section
-   html.Br(),
-    html.Div([
+   html.Div([
         html.H1("Evaluation", style={'color':'white', 'margin-right': '10px'}),
         html.H6("*based on test data", style={'color':'grey', 'fontStyle':'italic'})
     ], style={'display': 'flex', 'alignItems': 'center'}),
@@ -229,16 +242,20 @@ comparemodels_content = html.Div(id="main-content",children=[
            ],
            value = "mae",
            placeholder='Select Evaluation Metric',
-           style=get_dropdown_style(),
-           className="comparemodels-dropdown"
+           className="comparemodels-dropdown",
+           clearable = False
        )
    ], style={'width': '50%', 'marginBottom': '20px'}),
   
-   # Display Evaluation Metric for Model 1
+  html.Div([
+    # Display Evaluation Metric for Model 1
    html.Div(id="evaluation_metric1", style={'display': 'inline-block','fontSize': '20px', 'width': '50%', 'color':'white'}),
   
    # Display Evaluation Metric for Model 2
-   html.Div(id="evaluation_metric2", style={'display': 'inline-block','fontSize': '20px', 'width': '50%', 'color':'white'}),
+   html.Div(id="evaluation_metric2", style={'display': 'inline-block','fontSize': '20px', 'width': '50%', 'color':'white'})
+   ]),
+
+   html.Br(),
 
    #Display DM Test Values
    html.Div(id="dm_test_results", style={'display': 'inline-block','fontSize': '20px', 'text-align':'center', 'width':'100%', 'color':'white'}),
@@ -247,7 +264,9 @@ style={
        'height': '100vh',
        'overflowY': 'scroll',  # Enable scrolling
        'paddingTop': "25px", #Leave space on top for nav bar 
-       'paddingBottom': '200px' #bottom padding
+       'paddingBottom': '200px', #bottom padding
+       'marginLeft': '50px',
+        'marginRight': '50px'
    })
 
 # Plug that content into your default layout
@@ -332,8 +351,8 @@ def update_eval_metric_1(model, metric):
 
        # Return the metric and model name on separate lines with different styles
        return html.Div([
-       html.Div(f'{eval_metric}%', style={"fontSize": "36px", "fontWeight": "bold"}),
-       html.Div(f'{metric.upper()} for {model_labels.get(model, model)}', style={"fontSize": "18px", "fontWeight": "normal"}),
+       html.Div(f'{eval_metric}', style={"fontSize": "36px", "fontWeight": "bold"}),
+       html.Div(f'{metric.upper()} for {model_labels.get(model, model)}', style={"fontSize": "18px", "fontWeight": "normal", "whiteSpace": "nowrap"}),
        ], style={'width': '50%', 'text-align':'center', 'margin': '0 auto'}) 
 
    return "Select a model and metric to display the evaluation result."
@@ -358,8 +377,8 @@ def update_eval_metric_2(model, metric):
 
        # Return the metric and model name on separate lines with different styles
        return html.Div([
-       html.Div(f'{eval_metric}%', style={"fontSize": "36px", "fontWeight": "bold"}),
-       html.Div(f'{metric.upper()} for {model_labels.get(model, model)}', style={"fontSize": "18px", "fontWeight": "normal"}),
+       html.Div(f'{eval_metric}', style={"fontSize": "36px", "fontWeight": "bold"}),
+       html.Div(f'{metric.upper()} for {model_labels.get(model, model)}', style={"fontSize": "18px", "fontWeight": "normal","whiteSpace": "nowrap"}),
        ], style={'width': '50%', 'text-align':'center', 'margin': '0 auto'}) 
 
 
@@ -401,13 +420,80 @@ def compute_dm_test(model1_name, model2_name):
             return f"Error reading prediction data: {e}"
         stat, p, se, mean = dm_test(test, pred1, pred2)
         
-        # Create a list of HTML elements to display the results.
-        dm_text = [
-            html.H2("Diebold-Mariano (DM) Test Results", style={"color": "white"}),
-            html.Div(f"DM Stat: {stat:.2f}", style={"color": "white", "fontSize": "20px"}),
-            html.Div(f"p-value: {p:.3f}", style={"color": "white", "fontSize": "20px"}),
-            html.Div(f"HAC SE: {se:.3f}", style={"color": "white", "fontSize": "20px"}),
-            html.Div(f"Mean Loss Differential: {mean:.3f}", style={"color": "white", "fontSize": "20px"})
-        ]
-        return dm_text
-    return "Please select both models to compare."
+        # Determine colors based on values
+        dm_color = "orange" if stat > 0 else "rebeccapurple"
+        p_color = "red" if p < 0.1 else "blue"
+
+        # Build the text for the DM Test Results
+        dm_result_components = [
+        html.H2("Diebold-Mariano (DM) Test Results", style={"color": "white"}),
+        html.Div([
+            "DM Stat: ",
+            html.Span(f"{stat:.2f}", style={"color": dm_color})
+        ], style={"fontSize": "20px", "color": "white"}),
+        html.Div([
+            "p-value: ",
+            html.Span(f"{p:.3f}", style={"color": p_color})
+        ], style={"fontSize": "20px", "color": "white"}),
+        html.Div([
+            "HAC SE: ",
+            html.Span(f"{se:.3f}", style={"color": "white"})
+        ], style={"fontSize": "20px", "color": "white"}),
+        html.Div([
+            "Mean Loss Differential: ",
+            html.Span(f"{mean:.3f}", style={"color": "white"})
+        ], style={"fontSize": "20px", "color": "white"})]
+
+    # Determine the DM test result conclusion based on stat and p
+    if stat > 0:
+        # For stat > 0, model1 is better than model2.
+        model1_display = html.Span(f'{model_labels.get(model1_name, model1_name)} is better', style={"color": "darkorange"})
+        model2_display = html.Span(model_labels.get(model2_name, model2_name), style={"color": "white"})
+        
+        # Set the significance text and color based on p
+        if p < 0.1:
+            significance_text = html.Span("with", style={"color": "red"})
+        else:
+            significance_text = html.Span("without", style={"color": "blue"})
+        
+        conclusion_text = html.Div(
+            [
+                model1_display,
+                " than ",
+                model2_display,
+                " ",
+                significance_text,
+                " statistical significance"
+            ],
+            style={"color": "white", "fontSize": "20px", "fontWeight": "bold"}
+        )
+    elif stat < 0:
+        # For stat < 0, model2 is better than model1.
+        model1_display = html.Span(model_labels.get(model1_name, model1_name), style={"color": "white"})
+        model2_display = html.Span(f'{model_labels.get(model2_name, model2_name)} is better', style={"color": "rebeccapurple"})
+        
+        if p < 0.1:
+            significance_text = html.Span("with", style={"color": "red"})
+        else:
+            significance_text = html.Span("without", style={"color": "blue"})
+        
+        conclusion_text = html.Div(
+            [
+                model2_display,
+                " than ",
+                model1_display,
+                " ",
+                significance_text,
+                " statistical significance"
+            ],
+            style={"color": "white", "fontSize": "20px", "fontWeight": "bold"}
+        )
+    else:
+        conclusion_text = html.Div("No significant difference between models.", 
+                                style={"color": "white", "fontSize": "20px", "fontWeight": "bold"})
+
+    # Finally, append the conclusion text to your DM test result components
+    dm_result_components.append(html.Br())
+    dm_result_components.append(conclusion_text)
+
+    return dm_result_components
