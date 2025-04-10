@@ -120,6 +120,28 @@ body, html {
   border-radius: 10px !important;
 }
 
+.comparemodels-dropdown .Select__control {
+  background-color: transparent !important;
+  font-weight: bold;
+  color: black !important;
+  border: 1px solid white !important;
+}
+
+.comparemodels-dropdown .Select__menu {
+  background-color: transparent !important;
+  font-weight: bold;
+  color: black !important;
+}
+
+.comparemodels-dropdown .Select__option {
+  background-color: transparent !important;
+  color: black !important;
+}
+
+.comparemodels-dropdown .Select__placeholder {
+  color: black !important;
+}
+
 
 
 

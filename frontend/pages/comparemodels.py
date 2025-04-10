@@ -7,8 +7,17 @@ import numpy as np
 import json
 import requests
 from scipy.stats import norm
+from Components.package_imports import *
 from shared.default_pagelayout import get_default_layout
 from shared.myear_dropdown import myear_dropdown
+
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# current_dir is /path/to/MyProject/frontend/pages
+# The project root is two levels up: 
+project_root = os.path.join(current_dir, '..', '..')
+# Now build the path to test.csv inside Components/Predictions:
+test_csv_path = os.path.join(project_root, 'Components', 'Predictions', 'test.csv')
 
 #link page to homepage
 dash.register_page(__name__, path="/comparemodels", name="Compare Models")
@@ -79,11 +88,9 @@ def generate_model_figure_and_forecast(api_endpoint, model_label, year, month):
 
 
 def update_model1(year, month):
-    # For Model 1, assume the API endpoint is "mean_model_prediction"
     return generate_model_figure_and_forecast("mean_model_prediction", "Model 1", year, month)
 
 def update_model2(year, month):
-    # For Model 2, assume the API endpoint is "arft04_model_prediction"
     return generate_model_figure_and_forecast("arft04_model_prediction", "Model 2", year, month)
 
 def update_model3(year, month):
@@ -102,7 +109,8 @@ rmse_values = {
    "Model 1": 2.2,
    "Model 2": 1.8,
    "Model 3": 5.0,
-   "Model 4": 6.7
+   "Model 4": 6.7,
+   "Model 5": 3.2
 }
 
 
@@ -121,48 +129,14 @@ da_values = {
    "Model 4": 10.7
 }
 
-
-dmtest_values = {
-   "DM Statistic": 2.34,
-   "p-value": 0.02
+model_labels = {
+    "Model 1": "Prevailing Mean Benchmark Model",
+    "Model 2": "ARFT04 Benchmark Model",
+    "Model 3": "Mixed Data Sampling (MIDAS) Model",
+    "Model 4": "Bridge Model",
+    "Model 5": "Random Forest (RF)"
 }
 
-
-# Larger Mock Data for Models (use actual model predictions here)
-model1_y_true = np.array([3.1, 2.9, 3.0, 3.2, 2.8, 3.0, 3.1, 2.9, 3.2, 2.7])  # True values for Model 1
-model1_y_pred = np.array([3.0, 2.8, 3.1, 3.3, 2.9, 3.0, 3.1, 2.8, 3.2, 2.7])  # Predicted values for Model 1
-model2_y_true = np.array([2.8, 3.0, 3.1, 2.7, 3.0, 3.2, 3.1, 3.0, 2.9, 3.0])  # True values for Model 2
-model2_y_pred = np.array([2.7, 3.1, 3.0, 2.8, 3.1, 3.2, 3.0, 3.1, 2.8, 3.0])  # Predicted values for Model 2
-model3_y_true = np.array([3.5, 3.3, 3.6, 3.8, 3.7, 3.6, 3.5, 3.4, 3.6, 3.5])  # True values for Model 3
-model3_y_pred = np.array([3.6, 3.5, 3.7, 3.9, 3.8, 3.7, 3.6, 3.6, 3.8, 3.7])  # Predicted values for Model 3
-model4_y_true = np.array([4.1, 4.2, 4.3, 4.5, 4.6, 4.5, 4.4, 4.3, 4.5, 4.6])  # True values for Model 4
-model4_y_pred = np.array([4.0, 4.1, 4.2, 4.4, 4.5, 4.4, 4.3, 4.2, 4.4, 4.5])  # Predicted values for Model 4
-
-
-
-##mock function to compute dm test, eventually provided by backend
-def diebold_mariano_test(errors1, errors2):
-   # Ensure that the errors are numerical
-   errors1 = np.array(errors1, dtype=float)  # Convert to float
-   errors2 = np.array(errors2, dtype=float)  # Convert to float
-
-
-   # Calculate the loss differential (d_t = error_model1 - error_model2)
-   d_t = errors1 - errors2
-  
-   # Mean of the loss differential
-   d_bar = np.mean(d_t)
-  
-   # Standard deviation of the loss differential
-   std_d = np.std(d_t) / np.sqrt(len(d_t))
-  
-   # Compute the DM statistic
-   dm_statistic = d_bar / std_d
-  
-   # Compute the p-value using the standard normal distribution
-   p_value = 2 * (1 - norm.cdf(abs(dm_statistic)))  # Two-tailed test
-  
-   return dm_statistic, p_value
 
 # ---------------------
 # HELPER FUNCTIONS FOR STYLING
@@ -174,13 +148,6 @@ def get_dropdown_style():
         "fontWeight": "bold",                # bold text inside the input
         "color": "white",                   # white text color
         "padding": "5px"
-    }
-
-def get_dropdown_menu_style():
-    return {
-        "backgroundColor": "transparent",  # clear background for the dropdown list
-        "fontWeight": "bold",               # bold text for options
-        "color": "white",                   # white text color for options
     }
 
 def apply_transparent_background(fig):
@@ -204,15 +171,9 @@ comparemodels_content = html.Div(id="main-content",children=[
    html.H1("Compare NowCast Models", style={'text-align': 'center', 'color':'white'}),
    html.Br(),
    html.H4("Select a Month and Year to forecast next Quarter GDP Growth Rate", style={'text-align': 'center', 'color':'white'}),
-   
-   # Start and end date inputs
-  # html.Div([
-       #dcc.Input(id="start_date", type="number", placeholder="Enter Start Date"), #can use regex output later on
-       #dcc.Input(id="end_date", type="number", placeholder="Enter End Date"),
-   #], style={'text-align': 'center', 'margin-bottom': '20px'}),
 
    html.Div([myear_dropdown()], style={
-        'width': '30%',          # set a width less than 100%
+        'width': '23%',          # set a width less than 100%
         'margin': '0 auto',       # center the element horizontally
         'margin-bottom': '20px'
     }),
@@ -221,10 +182,11 @@ comparemodels_content = html.Div(id="main-content",children=[
    html.Div([
        dcc.Dropdown(
            id="model_title1",
-           options=[{'label': f'Model {i}', 'value': f'Model {i}'} for i in range(1, 6)],
+           options= model_labels,
            value = "Model 1",
            placeholder="Select Model 1",
-           style=get_dropdown_style()
+           style=get_dropdown_style(),
+           className="comparemodels-dropdown"
        ),
        html.H4("GDP Forecast Next Quarter:", style={'color':'white'}),
        html.Div(id='forecast_output_1', style={"fontWeight": "bold", "fontSize": "24px"}),
@@ -236,10 +198,11 @@ comparemodels_content = html.Div(id="main-content",children=[
    html.Div([
        dcc.Dropdown(
            id="model_title2",
-           options=[{'label': f'Model {i}', 'value': f'Model {i}'} for i in range(1, 6)],
+           options= model_labels,
            value = "Model 2",
            placeholder="Select Model 2",
-           style=get_dropdown_style()
+           style=get_dropdown_style(),
+           className="comparemodels-dropdown"
        ),
        html.H4("GDP Forecast Next Quarter:", style={'color':'white'}),
        html.Div(id='forecast_output_2', style={"fontWeight": "bold", "fontSize": "24px"}),
@@ -249,7 +212,10 @@ comparemodels_content = html.Div(id="main-content",children=[
 
    # Evaluation Section
    html.Br(),
-   html.H1("Evaluation", style={'color':'white'}),
+    html.Div([
+        html.H1("Evaluation", style={'color':'white', 'margin-right': '10px'}),
+        html.H6("*based on test data", style={'color':'grey', 'fontStyle':'italic'})
+    ], style={'display': 'flex', 'alignItems': 'center'}),
    html.Div(style={'borderTop': '2px solid white', 'margin': '20px 0'}),
   
    # Dropdown for Evaluation Metric
@@ -263,28 +229,16 @@ comparemodels_content = html.Div(id="main-content",children=[
            ],
            value = "mae",
            placeholder='Select Evaluation Metric',
-           style=get_dropdown_style()
+           style=get_dropdown_style(),
+           className="comparemodels-dropdown"
        )
    ], style={'width': '50%', 'marginBottom': '20px'}),
   
    # Display Evaluation Metric for Model 1
-   html.Div(id="evaluation_metric1", style={'display': 'inline-block','fontSize': '20px', 'width': '48%', 'color':'white'}),
+   html.Div(id="evaluation_metric1", style={'display': 'inline-block','fontSize': '20px', 'width': '50%', 'color':'white'}),
   
    # Display Evaluation Metric for Model 2
-   html.Div(id="evaluation_metric2", style={'display': 'inline-block','fontSize': '20px', 'width': '48%', 'color':'white'}),
-
-   #Display CI for Model 1
-   html.Div([
-       dcc.Graph(id="confidence_interval_vis1"),
-       html.H4("95% Confidence Interval")],
-       style={'text-align':'center', 'marginTop':'30px', 'display': 'inline-block','fontSize': '20px', 'width': '48%'}),
-  
-   #Display CI for Model 2
-   html.Div([
-       dcc.Graph(id="confidence_interval_vis2"),
-       html.H4("95% Confidence Interval")],
-       style={'text-align':'center', 'marginTop':'30px', 'display': 'inline-block','fontSize': '20px', 'width': '48%'}),
-
+   html.Div(id="evaluation_metric2", style={'display': 'inline-block','fontSize': '20px', 'width': '50%', 'color':'white'}),
 
    #Display DM Test Values
    html.Div(id="dm_test_results", style={'display': 'inline-block','fontSize': '20px', 'text-align':'center', 'width':'100%', 'color':'white'}),
@@ -379,7 +333,7 @@ def update_eval_metric_1(model, metric):
        # Return the metric and model name on separate lines with different styles
        return html.Div([
        html.Div(f'{eval_metric}%', style={"fontSize": "36px", "fontWeight": "bold"}),
-       html.Div(f'{metric.upper()} for {model}', style={"fontSize": "18px", "fontWeight": "normal"}),
+       html.Div(f'{metric.upper()} for {model_labels.get(model, model)}', style={"fontSize": "18px", "fontWeight": "normal"}),
        ], style={'width': '50%', 'text-align':'center', 'margin': '0 auto'}) 
 
    return "Select a model and metric to display the evaluation result."
@@ -405,7 +359,7 @@ def update_eval_metric_2(model, metric):
        # Return the metric and model name on separate lines with different styles
        return html.Div([
        html.Div(f'{eval_metric}%', style={"fontSize": "36px", "fontWeight": "bold"}),
-       html.Div(f'{metric.upper()} for {model}', style={"fontSize": "18px", "fontWeight": "normal"}),
+       html.Div(f'{metric.upper()} for {model_labels.get(model, model)}', style={"fontSize": "18px", "fontWeight": "normal"}),
        ], style={'width': '50%', 'text-align':'center', 'margin': '0 auto'}) 
 
 
@@ -419,33 +373,41 @@ def update_eval_metric_2(model, metric):
     Input('model_title2', 'value')]
 )
 def compute_dm_test(model1_name, model2_name):
-   if model1_name and model2_name:
-       # Generate mock forecast errors for the two selected models (replace with actual errors)
-       # Use actual errors from model predictions
-       errors1 = np.random.normal(0, 1, 10)  # Mock forecast errors for Model 1
-       errors2 = np.random.normal(0, 1, 10)  # Mock forecast errors for Model 2
-      
-       # Ensure the errors are numerical (float)
-       errors1 = np.array(errors1, dtype=float)
-       errors2 = np.array(errors2, dtype=float)
-      
-       # Perform the Diebold-Mariano test
-       dm_statistic, p_value = diebold_mariano_test(errors1, errors2)
-      
-       # Create the result message
-       result = f"DM Test Result: DM Statistic = {dm_statistic:.2f}, p-value = {p_value:.3f}. Conclusion: "
-      
-       # Conclusion based on p-value
-       if p_value < 0.05:
-           conclusion = "The models are significantly different in terms of forecast accuracy."
-       else:
-           conclusion = "No significant difference between the models."
-      
-       # Return the result and conclusion in the layout
-       return html.Div([
-           html.H2("Diebold-Mariano (DM) Test Results"),
-           html.Div(f'DM Statistic: {dm_statistic:.2f}', style={'display': 'inline-block', 'fontSize': '20px', 'width': '60%', 'color':'white'}),
-           html.Div(f'p-value: {p_value:.3f}', style={'display': 'inline-block', 'fontSize': '20px', 'width': '60%', 'color':'white'}),
-           html.Div(f"Conclusion: {conclusion}", style={'display': 'inline-block', 'fontSize': '18px', 'width': '80%', 'color':'white'})
-       ])
-   return "Please select both models to compare."
+    if model1_name and model2_name:
+        model_to_pred = {
+        "Model 1": os.path.join(project_root, "Components", "Predictions", "benchmark1.csv"),
+        "Model 2": os.path.join(project_root, "Components", "Predictions", "arft04.csv"),
+        "Model 3": os.path.join(project_root, "Components", "Predictions", "midas.csv"),
+        "Model 4": os.path.join(project_root, "Components", "Predictions", "bridge.csv"),
+        "Model 5": os.path.join(project_root, "Components", "Predictions", "rf_bridge.csv")
+        }
+
+        # Read the test data, which might be used as the true values
+        try:
+            test = pd.read_csv(test_csv_path, index_col=0)
+        except Exception as e:
+            return f"Error reading test data: {e}"
+        
+        # Get file paths for the selected models
+        pred1_file = model_to_pred.get(model1_name)
+        pred2_file = model_to_pred.get(model2_name)
+        if pred1_file is None or pred2_file is None:
+            return "Selected model does not have an associated predictions file."
+        
+        try:
+            pred1 = pd.read_csv(pred1_file, index_col=0)
+            pred2 = pd.read_csv(pred2_file, index_col=0)
+        except Exception as e:
+            return f"Error reading prediction data: {e}"
+        stat, p, se, mean = dm_test(test, pred1, pred2)
+        
+        # Create a list of HTML elements to display the results.
+        dm_text = [
+            html.H2("Diebold-Mariano (DM) Test Results", style={"color": "white"}),
+            html.Div(f"DM Stat: {stat:.2f}", style={"color": "white", "fontSize": "20px"}),
+            html.Div(f"p-value: {p:.3f}", style={"color": "white", "fontSize": "20px"}),
+            html.Div(f"HAC SE: {se:.3f}", style={"color": "white", "fontSize": "20px"}),
+            html.Div(f"Mean Loss Differential: {mean:.3f}", style={"color": "white", "fontSize": "20px"})
+        ]
+        return dm_text
+    return "Please select both models to compare."

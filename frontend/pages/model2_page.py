@@ -35,7 +35,7 @@ model2_content = html.Div(
         html.H1("ARFT04 Benchmark Model", style={"text-align": "center","color": "white", "marginBottom": "20px"}),
 
         # Graph Centered
-        dcc.Graph(id='model2-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
+        dcc.Graph(id='model2-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px", "fontWeight": "600"}),
 
         html.Br(), 
 
@@ -82,7 +82,7 @@ model2_content = html.Div(
         html.Br(),
 
         # Model Description
-        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px"}),
+        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px", "fontWeight": "600"}),
 
         html.P("This is a common benchmark used in US GDP prediction and was extensively researched by Marcellino (2014) where he compared various linear and \
                non-linear models. The ARF in the name indicates that the model is autoregressive, T represents the addition of a trend term and 04 represents \
