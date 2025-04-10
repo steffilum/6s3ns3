@@ -7,6 +7,9 @@ import numpy as np
 import json
 import requests
 from scipy.stats import norm
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 from Components.package_imports import *
 from shared.default_pagelayout import get_default_layout
 from shared.myear_dropdown import myear_dropdown
