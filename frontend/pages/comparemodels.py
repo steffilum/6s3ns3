@@ -174,8 +174,8 @@ comparemodels_content = html.Div(id="main-content",children=[
    html.H4("Select a Month and Year to forecast next Quarter GDP Growth Rate", style={'text-align': 'center', 'color':'white'}),
 
    html.Div([myear_dropdown()], style={
-        'width': '25%',          # set a width less than 100%
-        'margin': '0 auto',       # center the element horizontally
+        'width': '25%',          
+        'margin': '0 auto',       
         'margin-bottom': '20px',
         'display': 'flex',
         'justifyContent': 'center',
@@ -240,7 +240,7 @@ comparemodels_content = html.Div(id="main-content",children=[
                {'label': 'Mean Absolute Error (MAE)', 'value': 'mae'},
                {'label': 'Directional Accuracy (DA)', 'value': 'da'}
            ],
-           value = "mae",
+           value = "rmse",
            placeholder='Select Evaluation Metric',
            className="comparemodels-dropdown",
            clearable = False
@@ -269,7 +269,6 @@ style={
         'marginRight': '50px'
    })
 
-# Plug that content into your default layout
 layout = get_default_layout(main_content= comparemodels_content)
 
 # ---------------------
