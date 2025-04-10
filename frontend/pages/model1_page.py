@@ -71,7 +71,9 @@ model1_content = html.Div(
             "width": "100%",
         }
         ),
+        
         html.Br(),
+
         # Dropdowns for year and month
         html.Div([
             myear_dropdown()
