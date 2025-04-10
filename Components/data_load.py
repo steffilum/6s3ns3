@@ -253,7 +253,7 @@ def load_data_bridge(given_date = "2020-01-01"):
     #diff from midas due to aggregation of data
     df = df[df.index>="1993-01-01"]
     print("Bridge Data Loaded") 
-    with open(f'Components/test_data_bridge/data_iteration_{given_date}.pkl', 'wb') as f:
+    with open(file, 'wb') as f:
         pickle.dump((compiled, df), f)
     return compiled, df
 
@@ -348,7 +348,7 @@ def load_data_midas(given_date = "2020-01-01"):
     compiled.columns.values[-2:] = ['Defence', 'Lag_GDP']
     df = df[df.index>="1993-04-01"]
     print("MIDAS data Loaded")  
-    with open(f'Components/test_data_midas/data_iteration_{given_date}.pkl', 'wb') as f:
+    with open(file, 'wb') as f:
         pickle.dump((compiled, df), f)
     return compiled, df
 
