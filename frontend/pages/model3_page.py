@@ -114,6 +114,9 @@ loading_content = html.Div(
 # Plug that content into your default layout
 layout = get_default_layout(main_content=loading_content)
 
+api_url = 'http://127.0.0.1:5000/'
+deployment_url2 = 'https://sixs3ns3-backend-test.onrender.com/' # For deployment
+
 # Callback to update the graph
 @dash.callback(
     Output('model3-graph', 'figure'),
@@ -125,7 +128,7 @@ layout = get_default_layout(main_content=loading_content)
 )
 def update_graph(year, month):
     ## DO NOT DELETE -- CODE FOR INTEGRATION
-    response = requests.post("http://127.0.0.1:5000/midas_model_prediction", 
+    response = requests.post(f"{deployment_url2}/midas_model_prediction", 
                              headers = {'Content-Type': 'application/json'}, 
                              data = json.dumps({"year": year, "month": month}))
     data = response.json()
