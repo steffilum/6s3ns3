@@ -24,6 +24,7 @@ dash.register_page(__name__, path="/comparemodels", name="Compare Models")
 
 #Link to backend server
 api_url = "http://127.0.0.1:5000"
+deployment_url2 = 'https://sixs3ns3-backend-test.onrender.com/' # For deployment
 
 # ---------------------
 # DATA FETCHING AND MODEL GENERATING FUNCTIONS 
@@ -31,7 +32,7 @@ api_url = "http://127.0.0.1:5000"
 
 def generate_model_figure_and_forecast(api_endpoint, model_label, year, month):
     response = requests.post(
-        f"{api_url}/{api_endpoint}", 
+        f"{deployment_url2}/{api_endpoint}", 
         headers={'Content-Type': 'application/json'},
         data=json.dumps({"year": year, "month": month})
     )
