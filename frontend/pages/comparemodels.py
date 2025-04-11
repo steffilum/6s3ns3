@@ -23,7 +23,7 @@ test_csv_path = os.path.join(project_root, 'Components', 'Predictions', 'test.cs
 dash.register_page(__name__, path="/comparemodels", name="Compare Models")
 
 #Link to backend server
-api_url = "http://127.0.0.1:5000"
+deployment_url = 'https://sixs3ns3-backend-test.onrender.com/' #for deployment
 
 # ---------------------
 # DATA FETCHING AND MODEL GENERATING FUNCTIONS 
@@ -31,7 +31,7 @@ api_url = "http://127.0.0.1:5000"
 
 def generate_model_figure_and_forecast(api_endpoint, model_label, year, month):
     response = requests.post(
-        f"{api_url}/{api_endpoint}", 
+        f"{deployment_url}/{api_endpoint}", 
         headers={'Content-Type': 'application/json'},
         data=json.dumps({"year": year, "month": month})
     )
@@ -420,8 +420,8 @@ def compute_dm_test(model1_name, model2_name):
         stat, p, se, mean = dm_test(test, pred1, pred2)
         
         # Determine colors based on values
-        dm_color = "orange" if stat > 0 else "rebeccapurple"
-        p_color = "red" if p < 0.1 else "blue"
+        dm_color = "rgb(255, 153, 51)" if stat > 0 else "rgb(255,204,51)" 
+        p_color = "rgb(255,182,193)" if p < 0.1 else "rgb(33, 158, 188)" 
 
         # Build the text for the DM Test Results
         dm_result_components = [
@@ -445,48 +445,66 @@ def compute_dm_test(model1_name, model2_name):
 
     # Determine the DM test result conclusion based on stat and p
     if stat > 0:
-        # For stat > 0, model1 is better than model2.
-        model1_display = html.Span(f'{model_labels.get(model1_name, model1_name)} is better', style={"color": "darkorange"})
-        model2_display = html.Span(model_labels.get(model2_name, model2_name), style={"color": "white"})
+        # For stat > 0, model2 is better than model1.
+        model1_display = html.Span(model_labels.get(model1_name, model1_name), style={"color": "white"})
+        model2_display = html.Span(f'{model_labels.get(model2_name, model2_name)} is better', style={"color": dm_color})
         
         # Set the significance text and color based on p
         if p < 0.1:
-            significance_text = html.Span("with", style={"color": "red"})
-        else:
-            significance_text = html.Span("without", style={"color": "blue"})
-        
-        conclusion_text = html.Div(
+            significance_text = html.Span("is with", style={"color": "rgb(255,182,193)"})
+            conclusion_text = html.Div(
             [
-                model1_display,
-                " than ",
                 model2_display,
-                " ",
+                " than ",
+                model1_display,
+                ".",
+                " This ",
                 significance_text,
-                " statistical significance"
-            ],
-            style={"color": "white", "fontSize": "20px", "fontWeight": "bold"}
-        )
+                " statistical significance."
+            ], style={"color": "white", "fontSize": "20px", "fontWeight": "bold"})
+        else:
+            significance_text = html.Span("may not be with", style={"color": "rgb(33, 158, 188)"})
+            conclusion_text = html.Div(
+            [
+                model2_display,
+                " than ",
+                model1_display,
+                ".",
+                " However, this ",
+                significance_text,
+                " statistical significance."
+            ], style={"color": "white", "fontSize": "20px", "fontWeight": "bold"})
+
     elif stat < 0:
-        # For stat < 0, model2 is better than model1.
-        model1_display = html.Span(model_labels.get(model1_name, model1_name), style={"color": "white"})
-        model2_display = html.Span(f'{model_labels.get(model2_name, model2_name)} is better', style={"color": "rebeccapurple"})
+        # For stat < 0, model1 is better than model2.
+        model1_display = html.Span(f'{model_labels.get(model1_name, model1_name)} is better', style={"color": dm_color})
+        model2_display = html.Span(model_labels.get(model2_name, model2_name), style={"color": "white"})
         
         if p < 0.1:
-            significance_text = html.Span("with", style={"color": "red"})
-        else:
-            significance_text = html.Span("without", style={"color": "blue"})
-        
-        conclusion_text = html.Div(
+            significance_text = html.Span("is with", style={"color": "rgb(255,182,193)"})
+            conclusion_text = html.Div(
             [
-                model2_display,
-                " than ",
                 model1_display,
-                " ",
+                " than ",
+                model2_display,
+                ".",
+                " This ",
                 significance_text,
-                " statistical significance"
-            ],
-            style={"color": "white", "fontSize": "20px", "fontWeight": "bold"}
-        )
+                " statistical significance."
+            ], style={"color": "white", "fontSize": "20px", "fontWeight": "bold"})
+        else:
+            significance_text = html.Span("may not be with", style={"color": "rgb(33, 158, 188)"})
+            conclusion_text = html.Div(
+            [
+                model1_display,
+                " than ",
+                model2_display,
+                ".",
+                " However, this ",
+                significance_text,
+                " statistical significance."
+            ], style={"color": "white", "fontSize": "20px", "fontWeight": "bold"})
+            
     else:
         conclusion_text = html.Div("No significant difference between models.", 
                                 style={"color": "white", "fontSize": "20px", "fontWeight": "bold"})
