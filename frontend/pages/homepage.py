@@ -145,7 +145,7 @@ homepage_content = html.Div(
                             "borderRadius": "8px"
                         }
                     ),
-                    href="/model4",  
+                    href="/Bridge",  
                     style={
                         "position": "absolute",
                         "top": "70px",
