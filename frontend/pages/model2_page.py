@@ -13,7 +13,7 @@ import plotly.graph_objects as go
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
 # Register the Model 2 page
-dash.register_page(__name__, path="/model2", name="Model 2")
+dash.register_page(__name__, path="/ARFT04", name="ARFT04")
 
 # Sample data for the graph
 # years = [f"{year}Q{q}" for year in range(1950, 2026) for q in range(1, 5)]
