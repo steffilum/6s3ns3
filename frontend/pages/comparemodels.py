@@ -25,6 +25,10 @@ dash.register_page(__name__, path="/comparemodels", name="Compare Models")
 #Link to backend server
 deployment_url = 'https://sixs3ns3-backend-test.onrender.com/' #for deployment
 
+# Link to local server
+api_url = 'http://127.0.0.1:5000/'
+
+
 # ---------------------
 # DATA FETCHING AND MODEL GENERATING FUNCTIONS 
 # ---------------------
