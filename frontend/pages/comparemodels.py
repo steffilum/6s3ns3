@@ -269,7 +269,23 @@ style={
         'marginRight': '50px'
    })
 
-layout = get_default_layout(main_content= comparemodels_content)
+# Wrap the entire page content in a loading indicator
+loading_content = html.Div(
+    dcc.Loading(
+        id="page-loading",
+        type="circle",  
+        children=comparemodels_content, 
+        style={
+            "display": "flex",
+            "justifyContent": "center",
+            "alignItems": "center",
+            "height": "100vh" 
+        }
+
+    )
+)
+
+layout = get_default_layout(main_content= loading_content)
 
 # ---------------------
 # CALLBACKS
