@@ -145,7 +145,7 @@ homepage_content = html.Div(
                             "borderRadius": "8px"
                         }
                     ),
-                    href="/model3",  
+                    href="/model4",  
                     style={
                         "position": "absolute",
                         "top": "70px",
@@ -220,7 +220,7 @@ def update_all(selected_year, selected_month):
 
     # --------------------------- INTEGRATION CODE --------------------------------------
     
-    response = requests.post(f"{api_url}/midas_model_prediction", 
+    response = requests.post(f"{api_url}/bridge_model_prediction", 
                              headers = {'Content-Type': 'application/json'}, 
                              data = json.dumps({"year": selected_year, "month": selected_month}))
     data = response.json()

@@ -13,6 +13,8 @@ def bridge_model_prediction_df(date):
 
     start_of_this_quarter_date = pd.Period(date, freq='Q').start_time
     predicted_values = pd.concat([model.fittedvalues, pd.Series(model.predict(X_test)[0], index = [start_of_this_quarter_date])]).to_frame().rename(columns = {0: "Predicted GDP"})
+    if pd.Timestamp(date) == start_of_this_quarter_date:
+        y.iloc[-1] = np.nan
     y = y.to_frame().rename(columns = {0: "Actual GDP", "pct_chg": "Actual GDP"})
     df = pd.concat([y, predicted_values], axis = 1)
     df.index = pd.to_datetime(df.index).to_period('Q')
