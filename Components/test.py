@@ -1,8 +1,9 @@
 from package_imports import *
+from data_load import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
-# given_date = "2020-03-01"
+given_date = "2020-03-01"
 
 # date = pd.to_datetime(given_date)
 
@@ -58,4 +59,4 @@ fred = Fred(api_key = os.getenv("API_KEY"))
 # 2019-10-01
 # 2019-12-01
 
-print(load_data_bridge("2025-04-01"))
+load_data_midas("2025-04-01")

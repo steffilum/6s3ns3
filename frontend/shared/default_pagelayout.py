@@ -78,11 +78,12 @@ def get_default_layout(main_content=None):
                     className="mega-dropdown",
                     children=[
                         html.Div("Explore Models", className="dropdown-item-normal"),
-                        dcc.Link("Model 1", href="/model1", className="dropdown-item-bold"),
-                        dcc.Link("Model 2", href="/model2", className="dropdown-item-bold"),
-                        dcc.Link("Model 3", href="/model3", className="dropdown-item-bold"),
-                        dcc.Link("Model 4", href="/model4", className="dropdown-item-bold"),
-                        dcc.Link("Compare Models", href="/comparemodels", className="dropdown-item-comparemodels")
+                        dcc.Link("Prevailing Mean Benchmark Model", href="/Mean", className="dropdown-item-bold"),
+                        dcc.Link("ARFT04 Benchmark Model", href="/ARFT04", className="dropdown-item-bold"),
+                        dcc.Link("MIDAS Model", href="/MIDAS", className="dropdown-item-bold"),
+                        dcc.Link("Bridge Model", href="/Bridge", className="dropdown-item-bold"),
+                        dcc.Link("RF Model", href="/RF", className="dropdown-item-bold"),
+                        dcc.Link("Compare Models", href="/comparemodels", className="dropdown-item-bold")
                     ]
                 )
             ),

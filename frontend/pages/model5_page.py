@@ -12,8 +12,8 @@ import os
 import plotly.graph_objects as go
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
-# Register the Model 2 page
-dash.register_page(__name__, path="/ARFT04", name="ARFT04")
+# Register the Model 5 page
+dash.register_page(__name__, path="/RF", name="RF")
 
 # Sample data for the graph
 # years = [f"{year}Q{q}" for year in range(1950, 2026) for q in range(1, 5)]
@@ -21,8 +21,8 @@ dash.register_page(__name__, path="/ARFT04", name="ARFT04")
 
 # df = pd.DataFrame({"Year": years, "Real GDP": values})
 
-# Content for Model 2 page
-model2_content = html.Div(
+# Content for Model 5 page
+model5_content = html.Div(
     id="main-content",
     style={
         "height": "100vh",           # Full height of the viewport    
@@ -31,18 +31,18 @@ model2_content = html.Div(
         "paddingBottom": "200px"        # some space at the bottom
     },     
     children=[
-        # Header "Model 2"
-        html.H1("ARFT04 Benchmark Model", style={"text-align": "center","color": "white", "marginBottom": "20px"}),
+        # Header "Model 5"
+        html.H1("Random Forest (RF) Model", style={"text-align": "center","color": "white", "marginBottom": "20px", "fontWeight": "600"}),
 
         # Graph Centered
-        dcc.Graph(id='model2-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px", "fontWeight": "600"}),
+        dcc.Graph(id='model5-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
 
         html.Br(), 
 
         # Container showing forecast value
         html.Div( children = [
            html.H1(
-                    id = 'model2-forecast-title',
+                    id = 'model5-forecast-title',
                     children = ["GDP Forecast for: "],
                     style={
                     "color": "rgba(206, 203, 203)",
@@ -52,7 +52,7 @@ model2_content = html.Div(
                     "textAlign": "center"}
             ), 
             html.H2(
-                    id = 'model2-forecast', children="", 
+                    id = 'model5-forecast', children="", 
                     style={
                     "color": "white",
                     "fontWeight": "600",
@@ -71,7 +71,7 @@ model2_content = html.Div(
             "width": "100%",
         }
         ),
-
+        
         html.Br(),
 
         # Dropdowns for year and month
@@ -84,10 +84,11 @@ model2_content = html.Div(
         # Model Description
         html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px", "fontWeight": "600"}),
 
-        html.P("This is a common benchmark used in US GDP prediction and was extensively researched by Marcellino (2014) where he compared various linear and \
-               non-linear models. The ARF in the name indicates that the model is autoregressive, T represents the addition of a trend term and 04 represents \
-               the number of lags in the AR model. As mentioned in the paper, ARFT04 has the lowest MSE in forecasting quarterly GDP(h=1, 2, 4).",
-        style={"color": "white", "width": "80%", "margin": "0 auto"}
+        html.P("RF is a supervised machine learning algorithm that creates multiple decision trees and aggregates the predictions of the trees to produce a final prediction. \
+               The number of trees was chosen by conducting an expanding window validation procedure for 30 observations prior to 2007:Q3, where our test data starts. \
+               This window was chosen due to limited data availability and to also include the 2001 recession. By training the model on past economic data, \
+               RF can learn the patterns that may not be identifiable through traditional linear regression methods.",
+        style={"color": "white", "width": "80%", "margin": "0 auto", "marginBottom": "10px"}
         )
     ]
 )
@@ -97,7 +98,7 @@ loading_content = html.Div(
     dcc.Loading(
         id="page-loading",
         type="circle",  
-        children=model2_content, 
+        children=model5_content, 
         style={
             "display": "flex",
             "justifyContent": "center",
@@ -108,7 +109,6 @@ loading_content = html.Div(
     )
 )
 
-
 # Plug that content into your default layout
 layout = get_default_layout(main_content=loading_content)
 
@@ -117,16 +117,16 @@ deployment_url2 = 'https://sixs3ns3-backend-test.onrender.com/'
 
 # Callback to update the graph
 @dash.callback(
-    Output('model2-graph', 'figure'),
-    Output('model2-forecast', 'children'),
-    Output('model2-forecast', 'style'),
-    Output('model2-forecast-title', 'children'),
+    Output('model5-graph', 'figure'),
+    Output('model5-forecast', 'children'),
+    Output('model5-forecast', 'style'),
+    Output('model5-forecast-title', 'children'),
     [Input('year-dropdown', 'value'),
      Input('month-dropdown', 'value')]
 )
 def update_graph(year, month):
     ## DO NOT DELETE -- CODE FOR INTEGRATION
-    response = requests.post(f"{api_url}/arft04_model_prediction", 
+    response = requests.post(f"{api_url}/rf_model_prediction", 
                              headers = {'Content-Type': 'application/json'}, 
                              data = json.dumps({"year": year, "month": month}))
     data = response.json()
@@ -134,7 +134,7 @@ def update_graph(year, month):
     data = data.reset_index().rename(columns = {"index": "Quarter"})
     data = data[data["Quarter"].str[:4].astype(int) >= 2000] # show from 2000 onwards
     selected_date = f"{month} {year}"
-    
+
     fig = px.line(data, 
                   x = "Quarter", 
                   y = "Predicted GDP", 
@@ -196,10 +196,6 @@ def update_graph(year, month):
     
     
     return fig, forecast_value, forecast_style, forecast_title
-    # ## Tentative Graph Plotting Code
-
-    # fig = px.line(pd.DataFrame.from_dict(data), x = "quarters", y = "pct_chg", color = "Indicator", title = "Real GDP Percentage Change Over Time")
-    # return fig
 
     # # Create a target year from the selected year and month
     # target_year = f"{year}Q{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].index(month) + 1}"
