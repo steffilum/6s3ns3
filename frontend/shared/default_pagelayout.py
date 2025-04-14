@@ -46,7 +46,7 @@ def get_default_layout(main_content=None):
                 },
                 children=[
                     html.Div([
-                        dcc.Link("6SENS3", href='/', className="logo-clickable", style={
+                        dcc.Link("6S3NS3", href='/', className="logo-clickable", style={
                             "fontWeight": "800",
                             "fontSize": "32px",
                             "textDecoration": "none",
