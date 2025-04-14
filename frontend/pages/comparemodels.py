@@ -1,5 +1,6 @@
 import dash
 from dash import html, dcc, Input, Output
+import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
@@ -13,6 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.
 from Components.package_imports import *
 from shared.default_pagelayout import get_default_layout
 from shared.myear_dropdown import myear_dropdown
+from datetime import datetime
 
 import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -189,6 +191,19 @@ comparemodels_content = html.Div(id="main-content",children=[
         'alignItems': 'center'
     }),
 
+    dbc.Toast(
+            id='error6',
+            header="Error",
+            is_open=False,
+            duration=4000,  
+            dismissable=True,
+            style={
+                "zIndex": 1000,
+                "backgroundColor": "rgba(255, 0, 0, 0.8)",
+                "color": "white"
+            }
+        ),
+
     html.Br(),
 
     html.Div([
@@ -301,12 +316,28 @@ layout = get_default_layout(main_content= loading_content)
 # Callback for Model 1: Update graph and forecast with date filtering
 @dash.callback(
    [Output('graph_1', 'figure'),
-    Output('forecast_output_1', 'children')],
+    Output('forecast_output_1', 'children'),
+    Output('error6', 'children'),
+    Output('error6', 'is_open')],
    [Input('model_title1', 'value'),
     Input('year-dropdown', 'value'),
     Input('month-dropdown', 'value')]
 )
 def update_graph_and_forecast_1(model_name, year, month):
+    current = datetime.now()
+    current_year = current.year
+    current_month_abbr = current.strftime("%b")
+    
+    # Convert selected values from dropdown
+    selected_year_int = int(year)
+    selected_month_int = datetime.strptime(month, "%b").month
+    current_month_int = datetime.strptime(current_month_abbr, "%b").month
+
+     # If selected date is in the future
+    if selected_year_int > current_year or (selected_year_int == current_year and selected_month_int > current_month_int):
+        error_toast_msg = f"⚠ Please select a date on or before {current_month_abbr} {current_year}."
+        return (dash.no_update, dash.no_update, error_toast_msg, True)
+
     if model_name and year and month:
         # Choose which model function to call based on model_name
         if model_name == "Model 1":
@@ -322,8 +353,13 @@ def update_graph_and_forecast_1(model_name, year, month):
         else:
             fig = go.Figure()
             forecast_text = ""
-        return fig, forecast_text
-    return {}, ""
+        return fig, forecast_text, "", False
+    return (
+        dash.no_update,            
+        forecast_text,
+        "",           
+        False                     
+    )
 
 
 # Callback for Model 2: Update graph and forecast with date filtering
@@ -335,6 +371,19 @@ def update_graph_and_forecast_1(model_name, year, month):
     Input('month-dropdown', 'value')]
 )
 def update_graph_and_forecast_2(model_name, year, month):
+    current = datetime.now()
+    current_year = current.year
+    current_month_abbr = current.strftime("%b")
+    
+    # Convert selected values from dropdown
+    selected_year_int = int(year)
+    selected_month_int = datetime.strptime(month, "%b").month
+    current_month_int = datetime.strptime(current_month_abbr, "%b").month
+
+     # If selected date is in the future
+    if selected_year_int > current_year or (selected_year_int == current_year and selected_month_int > current_month_int):
+        return (dash.no_update, dash.no_update)
+
     if model_name and year and month:
         # Choose which model function to call based on model_name
         if model_name == "Model 1":

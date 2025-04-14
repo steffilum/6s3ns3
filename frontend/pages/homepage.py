@@ -15,6 +15,7 @@ import requests
 from Components.package_imports import *
 import plotly.express as px
 import plotly.graph_objects as go
+from datetime import datetime
 
 # Set working directory to current file location
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -178,7 +179,23 @@ homepage_content = html.Div(
             children=[
                 myear_dropdown()
     ]
-)
+), 
+    # Add notification toast for invalid date selection
+        dbc.Toast(
+            id='home-error',
+            header="Error",
+            is_open=False,
+            duration=4000,  
+            dismissable=True,
+            style={
+                "position": "absolute",
+                "top": "470px",
+                "left": "700px",
+                "zIndex": 1000,
+                "backgroundColor": "rgba(255, 0, 0, 0.8)",
+                "color": "white"
+            }
+        )
     ]
 )
 
@@ -211,6 +228,8 @@ deployment_url2 = 'https://sixs3ns3-backend-test.onrender.com/' # For deployment
     Output('gdp-forecast', 'style'),
     Output('gdp-forecast-graph', 'figure'),
     Output('gdp-forecast-title', 'children'),
+    Output('home-error', 'children'),
+    Output('home-error', 'is_open'),
     Input('year-dropdown', 'value'),
     Input('month-dropdown', 'value')
 )
@@ -218,18 +237,18 @@ deployment_url2 = 'https://sixs3ns3-backend-test.onrender.com/' # For deployment
 
 def update_all(selected_year, selected_month):
 
-    # --------------------------- INTEGRATION CODE --------------------------------------
-    
-    response = requests.post(f"{deployment_url2}/bridge_model_prediction", 
-                             headers = {'Content-Type': 'application/json'}, 
-                             data = json.dumps({"year": selected_year, "month": selected_month}))
-    data = response.json()
-    data = pd.DataFrame.from_dict(data)
-    data = data.reset_index().rename(columns = {"index": "Quarter"})
-    data = data[data["Quarter"].str[:4].astype(int) >= 2000]
-    # print(data)
-    selected_date = f"{selected_month} {selected_year}"
+    # Get current date
+    current = datetime.now()
+    current_year = current.year
+    current_month_abbr = current.strftime("%b")
 
+    # Convert selected values from dropdown
+    selected_year_int = int(selected_year)
+    selected_month_int = datetime.strptime(selected_month, "%b").month
+    current_month_int = datetime.strptime(current_month_abbr, "%b").month
+
+    # Default Display text 
+    selected_date = f"{selected_month} {selected_year}"
     display_text = html.Span([
         html.Span("Selected Time: ", style={"color": "grey"}),
         html.Span(selected_date, style={"color": "white", "fontWeight": "700"})
@@ -241,96 +260,68 @@ def update_all(selected_year, selected_month):
         "fontSize": "28px",
         "fontFamily": "Montserrat, sans-serif"
     }
-    
-    value = data["Predicted GDP"].iloc[-1] ## get predicted GDP for the quarter of the selected date
-    value = round(value, 3)
+
+    # If selected date is in the future
+    if selected_year_int > current_year or (selected_year_int == current_year and selected_month_int > current_month_int):
+        error_toast_msg = f"⚠ Please select a date on or before {current_month_abbr} {current_year}."
+        forecast_title = f"Forecast Unavailable"
+        return (
+            display_text,
+            "-",
+            base_style,
+            dash.no_update,
+            forecast_title,
+            error_toast_msg,  
+            True             
+        )
+
+    # ---- If valid date, fetch data from backend ----
+    response = requests.post(
+        f"{deployment_url2}/bridge_model_prediction",
+        headers={'Content-Type': 'application/json'},
+        data=json.dumps({"year": selected_year, "month": selected_month})
+    )
+
+    data = response.json()
+    data = pd.DataFrame.from_dict(data).reset_index().rename(columns={"index": "Quarter"})
+    data = data[data["Quarter"].str[:4].astype(int) >= 2000]
+
+    value = round(data["Predicted GDP"].iloc[-1], 3)
     if value < 0:
-        forecast_value = f"{value:.3f}%"
         forecast_style = {**base_style, "color": "red"}
     elif value > 0:
-        forecast_value = f"{value:.3f}%"
         forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
     else:
-        forecast_value = f"{value:.3f}%"
         forecast_style = {**base_style, "color": "white"}
     
-    fig = px.line(data, 
-                  x = "Quarter", 
-                  y = "Predicted GDP", 
-                  title = f"Forecast GDP Growth Rate",
-                  labels = {"Predicted GDP": "GDP Growth Rate (%)", "Quarter": "Year"}, 
-                  template = "plotly_dark")
-    
-    # Force a legend entry for the first trace
+    forecast_value = f"{value:.3f}%"
+
+    fig = px.line(data, x="Quarter", y="Predicted GDP",
+                  title="Forecast GDP Growth Rate",
+                  labels={"Predicted GDP": "GDP Growth Rate (%)", "Quarter": "Year"},
+                  template="plotly_dark")
     fig.data[0].name = "Predicted GDP"
-    fig.data[0].showlegend = True           
-    
-    # Add the actual GDP line as a dotted orange line.
+    fig.data[0].showlegend = True
+
     fig.add_trace(go.Scatter(
         x=data["Quarter"],
         y=data["Actual GDP"],
         mode="lines",
         name="Actual GDP",
-        line=dict(
-            color="orange"
+        line=dict(color="orange")
     ))
-    )
 
-    
     fig.update_layout(
         showlegend=True,
-        paper_bgcolor='rgba(0,0,0,0)', 
-        plot_bgcolor='rgba(0,0,0,0)',   
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
         margin=dict(l=0, r=0, t=50, b=50),
-        title = {
+        title={
             "text": f"GDP Growth Rate up till {selected_date}",
-            "font": {
-                "color": "grey",
-                "family": "Montserrat, sans-serif"
-            }
+            "font": {"color": "grey", "family": "Montserrat, sans-serif"}
         }
-        # xaxis=dict(range = [data["Quarter"].iloc[68], data["Quarter"].iloc[-1]])
     )
- 
+
     forecast_title = f"Forecast for {data['Quarter'].iloc[-1]}"
 
-    return display_text, forecast_value, forecast_style, fig, forecast_title
-
-    ## --------------------- INTEGRATION CODE --------------------------------------------
-
-    # # Combine selected month and year into a single date string.
-    # selected_date = f"{selected_month} {selected_year}"
-    
-    # # Build display text.
-    # display_text = html.Span([
-    #     html.Span("Selected Time: ", style={"color": "grey"}),
-    #     html.Span(selected_date, style={"color": "white", "fontWeight": "700"})
-    # ])
-    
-    # # Base style for the forecast text.
-    # base_style = {
-    #     "color": "grey",
-    #     "fontWeight": "600",
-    #     "fontSize": "28px",
-    #     "fontFamily": "Montserrat, sans-serif"
-    # }
-    
-    # # Get forecast value using the combined date string.
-    # value = get_forecast(selected_date)
-    # if value < 0:
-    #     forecast_value = f"{value:.3f}%"
-    #     forecast_style = {**base_style, "color": "red"}
-    # elif value > 0:
-    #     forecast_value = f"{value:.3f}%"
-    #     forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
-    # else:
-    #     forecast_value = f"{value:.3f}%"
-    #     forecast_style = {**base_style, "color": "white"}
-    
-    # # Update the forecast graph.
-    # figure = get_forecast_graph(selected_date)
-    
-    # # Update the title.
-    # forecast_title = f"GDP Forecast for {get_quarter(selected_date)}:"
-    
-    # return display_text, forecast_value, forecast_style, figure, forecast_title
+    return display_text, forecast_value, forecast_style, fig, forecast_title, "", False
