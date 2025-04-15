@@ -1,4 +1,5 @@
 from package_imports import *
+from data_load import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
@@ -58,4 +59,7 @@ fred = Fred(api_key = os.getenv("API_KEY"))
 # 2019-10-01
 # 2019-12-01
 
-print(load_data_bridge("2025-04-01"))
+# print(load_data_bridge("2025-04-01"))
+
+
+print(load_data_bridge("2025-04-01")[0].mean(axis = 0))
