@@ -7,7 +7,7 @@ team_members = [
     {"name": "Shani Hiew", "title": "Front-End", "img": "/assets/pictures/shani.jpg"},
     {"name": "Steffi Lum", "title": "Front-End", "img": "/assets/pictures/steffi.JPG"},
     {"name": "Josiah Lee", "title": "Back-End", "img": "/assets/pictures/josiah.jpeg"},
-    {"name": "Quek Hong Rui", "title": "Back-End", "img": "/assets/pictures/member5.jpg"},
+    {"name": "Quek Hong Rui", "title": "Back-End", "img": "/assets/pictures/hongrui.jpg"},
     {"name": "Riley Teo", "title": "Back-End", "img": "/assets/pictures/riley.jpg"},
 ]
 
