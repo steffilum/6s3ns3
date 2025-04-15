@@ -1,4 +1,4 @@
-from package_imports import *
+from .package_imports import *
 
 # takes in the given dates and return values up to the date if have if not predict
 #takes in given date and period, so 'Q' or 'M' for bridge or midas
@@ -216,10 +216,12 @@ def sahms(date = "2020-01-01", period = 'Q'):
 
 
 def load_data_bridge(given_date = "2020-01-01"):
-    file = f'Components/test_data_bridge/data_iteration_{given_date}.pkl'
+    root_dir = os.path.abspath(os.getcwd())
+    file = os.path.join(root_dir, "Components", "test_data_bridge", f"data_iteration_{given_date}.pkl")
+    # file = f'Components/test_data_bridge/data_iteration_{given_date}.pkl'
     if os.path.exists(file):
         with open(file, 'rb') as f:
-            print("Bridge Data Loaded") 
+            print("Bridge Data Loaded")
             return pickle.load(f)        
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("GDP", given_date, fred)
@@ -251,7 +253,7 @@ def load_data_bridge(given_date = "2020-01-01"):
     #diff from midas due to aggregation of data
     df = df[df.index>="1993-01-01"]
     print("Bridge Data Loaded") 
-    with open(f'Components/test_data_bridge/data_iteration_{given_date}.pkl', 'wb') as f:
+    with open(file, 'wb') as f:
         pickle.dump((compiled, df), f)
     return compiled, df
 
@@ -303,7 +305,9 @@ def load_data_rf_monthly(given_date = "2020-01-01"):
     return X, y 
 
 def load_data_midas(given_date = "2020-01-01"):
-    file = f'Components/test_data_midas/data_iteration_{given_date}.pkl'
+    root_dir = os.path.abspath(os.getcwd())    
+    file = os.path.join(root_dir, "Components", "test_data_midas", f"data_iteration_{given_date}.pkl")
+    # file = f'Components/test_data_midas/data_iteration_{given_date}.pkl'
     if os.path.exists(file):
         with open(file, 'rb') as f:
             print("MIDAS Data Loaded") 
@@ -344,7 +348,7 @@ def load_data_midas(given_date = "2020-01-01"):
     compiled.columns.values[-2:] = ['Defence', 'Lag_GDP']
     df = df[df.index>="1993-04-01"]
     print("MIDAS data Loaded")  
-    with open(f'Components/test_data_midas/data_iteration_{given_date}.pkl', 'wb') as f:
+    with open(file, 'wb') as f:
         pickle.dump((compiled, df), f)
     return compiled, df
 

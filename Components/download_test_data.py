@@ -14,6 +14,8 @@ for index in range(1, 304):
 #     new_date = date - pd.DateOffset(months=3*index)
 #     new_date_str = new_date.strftime('%Y-%m-%d')
 #     X_train, y_train = load_data_bridge_nohouse(new_date_str)
+#     with open(f'Components/test_data_bridge_nohouse/data_iteration_{new_date_str}.pkl', 'wb') as f:
+#         pickle.dump((X_train, y_train), f)
 
 
 # with open('Components/test_data_midas/data_iteration_2019-09-01.pkl', 'rb') as f:

@@ -38,7 +38,7 @@ for index in range(1, 51):
     new_date_str = new_date.strftime('%Y-%m-%d')
     with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'rb') as f:
         X_train, y_train = pickle.load(f)
-    X_train = X_train.drop("SAHM", axis = 1)
+    # X_train = X_train.drop("SAHM", axis = 1)
     X_train = sm.add_constant(X_train)    
     X_test = X_train.iloc[-1, :]
     X_train = X_train.iloc[:-1, :]
