@@ -1,11 +1,11 @@
 from Components.package_imports import *
-from Components.data_load import load_data_bridge
+from Components.data_load import load_data_bridge_nohouse
 import os
 import certifi
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
 def bridge_model_prediction_df(date):
-    X, y = load_data_bridge(date)
+    X, y = load_data_bridge_nohouse(date)
     X_= sm.add_constant(X)    
     X_test = X.iloc[-1, :]
     X_train = X.iloc[:-1, :]

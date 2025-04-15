@@ -1,6 +1,6 @@
 from data_load import *
 
-given_date = "2025-03-01"
+given_date = "2020-03-01"
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
@@ -12,9 +12,8 @@ print(df)
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
-X, y = load_data_bridge(given_date=given_date)
+X, y = load_data_bridge_nohouse(given_date=given_date)
 # X, _, y, _ = train_test_split(X.iloc[:-1, :], y, test_size=50, shuffle=False)
-X['Housing_Start'] = quart_pct_chg_housing_units_started(given_date)
 
 vif_data = pd.DataFrame()
 vif_data["Feature"] = X.columns
@@ -32,28 +31,28 @@ condition_number = np.linalg.cond(X.values)
 print(f"Condition number: {condition_number}")
 
 # Evaluation on test set
-# pred = []
-# for index in range(1, 51):
-#     date = pd.to_datetime(given_date)
-#     new_date = date - pd.DateOffset(months=3*index)
-#     new_date_str = new_date.strftime('%Y-%m-%d')
-#     with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'rb') as f:
-#         X_train, y_train = pickle.load(f)
-#     # X_train = X_train.drop("SAHM", axis = 1)
-#     X_train = sm.add_constant(X_train)    
-#     X_test = X_train.iloc[-1, :]
-#     X_train = X_train.iloc[:-1, :]
-#     model = sm.OLS(y_train, X_train).fit()
-#     pred.append(model.predict(X_test)[0])
-#     print(f"Iteration {index}")
+pred = []
+for index in range(1, 51):
+    date = pd.to_datetime(given_date)
+    new_date = date - pd.DateOffset(months=3*index)
+    new_date_str = new_date.strftime('%Y-%m-%d')
+    with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'rb') as f:
+        X_train, y_train = pickle.load(f)
+    # X_train = X_train.drop("SAHM", axis = 1)
+    X_train = sm.add_constant(X_train)    
+    X_test = X_train.iloc[-1, :]
+    X_train = X_train.iloc[:-1, :]
+    model = sm.OLS(y_train, X_train).fit()
+    pred.append(model.predict(X_test)[0])
+    print(f"Iteration {index}")
 
-# pred.reverse()
+pred.reverse()
 
-# pred = pd.Series(pred, index = test.index)
+pred = pd.Series(pred, index = test.index)
 
-#evaluation
-# eval(pred, test)
-# print(pred, test)
+# evaluation
+eval(pred, test)
+print(pred, test)
 
 # pred.to_csv('Components/Predictions/model1.csv')
 
