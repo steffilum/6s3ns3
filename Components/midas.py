@@ -11,7 +11,7 @@ df = df.pct_chg
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
-X, y = load_data_midas(given_date=given_date)
+# X, y = load_data_midas(given_date=given_date)
 
 # vif_data = pd.DataFrame()
 # vif_data["Feature"] = X.columns
@@ -35,7 +35,7 @@ for index in range(1, 51):
     new_date_str = new_date.strftime('%Y-%m-%d')
     with open(f'Components/test_data_midas/data_iteration_{new_date_str}.pkl', 'rb') as f:
         X_train, y_train = pickle.load(f)
-    X_train = X_train.drop(["SAHM_m1", "SAHM_m2", "SAHM_m3"], axis = 1)
+    # X_train = X_train.drop(["SAHM_m1", "SAHM_m2", "SAHM_m3"], axis = 1)
     X_train = sm.add_constant(X_train)    
     X_test = X_train.iloc[-1, :]
     X_train = X_train.iloc[:-1, :]
@@ -53,8 +53,8 @@ print(pred, test)
 
 # pred.to_csv('Components/Predictions/midas.csv')
 
-model = sm.OLS(y, X.iloc[:-1, :]).fit()
-print(model.summary())
-print(model.predict(X.iloc[:-1, :])[0])
-residuals = model.resid
-print(X.iloc[:-1, :].apply(lambda x: x.corr(residuals)))
+# model = sm.OLS(y, X.iloc[:-1, :]).fit()
+# print(model.summary())
+# print(model.predict(X.iloc[:-1, :])[0])
+# residuals = model.resid
+# print(X.iloc[:-1, :].apply(lambda x: x.corr(residuals)))
