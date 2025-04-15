@@ -51,6 +51,7 @@ for index in range(1, 51):
     new_date_str = new_date.strftime('%Y-%m-%d')
     with open(f'Components/test_data_bridge/data_iteration_{new_date_str}.pkl', 'rb') as f:
         X_train, y_train = pickle.load(f)
+    # X_train = X_train.drop("SAHM", axis = 1)
     X_train = X_train.iloc[:-1, :]
     X_validate = X_train.iloc[-1, :].values.reshape(1, -1) 
     regressor = RandomForestRegressor(n_estimators=500, n_jobs=4)
@@ -64,6 +65,7 @@ pred = pd.Series(pred, index = test.index)
 
 
 #evaluation
-eval(pred, test)
+# eval(pred, test, False)
+print(pred, test)
 
 # pred.to_csv('Components/Predictions/rf_bridge.csv')

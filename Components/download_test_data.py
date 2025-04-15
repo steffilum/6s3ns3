@@ -3,11 +3,11 @@ from data_load import *
 
 given_date = "2025-04-01"
 
-for index in range(1, 304):
-    date = pd.to_datetime(given_date)
-    new_date = date - pd.DateOffset(months=index)
-    new_date_str = new_date.strftime('%Y-%m-%d')
-    X_train, y_train = load_data_midas(new_date_str)
+# for index in range(1, 304):
+#     date = pd.to_datetime(given_date)
+#     new_date = date - pd.DateOffset(months=index)
+#     new_date_str = new_date.strftime('%Y-%m-%d')
+#     X_train, y_train = load_data_midas(new_date_str)
 
 # for index in range(1, 51):
 #     date = pd.to_datetime(given_date)
@@ -26,16 +26,18 @@ for index in range(1, 304):
 #     df, series = pickle.load(f)
 # print(df.columns)
 
-# folder_path = 'Components/test_data_midas'
-# new_path = 'Components/test_data_midas_nohouse'
+folder_path = 'Components/test_data_bridge'
+new_path = 'Components/test_data_bridge_nohouse'
 
-# for filename in os.listdir(folder_path):
-#     filepath = os.path.join(folder_path, filename)
-#     with open(filepath, 'rb') as f:
-#         df, series = pickle.load(f)
-#         df = df.drop("Housing_Start_m1", axis = 1)
-#         df = df.drop("Housing_Start_m2", axis = 1)
-#         df = df.drop("Housing_Start_m3", axis = 1)
-#     filepath = os.path.join(new_path, filename)
-#     with open(filepath, 'wb') as f:
-#         pickle.dump((df, series), f)
+for filename in os.listdir(folder_path):
+    filepath = os.path.join(folder_path, filename)
+    with open(filepath, 'rb') as f:
+        df, series = pickle.load(f)
+        df = df.drop("Housing_Start", axis = 1)
+    filepath = os.path.join(new_path, filename)
+    with open(filepath, 'wb') as f:
+        pickle.dump((df, series), f)
+
+# with open('Components/test_data_bridge_nohouse/data_iteration_2025-04-01.pkl', 'rb') as f:
+#     df, series = pickle.load(f)
+# print(df)

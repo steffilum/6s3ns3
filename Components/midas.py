@@ -1,6 +1,6 @@
 from data_load import *
 
-given_date = "2020-03-01"
+given_date = "2025-03-01"
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
@@ -43,12 +43,13 @@ for index in range(1, 51):
     pred.append(model.predict(X_test)[0])
     print(f"Iteration {index}: {new_date_str}")
 
-# pred.reverse()
+pred.reverse()
 
-# pred = pd.Series(pred, index = test.index)
+pred = pd.Series(pred, index = test.index)
 
 #evaluation
-eval(pred, test)
+# eval(pred, test)
+print(pred, test)
 
 # pred.to_csv('Components/Predictions/midas.csv')
 

@@ -1,6 +1,6 @@
 from data_load import *
 
-given_date = "2020-03-01"
+given_date = "2025-03-01"
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
@@ -78,10 +78,11 @@ eval(pred, test)
 
 # pred.to_csv('Components/Predictions/model1_EN.csv')
 
-# model = ElasticNet(alpha=.1, l1_ratio=.9)
-# model.fit(X.iloc[:-1, :], y)
-# coef_df = pd.DataFrame({
-#     "Feature": X.iloc[:-1, :].columns,  # Get feature names
-#     "Coefficient": model.coef_   # Get coefficients
-# })
-# print(coef_df)
+X = sm.add_constant(X)  
+model = ElasticNet(alpha=.1, l1_ratio=.5)
+model.fit(X.iloc[:-1, :], y)
+coef_df = pd.DataFrame({
+    "Feature": X.iloc[:-1, :].columns,  # Get feature names
+    "Coefficient": model.coef_   # Get coefficients
+})
+print(coef_df)

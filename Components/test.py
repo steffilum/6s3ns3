@@ -59,4 +59,7 @@ given_date = "2020-03-01"
 # 2019-10-01
 # 2019-12-01
 
-print(load_data_bridge("2025-04-01"))
+# print(load_data_bridge("2025-04-01"))
+
+
+print(load_data_bridge("2025-04-01")[0].mean(axis = 0))
