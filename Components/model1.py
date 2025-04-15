@@ -12,9 +12,8 @@ print(df)
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
-X, y = load_data_bridge(given_date=given_date)
+X, y = load_data_bridge_nohouse(given_date=given_date)
 # X, _, y, _ = train_test_split(X.iloc[:-1, :], y, test_size=50, shuffle=False)
-X['Housing_Start'] = quart_pct_chg_housing_units_started(given_date)
 
 vif_data = pd.DataFrame()
 vif_data["Feature"] = X.columns
