@@ -13,8 +13,8 @@ import plotly.graph_objects as go
 from datetime import datetime
 os.environ['SSL_CERT_FILE'] = certifi.where()
 
-# Register the Model 1 page
-dash.register_page(__name__, path="/Mean", name="Mean")
+# Register the Model 5 page
+dash.register_page(__name__, path="/RF", name="RF")
 
 # Sample data for the graph
 # years = [f"{year}Q{q}" for year in range(1950, 2026) for q in range(1, 5)]
@@ -22,8 +22,8 @@ dash.register_page(__name__, path="/Mean", name="Mean")
 
 # df = pd.DataFrame({"Year": years, "Real GDP": values})
 
-# Content for Model 1 page
-model1_content = html.Div(
+# Content for Model 5 page
+model5_content = html.Div(
     id="main-content",
     style={
         "height": "100vh",           # Full height of the viewport    
@@ -32,18 +32,18 @@ model1_content = html.Div(
         "paddingBottom": "200px"        # some space at the bottom
     },     
     children=[
-        # Header "Model 1"
-        html.H1("Prevailing Mean Benchmark Model", style={"text-align": "center","color": "white", "marginBottom": "20px", "fontWeight": "600"}),
+        # Header "Model 5"
+        html.H1("Random Forest (RF) Model", style={"text-align": "center","color": "white", "marginBottom": "20px", "fontWeight": "600"}),
 
         # Graph Centered
-        dcc.Graph(id='model1-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
+        dcc.Graph(id='model5-graph', style={"text-align": "center", "width": "80%", "margin": "0 auto", "height": "500px"}),
 
         html.Br(), 
 
         # Container showing forecast value
         html.Div( children = [
            html.H1(
-                    id = 'model1-forecast-title',
+                    id = 'model5-forecast-title',
                     children = ["GDP Forecast for: "],
                     style={
                     "color": "rgba(206, 203, 203)",
@@ -53,7 +53,7 @@ model1_content = html.Div(
                     "textAlign": "center"}
             ), 
             html.H2(
-                    id = 'model1-forecast', children="", 
+                    id = 'model5-forecast', children="", 
                     style={
                     "color": "white",
                     "fontWeight": "600",
@@ -83,7 +83,7 @@ model1_content = html.Div(
         # Add notification for invalid date
         html.Div( children = [
             dbc.Toast(
-            id='error1',
+            id='error5',
             header="Error",
             is_open=False,
             duration=4000,  
@@ -104,17 +104,17 @@ model1_content = html.Div(
             "paddingTop": "20px",
         }
         ),
-        
+
         html.Br(),
 
         # Model Description
-        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px", 
-                                            "fontWeight": '600'}),
+        html.H2("Model Description", style={"text-align": "center", "color": "white", "marginTop": "30px", "fontWeight": "600"}),
 
-        html.P("This model takes the prevailing arithmetic mean of GDP for all past quarters and that would be the prediction for GDP in the next quarter. \
-               We can see that the predictions tend to fall above the real values in evaluation test data, likely due to the fact GDP growth figures are greater \
-               in periods of growth during the industrial revolution as compared to more steady growth in the 2000s. One main con of this model would be the inability to predict recessions as they are few and far between.",
-        style={"color": "lightgrey", "width": "80%", "margin": "0 auto"}
+        html.P("RF is a supervised machine learning algorithm that creates multiple decision trees and aggregates the predictions of the trees to produce a final prediction. \
+               The number of trees was chosen by conducting an expanding window validation procedure for 30 observations prior to 2007:Q3, where our test data starts. \
+               This window was chosen due to limited data availability and to also include the 2001 recession. By training the model on past economic data, \
+               RF can learn the patterns that may not be identifiable through traditional linear regression methods.",
+        style={"color": "white", "width": "80%", "margin": "0 auto", "marginBottom": "10px"}
         )
     ]
 )
@@ -124,7 +124,7 @@ loading_content = html.Div(
     dcc.Loading(
         id="page-loading",
         type="circle",  
-        children=model1_content, 
+        children=model5_content, 
         style={
             "display": "flex",
             "justifyContent": "center",
@@ -135,20 +135,20 @@ loading_content = html.Div(
     )
 )
 
-
 # Plug that content into your default layout
 layout = get_default_layout(main_content=loading_content)
+
 api_url = 'http://127.0.0.1:5000/'
 deployment_url2 = 'https://sixs3ns3-backend-test.onrender.com/' 
 
 # Callback to update the graph
 @dash.callback(
-    Output('model1-graph', 'figure'),
-    Output('model1-forecast', 'children'),
-    Output('model1-forecast', 'style'),
-    Output('model1-forecast-title', 'children'),
-    Output('error1', 'children'),
-    Output('error1', 'is_open'),
+    Output('model5-graph', 'figure'),
+    Output('model5-forecast', 'children'),
+    Output('model5-forecast', 'style'),
+    Output('model5-forecast-title', 'children'),
+    Output('error5', 'children'),
+    Output('error5', 'is_open'),
     [Input('year-dropdown', 'value'),
      Input('month-dropdown', 'value')]
 )
@@ -188,7 +188,7 @@ def update_graph(year, month):
 
     # If valid date, fetch data from backend
     response = requests.post(
-        f"{deployment_url2}/mean_model_prediction",
+        f"{deployment_url2}/rf_model_prediction",
         headers={'Content-Type': 'application/json'},
         data=json.dumps({"year": year, "month": month})
     )
@@ -234,14 +234,99 @@ def update_graph(year, month):
 
     forecast_title = f"Forecast for {data['Quarter'].iloc[-1]}"
 
-    # Return exactly 6 outputs in the valid branch:
+    
     return (
-        fig,             # model1-graph.figure
-        forecast_value,  # model1-forecast.children
-        forecast_style,  # model1-forecast.style
-        forecast_title,  # model1-forecast-title.children
-        "",              # error1.children (no error)
-        False            # error1.is_open (closed)
+        fig,             
+        forecast_value,  
+        forecast_style,  
+        forecast_title,  
+        "",              
+        False            
     )
 
 
+
+
+def update_graph(year, month):
+    ## DO NOT DELETE -- CODE FOR INTEGRATION
+    response = requests.post(f"{deployment_url2}/rf_model_prediction", 
+                             headers = {'Content-Type': 'application/json'}, 
+                             data = json.dumps({"year": year, "month": month}))
+    data = response.json()
+    data = pd.DataFrame.from_dict(data)
+    data = data.reset_index().rename(columns = {"index": "Quarter"})
+    data = data[data["Quarter"].str[:4].astype(int) >= 2000] # show from 2000 onwards
+    selected_date = f"{month} {year}"
+
+    fig = px.line(data, 
+                  x = "Quarter", 
+                  y = "Predicted GDP", 
+                  title = f"Forecast GDP Growth Rate",
+                  labels = {"Predicted GDP": "GDP Growth Rate (%)", "Quarter": "Year"}, 
+                  template = "plotly_dark")
+    
+    # Force a legend entry for the first trace
+    fig.data[0].name = "Predicted GDP"
+    fig.data[0].showlegend = True           
+    
+    # Add the actual GDP line as a dotted orange line.
+    fig.add_trace(go.Scatter(
+        x=data["Quarter"],
+        y=data["Actual GDP"],
+        mode="lines",
+        name="Actual GDP",
+        line=dict(
+            color="orange"
+    ))
+    )
+
+    fig.update_layout(
+        showlegend=True,
+        paper_bgcolor='rgba(0,0,0,0)', 
+        plot_bgcolor='rgba(0,0,0,0)',   
+        margin=dict(l=0, r=0, t=50, b=50),
+        title = {
+            "text": f"GDP Growth Rate up till {selected_date}",
+            "font": {
+                "color": "grey",
+                "family": "Montserrat, sans-serif"
+            }
+        }
+    )
+
+
+    base_style = {
+        "color": "grey",
+        "fontWeight": "600",
+        "fontSize": "28px",
+        "fontFamily": "Montserrat, sans-serif"
+    }
+
+    value = data["Predicted GDP"].iloc[-1]  # Get predicted GDP
+    value = round(value, 3)
+
+    if value < 0:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "red"}
+    elif value > 0:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "rgb(0, 200, 83)"}
+    else:
+        forecast_value = f"{value:.3f}%"
+        forecast_style = {**base_style, "color": "white"}
+
+    forecast_title = f"Forecast for {data['Quarter'].iloc[-1]}" 
+    
+    
+    return fig, forecast_value, forecast_style, forecast_title
+
+    # # Create a target year from the selected year and month
+    # target_year = f"{year}Q{['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].index(month) + 1}"
+    
+    # if target_year not in df['Year'].values:
+    #     return px.line(df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
+    
+    # end_index = df[df['Year'] == target_year].index[0] + 1
+    # filtered_df = df.iloc[:end_index]
+    # fig = px.line(filtered_df, x='Year', y='Real GDP', title="Real GDP Growth Over Time")
+    # return fig
