@@ -8,13 +8,13 @@ df = get_most_recent_series_of_date("ANDENO", given_date, fred)
 df = df[df.index<=pd.to_datetime("2007-06-01")]
 
 pct_chg_nondefense_capital_goods = transform_series(df, 5).dropna()
-# print(pct_chg_nondefense_capital_goods)
-# pct_chg_nondefense_capital_goods.plot()
-# plt.show()
+print(pct_chg_nondefense_capital_goods)
+pct_chg_nondefense_capital_goods.plot()
+plt.show()
 
-# print("ADF Test Result: ", adfuller(pct_chg_nondefense_capital_goods))
-# plot_acf_pacf(pct_chg_nondefense_capital_goods)
-# plt.show()
+print("ADF Test Result: ", adfuller(pct_chg_nondefense_capital_goods))
+plot_acf_pacf(pct_chg_nondefense_capital_goods)
+plt.show()
 
 # gridsearch chosen base on pcf and acf
 #seasonal order based on acf

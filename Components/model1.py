@@ -1,6 +1,6 @@
 from data_load import *
 
-given_date = "2020-03-01"
+given_date = "2025-03-01"
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
@@ -52,9 +52,10 @@ pred = pd.Series(pred, index = test.index)
 
 # evaluation
 eval(pred, test)
-print(pred, test)
+# print(pred, test)
 
 # pred.to_csv('Components/Predictions/model1.csv')
+
 
 X = sm.add_constant(X)  
 model = sm.OLS(y, X.iloc[:-1, :]).fit()
@@ -62,14 +63,11 @@ print(model.summary())
 print(model.predict(X.iloc[:-1, :])[0])
 residuals = model.resid
 print(X.iloc[:-1, :].apply(lambda x: x.corr(residuals)))
-print(model.mse_resid)
-pred_x = X.iloc[-1, :]
-print((pred_x.T @ model.normalized_cov_params) @ pred_x)
+# print(model.mse_resid)
+print(f'Mean of model residuals: {residuals.mean()}')
 
-print(sm.stats.acorr_ljungbox(residuals, return_df = True))
-#indicating serial correlation in the residuals the estimates may remain the same but the se might change
-newey_results = model.get_robustcov_results(cov_type='HAC', maxlags=2)
-print(newey_results.summary())
-
+#Estimation of variance of prediction
+# pred_x = X.iloc[-1, :]
+# print((pred_x.T @ model.normalized_cov_params) @ pred_x)
 
 # pred.to_csv('Components/Predictions/model1.csv')

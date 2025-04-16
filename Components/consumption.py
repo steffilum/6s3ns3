@@ -8,19 +8,22 @@ df = get_most_recent_series_of_date("PCE", given_date, fred)
 df = df[df.index<=pd.to_datetime("2007-06-01")]
 
 pct_chg_pce = transform_series(df, 5).dropna()*100
-# pct_chg_pce.plot()
-# plt.show()
+pct_chg_pce.plot()
+plt.axhline(y = pct_chg_pce.mean(), linestyle = ':', label = f"Mean: {pct_chg_pce.mean():.2f}", color = "red", linewidth = 5)
+plt.title("Log difference of PCE over time")
+plt.legend()
+plt.show()
 
 # checking for stationarity
-# print("ADF Test Result: ", adfuller(pct_chg_pce, regression='c'))
+print("ADF Test Result: ", adfuller(pct_chg_pce, regression='c'))
 plot_acf_pacf(pct_chg_pce)
 plt.show()
 
 # gridsearch chosen base on pcf and acf
 #seasonal order based on acf
-# best_arma(pct_chg_pce, trend='c', test_size=10, start_p= 0, start_q=0, max_p=5, max_q=5)
+# best_arma(pct_chg_pce, trend='c', test_size=30, start_p= 0, start_q=0, max_p=5, max_q=5)
 model = ARIMA(pct_chg_pce, order=(4, 0, 3), trend = 'c', freq = 'MS')
-model = model.fit(start_params = np.full(4+3+1, .01))
+model = model.fit()
  
 fig, ax = plt.subplots()
 ax.plot(model.fittedvalues)
