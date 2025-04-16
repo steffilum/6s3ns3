@@ -188,7 +188,7 @@ def update_graph(year, month):
 
     # If valid date, fetch data from backend
     response = requests.post(
-        f"{deployment_url2}/mean_model_prediction",
+        f"{api_url}/mean_model_prediction",
         headers={'Content-Type': 'application/json'},
         data=json.dumps({"year": year, "month": month})
     )

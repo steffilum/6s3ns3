@@ -40,7 +40,7 @@ api_url = 'http://127.0.0.1:5000/'
 
 def generate_model_figure_and_forecast(api_endpoint, model_label, year, month):
     response = requests.post(
-        f"{deployment_url}/{api_endpoint}", 
+        f"{api_url}/{api_endpoint}", 
         headers={'Content-Type': 'application/json'},
         data=json.dumps({"year": year, "month": month})
     )
