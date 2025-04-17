@@ -25,6 +25,3 @@ Currently from the fred data, we have these for each component
 
 Dependent variable
 "GDP": "Gross Domestic Product", Quarterly
-
-Current Problems
-Most of these data is quarterly, not high frequency enough should consider high frequency proxies instead
