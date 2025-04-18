@@ -7,6 +7,7 @@ Dependent variable:
 
 ## File Structure: 
 ### FrontEnd:
+![Frontend Structure](frontendstructure.png)
 We implemented the front-end web application using Dash, and all related code can be found in the frontend folder. The frontend folder contains the main app.py file used to run our Dash application, as well as a requirements.txt file that lists all the packages required for this project. Other subfolders are also included and will be explained in detail in the sections below.
 
 ### assets:
