@@ -126,3 +126,18 @@ Here we have the predictions for our model for the test period with the test.csv
 #### test_data_nohouse: Bridge data generated without housing starts
 #### test_data_midas: Preloaded data for MIDAS
 #### Here we have the monthly data stored allowing for quick access
+
+
+
+## Deployment & Access
+We host both the frontend and backend of our Dash application on the cloud using Render. The application is publicly accessible at: https://sixthsense.onrender.com
+However, since we are a bunch of broke university kids trying our best, we're unable to afford the paid tier in Render and thus the website may go to sleep after inactivity, which may cause delays up to 15 minutes. We appreciate your support and interest in our project! If you have any questions, feedback, or would like to sponsor us, feel free to reach out at: 6s3ns3sixthsense@gmail.com
+
+Otherwise, here is how we recommend you run our app on your local device: 
+1) Clone the integration branch into your local devices
+2) Make sure you have the necessary packages listed in our requirements.txt installed 
+3) Run backend_app.py
+4) Run app.py under frontend folder in a separate terminal
+
+Once both are running, you can access the application in your browser at your local host
+
