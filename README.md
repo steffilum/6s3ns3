@@ -59,3 +59,23 @@ arft04.py
 benchmark1.py
 
 ### Models
+midas_EN.py
+midas.py
+model1_EN.py
+model1.py
+Prophet.py
+rf_bridge.py
+rf_midas.py
+
+### Predictions
+arft04.py
+benchmark1.py
+bridge_model_prediction.py
+midas_model_prediction.py
+rf_model_prediction.py
+
+### Other files
+analysis_gdp.py: For initial analysis of GDP
+dm.py: To conduct DM test
+data_load.py: For compiling of data to be imported for our models
+download_test_data.py: To preload our test data
