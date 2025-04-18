@@ -7,18 +7,15 @@ This file was not used in the model and used mainly to analyse GDP
 fred = Fred(api_key = os.getenv("API_KEY"))
 
 df = get_most_recent_series_of_date("GDP", "2020-01-01", fred)
-df = pct_chg(df)
+df = transform_series(df, 5).dropna()
 
-df.pct_chg.plot()
+df.plot()
 plt.show()
 
-#looks like white noise but need to demean
-df_demean = df.pct_chg-df.pct_chg.mean()
-df_demean.plot()
-plt.show()
+plot_acf_pacf(df)
 
 # testing for stationarity may be stationary as power is low
-print("ADF Test Result: ", adfuller(df.pct_chg))
+print("ADF Test Result: ", adfuller(df, regression="c"))
 # First diff shows significant improvement thus can conclude that first diff is stationary
 df = difference_df(df, 1)
 # print("ADF Test Result: ", adfuller(df['Diff_Value']))
