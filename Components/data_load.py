@@ -1,4 +1,4 @@
-from Components.package_imports import *
+from package_imports import *
 
 # takes in the given dates and return values up to the date if have if not predict
 #takes in given date and period, so 'Q' or 'M' for bridge or midas
@@ -321,7 +321,7 @@ def load_data_rf_monthly(given_date = "2020-01-01"):
 def load_data_midas(given_date = "2020-01-01"):
     root_dir = os.path.abspath(os.getcwd())    
     file = os.path.join(root_dir, "Components", "test_data_midas", f"data_iteration_{given_date}.pkl")
-    # file = f'Components/test_data_midas/data_iteration_{given_date}.pkl'
+    file = f'Components/test_data_midas/data_iteration_{given_date}.pkl'
     if os.path.exists(file):
         with open(file, 'rb') as f:
             print("MIDAS Data Loaded") 
