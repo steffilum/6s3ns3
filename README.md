@@ -25,3 +25,19 @@ Currently from the fred data, we have these for each component
 
 Dependent variable
 "GDP": "Gross Domestic Product", Quarterly
+
+## Backend 
+Firstly, we created our custom package name package_imports for our backend import statements and custom functions that we use. View imports.py to see which packages have been imported and utils.py for which functions were created
+
+### utils.py
+difference_df: takes the diff of the value
+get_most_recent_series_of_date: gets the most recent df of a series
+best_arma: CV and chooses the best ARMA orders in the model
+pct_chg: Takes the percentage change using log diff
+plot_acf_pacf: Plots the acf and pacf
+eval: Gives RMSE, MAE and DA and plots the test and pred
+transform_series: transform series as recommended by FRED
+dm_test: Conducts DM test
+
+### utils.py
+loads env folder and set seeds and import custom functions and installs packages
