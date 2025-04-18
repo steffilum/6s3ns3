@@ -41,16 +41,16 @@ We perform the initial analysis of the regressors here.
 
 6. After that at the bottom we create a function to help forward fill that component given the data as of that date
 
-business_equiment.py: For Industrial Production: Equipment: Business Equipment
-business_inventories.py: For Total Business Inventories
-commercial_industrial_loans.py: For Commercial and Industrial Loans, All Commercial Banks
-consumption.py: For Personal Consumption Expenditure
-exports_bop.py: For Exports of Goods and Services: Balance of Payments Basis
-govt_spending_construction.py: For Total Public Construction Spending: Total Construction in the United States
-govt_spending_fed_defence.py: For Federal Government: National Defense Consumption Expenditures and Gross Investment
-housing_unit_started.py: New Privately-Owned Housing Unit Started
-imports_bop.py: For Imports of Goods and Services: Balance of Payments Basis
-nondefense_captial_goods.py: For Manufacturers’ New Orders: Nondefense Capital Goods
+#### business_equiment.py: For Industrial Production: Equipment: Business Equipment
+#### business_inventories.py: For Total Business Inventories
+#### commercial_industrial_loans.py: For Commercial and Industrial Loans, All Commercial Banks
+#### consumption.py: For Personal Consumption Expenditure
+#### exports_bop.py: For Exports of Goods and Services: Balance of Payments Basis
+#### govt_spending_construction.py: For Total Public Construction Spending: Total Construction in the United States
+#### govt_spending_fed_defence.py: For Federal Government: National Defense Consumption Expenditures and Gross Investment
+#### housing_unit_started.py: New Privately-Owned Housing Unit Started
+#### imports_bop.py: For Imports of Goods and Services: Balance of Payments Basis
+#### nondefense_captial_goods.py: For Manufacturers’ New Orders: Nondefense Capital Goods
 
 ### Benchmarks
 For these 2 benchmarks the idea is very simple, just fit the ARFT04 or take the historical mean.
