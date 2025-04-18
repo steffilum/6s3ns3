@@ -141,7 +141,7 @@ loading_content = html.Div(
 layout = get_default_layout(main_content=loading_content)
 
 api_url = 'http://127.0.0.1:5000/'
-deployment_url2 = 'https://sixs3ns3-backend-test.onrender.com/' 
+deployment_url2 = 'https://sixsense-k59p.onrender.com/' 
 
 # Callback to update the graph
 @dash.callback(
