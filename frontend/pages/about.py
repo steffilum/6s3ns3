@@ -32,25 +32,12 @@ about_content = html.Div(
         ),
         html.Br(),
         html.P("""
-            Economists and policymakers worldwide have faced challenges in providing timely and
-            precise economic forecasts. However, the biggest issue lies in the delayed publishing of
-            credible economic data. The growth of real GDP, widely used as a barometer for the health
-            of the economy, is commonly published quarterly. In addition to the infrequent publishings,
-            these numbers are often subject to subsequent revisions. The absence of timely updates on
-            these economic indicators can have dire consequences: For example, throughout much of
-            2021, the Federal Reserve downplayed concerns of rising inflation, characterising the rising
-            prices as “transitory” despite clear signs of persistent inflation. As a result, inflation in the
-            U.S. has worsened financial conditions for 65% of Americans in 2023, according to a report
-            by CNN Business. As such, recent developments in Nowcasting, which leverage higher
-            frequency and more timely released data available to predict the state of the economy, have
-            the potential to bridge this gap.
-            The main objective of this project is to explore nowcasting techniques to provide various
-            economic agents in the United States economy – such as government, financial institutions,
-            and households – with accurate and timely predictions of various economic indicators,
-            enabling them to make faster and more informed decisions. Users will be able to access
-            these insights through a user-friendly website. Other objectives include developing a robust
-            data ecosystem that includes the extraction and processing of timely data into nowcasting
-            models and linking of backend models to frontend user-friendly interface for accessibility.
+            Currently, economists and policymakers are facing challenges in receiving up-to-date information about Gross Domestic Product (GDP). 
+            As data on GDP is only available quarterly, there is a lag in which the GDP estimate of the quarter will be available. This lag, often up to 4 months, creates substantial challenges for timely decision making. 
+            Thus, 6se3nse is our one-stop solution for staying ahead of the economy. 6se3nse provides economists and policymakers with more timely estimates of quarterly GDP growth through monthly updated nowcast. 
+            For example, in early November, economists can access a nowcast for Quarter 4 (Q4), 
+            instead of waiting till late January for the official Q4 GDP release. In addition, users can stay abreast of the latest economic news from top financial sources and explore latest 
+            economic data so users can focus on work that truly matters. 6se3nse leverages a Python and Flask framework backend with the Dash framework for its front-end interactive components.
             """, style={"color": "lightgrey", "fontSize": "18px", "fontFamily": "Montserrat, sans-serif", 
                         "marginLeft": "10%", "marginRight": "10%", "textAlign": "justify"}
         ),
@@ -74,14 +61,8 @@ about_content = html.Div(
         ),
         html.Br(),
         html.P("""
-            Our model would adopt a bridge model similar to that of the Atlanta FRED model. It would use a similar methodology of Consumption(C), Investment(I), Government(G), Nett Exports(X-M).
-            We aim to predict the GDP for the current quarter as well as as past quarter that has not been released.
-            We assume that data follows a 1 month lag. For example, all monthly and quarterly data would only have an initial prediction 1 month in advance.
-            We aim to do 2 things, predict GDP in current quarter and past quarters. For example, in the start of M3 2024, we would want to predict Q1 2024 GDP for that quarter. However, in the start of M1 2024, we would want Q4 2023 GDP as this data is not released due to the lag in data release. For start of M1 of new quarter or end of M3 for previous quarter we want to predict the previous quarter GDP. For start of M2 or end of M1 we would know the past quarter GDP and would want to predict GDP for that whole quarter. Same for start of M3 and end of M2.
-            In order to do this quarterly prediction we intend to use a quarterly bridge model which splits quarterly GDP into its various components C, I, G, X-M. For each of these components, we intend to create a bridge model and use iterative predictions to get the quarterly value
-            Currently from the fred data, we have these for each component "DGDSRC1": "Consumption Expenditure Goods", Monthly "PCESC96": "Consumption Expenditure Services", Monthly "EXPGSC1": "Goods & Services Exports", Quarterly "IMPGSC1": "Goods & Services Imports", Quarterly "PNFIC1": "Real Private Nonresidential Fixed Investment", Quarterly "PRFIC1": "Real Private Residential Fixed Investment", Quarterly "GCEC1": "Real Government Consumption Expenditures and Gross Investment", Quarterly "SLEXPND": "State and Local Government Current Expenditures", Quarterly
-            Dependent variable "GDP": "Gross Domestic Product", Quarterly
-            Current Problems Most of these data is quarterly, not high frequency enough should consider high frequency proxies instead
+            6se3nse uses FRED-MD monthly and FRED-QD quarterly data (https://www.stlouisfed.org/research/economists/mccracken/fred-databases). Logarithmic differences were mainly used for data transformation, supplemented by publicly available transformation code from GitHub (https://fg-research.com/blog/general/posts/fred-md-overview.html). To provide a structured framework for GDP analysis, we employ the standard GDP expenditure approach which decomposes GDP into its core components: Consumption Spending (C), Investments (I), Government Expenditure (G), and Net Exports (X-M). Other economic indicators such as Sahm’s Rule will also be employed. For our models we mainly explored an ARMA-Bridge model, a U-MIDAS model, an RF model, using Elastic Net (EN) for both the ARMA-bridge and U-MIDAS model as well as Prophet.
+
             """, 
             style={"color": "lightgrey", "fontSize": "18px", "fontFamily": "Montserrat, sans-serif",
                         "marginLeft": "10%", "marginRight": "10%", "textAlign": "justify"}
