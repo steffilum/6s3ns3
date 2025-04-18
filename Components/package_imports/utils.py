@@ -1,9 +1,22 @@
 from .imports import *
 
-# differences a dataframe by adding a lag
-# takes in a series with a time index and value
-# returns a df with time index, value and lag value but w 1 less obs
 def difference_df(df, col = 0):
+    '''
+    Differences a time series by adding a lag. 
+
+    Parameters:
+    ______________________________
+    df: pandas.Series or pandas.DataFrame
+        Time series.
+
+    col: int.
+        Zero-based index of the dataframe column corresponding to the time series.
+
+    Returns: 
+    ______________________________
+    pandas.DataFrame
+        The input Series or DataFrame object with time index, an additional column of differenced values and 1 less observation. 
+    '''
     if isinstance(df, pd.Series):
         df = df.to_frame()
         df = df.rename(columns = {df.columns[0]: "Value"})
@@ -15,20 +28,77 @@ def difference_df(df, col = 0):
         df = df.dropna()
         return df
 
-#gets the most recent df of a series
-# takes in the series key and end date
-#returns a series whos index is date and value
 def get_most_recent_series_of_date(series_key, end_date, fred):
+    '''
+    Retrieves FRED data on an economic indicator up till the latest entry as of a certain date.
+
+    Parameters:
+    ______________________________
+    series_key: string
+        The key of the economic indicator in FRED's database: https://fred.stlouisfed.org/release?rid=205.
+
+    end_date: string
+        The date in YYYY-MM-DD format. 
+
+    fred: fredapi 
+        The fredapi object to pull FRED data from.
+
+    Returns: 
+    ______________________________
+    pandas.Series
+        The values of the input economic indicator, with a date index.
+    '''    
     df = fred.get_series_as_of_date(series_key, end_date).drop_duplicates(subset = ["date"], keep = "last")
     df = pd.Series(df["value"].to_list(), index = df["date"].to_list())
     df.index = pd.to_datetime(df.index)
     df = df.dropna()
     df = df.astype("float")
     return df
-
-#chooses the best arma model by using oos forecasting
-#inputs df a time series stationary, max p and q to test and test size
+    
 def best_arma(df, start_p = 0, start_q = 0, max_p = 5, max_q = 5, test_size = 50, trend = None, freq = 'MS', exog = None, seasonal_order = (0, 0, 0, 0)):
+    '''
+    Chooses the best hyperparameters of the ARMA model for a time series, using out-of-sample forecasting.
+
+    Parameters:
+    ______________________________
+    df: pandas.Series or pandas.DataFrame
+        The stationary time series.
+
+    start_p: int
+        The lower bound of the GridSearch for the p parameter (lag order) of the ARMA model.
+
+    start_q: int
+        The lower bound of the GridSearch for the q parameter (moving average order) of the ARMA model.
+
+    max_p: int
+        The upper bound of the GridSearch for the p parameter (lag order) of the ARMA model.
+
+    max_q: int
+        The upper bound of the GridSearch for the q parameter (moving average order) of the ARMA model. 
+
+    test_size: int
+        The size of the test sample for hyperparameter tuning.
+        
+    trend: string
+        Deterministic trend of the time series. 
+    
+    freq: string
+        Frequency of the time-series. 
+
+    exog: pandas.Series or array-like
+        Exogenous regressors (if any).
+
+    seasonal_order: tuple
+        The (P,D,Q,s) order of the seasonal component of the ARMA model, representing the lag order, difference (default 0), moving average order and periodicity respectively. 
+
+    Returns: 
+    ______________________________
+    p: int
+        Optimal lag order for the ARMA model of the input time series.
+
+    q: int
+        Optimal moving average order for the ARMA model of the input time series.
+    '''
 
     df = df.asfreq(freq)
 
@@ -59,11 +129,23 @@ def best_arma(df, start_p = 0, start_q = 0, max_p = 5, max_q = 5, test_size = 50
     print(f'Best ARIMA model order: p={p+start_p} and q={q+start_q}')
     return p, q
 
-
-# takes the rough percent change in a df
-# takes in a df with a time index and value
-# returns a series with time index, value and lag value but w 1 less obs
 def pct_chg(df, col = 0):
+    '''
+    Gives a rough percentage change between consecutive values in a time series. 
+
+    Parameters:
+    ______________________________
+    df: pandas.Series or pandas.DataFrame
+        Time series.
+
+    col: int
+        Zero-based index of the dataframe column corresponding to the time series.
+
+    Returns: 
+    ______________________________
+    pandas.DataFrame
+        The input Series or DataFrame object with time index, an additional column of percentage change values and 1 less observation. 
+    '''
     if isinstance(df, pd.Series):
         df = np.log(df)
         df = df.to_frame()
@@ -76,18 +158,45 @@ def pct_chg(df, col = 0):
         df= df.dropna()
         return df
     
-# Function to plot ACF and PACF
-#takes in a time series then plots the acf and pacf
 def plot_acf_pacf(timeseries):
+    '''
+    Plots the Autocorrelation Function (ACF) and Partial Autocorrelation Function (PACF) for a time series.
+
+    Parameters:
+    ______________________________
+    timeseries: pandas.Series
+        Time series.
+        
+    Returns: 
+    ______________________________
+    None
+        Displays the ACF and PACF graphs for the time series.
+    '''
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 7))
     plot_acf(timeseries, ax=ax1, lags=75)
     plot_pacf(timeseries, ax=ax2, lags=75)
     plt.show()
 
-# prints various eval metrics
-#takes in test and pred as series, does not return, prints out required metrics
 def eval(test, pred, plot = True):
-    # #plotting of resid
+    '''
+    Evaluates the forecasting performance of a model using Root Mean Squared Error (RMSE), Mean Absolute Error (MAE) and Directional Accuracy metrics.
+
+    Parameters:
+    ______________________________
+    test: pandas.Series
+        Actual time series values. 
+
+    pred: pandas.Series
+        Forecasted time series values.
+
+    plot: boolean
+        If True, displays a plot of the actual time series values and the predicted time series values. 
+
+    Returns: 
+    ______________________________
+    None
+        Prints the RMSE, MAE and Directional Accuracy evalutation metrics for the input predicted values. 
+    '''
     if plot:
         fig, ax = plt.subplots()
         ax.plot(test)
@@ -103,10 +212,9 @@ def eval(test, pred, plot = True):
 
     print(f'Directional Accuracy: {directional_pred}')
 
-# obtained from https://fg-research.com/blog/general/posts/fred-md-overview.html
 def transform_series(x, tcode):
     '''
-    Transform the time series.
+    Transforms a time series based on FRED's recommendations.
 
     Parameters:
     ______________________________
@@ -114,7 +222,17 @@ def transform_series(x, tcode):
         Time series.
 
     tcode: int.
-        Transformation code.
+        Transformation code indicated in FRED's paper: https://fg-research.com/blog/general/posts/fred-md-overview.html
+
+    Returns:
+    ______________________________
+    pandas.Series
+        The transformed time series. 
+
+    Raises:
+    ______________________________
+    ValueError
+        If the input tcode is not one that is used by FRED.
     '''
 
     if tcode == 1:
@@ -134,11 +252,37 @@ def transform_series(x, tcode):
     else:
         raise ValueError(f"unknown `tcode` {tcode}")
     
-
-
 # takes in multiple data frames contating the test data, predictions from the first model and second model
 # returns the dmstat, pvalue HAC SE and the mean loss diff
 def dm_test(test, pred1, pred2):
+    '''
+    Conducts the Diebold-Mariano (DM) Test for two time series forecasts. 
+
+    Parameters:
+    ______________________________
+    test: pandas.Series or pandas.DataFrame
+        Contains the actual values of the time series.
+
+    pred1: pandas.Series or pandas.DataFrame
+        Contains the values of the time series forecasted by the first model.
+
+    pred2: pandas.Series or pandas.DataFrame
+        Contains the values of the time series forecasted by the second model.
+
+    Returns: 
+    ______________________________
+    dm_stat: float
+        The DM statistic of the DM Test.
+
+    p_value: float
+        The p-value of the DM Test.
+
+    se: float
+        The standard error of the mean of the loss-differential of the two time series forecasts.
+
+    mean: float
+        The (realised) mean of the loss-differential of the two time series forecasts.
+    '''
     test = np.asarray(test).flatten()
     pred1 = np.asarray(pred1).flatten()
     pred2 = np.asarray(pred2).flatten()
