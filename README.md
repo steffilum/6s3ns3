@@ -24,7 +24,7 @@ eval: Gives RMSE, MAE and DA and plots the test and pred
 transform_series: transform series as recommended by FRED
 dm_test: Conducts DM test
 
-### __init__.py
+#### __init__.py
 loads env folder and set seeds and import custom functions and installs packages
 
 ### Regressors
