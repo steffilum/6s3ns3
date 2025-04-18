@@ -13,5 +13,5 @@ matplotlib==3.5.2
 statsmodels==0.14.4
 plotly==5.10.0
 prophet==1.1.5
-scipy==1.7.3
+scipy
 seaborn==0.12.2
