@@ -1,35 +1,20 @@
 # 6s3ns3
 DSE3101 project - Nowcasting
 
-Our model would adopt a bridge model similar to that of the Atlanta FRED model.
-
-It would use a similar methodology of Consumption(C), Investment(I), Government(G), Nett Exports(X-M).
-
-We aim to predict the GDP for the current quarter as well as as past quarter that has not been released. 
-
-We assume that data follows a 1 month lag. For example, all monthly and quarterly data would only have an initial prediction 1 month in advance.
-
-We aim to do 2 things, predict GDP in current quarter and past quarters. For example, in the start of M3 2024, we would want to predict Q1 2024 GDP for that quarter. However, in the start of M1 2024, we would want  Q4 2023 GDP as this data is not released due to the lag in data release. For start of M1 of new quarter or end of M3 for previous quarter we want to predict the previous quarter GDP. For start of M2 or end of M1 we would know the past quarter GDP and would want to predict GDP for that whole quarter. Same for start of M3 and end of M2.
-
-In order to do this quarterly prediction we intend to use a quarterly bridge model which splits quarterly GDP into its various components C, I, G, X-M. For each of these components, we intend to create a bridge model and use iterative predictions to get the quarterly value
-
-Currently from the fred data, we have these for each component
-"DGDSRC1": "Consumption Expenditure Goods", Monthly
-"PCESC96": "Consumption Expenditure Services", Monthly
-"EXPGSC1": "Goods & Services Exports", Quarterly
-"IMPGSC1": "Goods & Services Imports", Quarterly
-"PNFIC1": "Real Private Nonresidential Fixed Investment", Quarterly
-"PRFIC1": "Real Private Residential Fixed Investment", Quarterly
-"GCEC1": "Real Government Consumption Expenditures and Gross Investment", Quarterly
-"SLEXPND": "State and Local Government Current Expenditures", Quarterly
-
 Dependent variable
 "GDP": "Gross Domestic Product", Quarterly
 
 ## Backend 
 Firstly, we created our custom package name package_imports for our backend import statements and custom functions that we use. View imports.py to see which packages have been imported and utils.py for which functions were created
 
-### utils.py
+### package_imports
+This is our own custom package for the backend to help with the import of packages and to custom functions as well as initialisation of essential variables
+
+#### imports.py
+Import of packages
+
+#### utils.py
+This is to file to store all our custom functions. Here is a descriptions of the functions that we created.
 difference_df: takes the diff of the value
 get_most_recent_series_of_date: gets the most recent df of a series
 best_arma: CV and chooses the best ARMA orders in the model
@@ -43,29 +28,53 @@ dm_test: Conducts DM test
 loads env folder and set seeds and import custom functions and installs packages
 
 ### Regressors
-business_equiment.py
-business_inventories.py
-commercial_industrial_loans.py
-consumption.py
-exports_bop.py
-govt_spending_construction.py
-govt_spending_fed_defence.py
-housing_unit_started.py
-imports_bop.py
-nondefense_captial_goods.py
+We perform the initial analysis of the regressors here. 
+1. We get our data from FRED first. We would try to get the data as close to the date that we actually want. Since our training data is from 2007 M6 we get data up to 2007 M12 then filter this is to ensure that we have all the data up to M6. Should the data be available but only published onto FRED (i.e. Imports and Exports) we will get the data as close to the data as possible then filter up to 2007 M6
+
+2. We perform the recommended transform then plot the graph to check for missing values. 
+
+3. We perform ADF test with a constant to account for a non-constant mean. We dont use a time trend as we don't think that in the long run our data should have an increasing trend or decreasing trend. If stationary, then leave as is. Else, we attempt to visually verify if it is really non-stationary. Since ADF test tend to have lower power, we tend to handle with a bit of discretion to see if additional differencing is necessary. We also look at the PACF and ACF to find orders for ARMA. We verified previously that the series is stationary so d = 0.
+
+4. CV is performed by our best_arma function found in utils.py. We use recursive expanding window OOS forecast for 1-step forecast for 30 obs after the parameters that we maked. In the event that there is not enough data we may choose to reduce the number of observations or to reduce the (p, q) to deviate from the ACF and PACF found by our models.
+
+5. We then fit an ARMA model and try to forward fill our data based on our ARMA models, this would typically result in prediction of 2-4 monmths based on the month the user is in
+
+6. After that at the bottom we create a function to help forward fill that component given the data as of that date
+
+business_equiment.py: For Industrial Production: Equipment: Business Equipment
+business_inventories.py: For Total Business Inventories
+commercial_industrial_loans.py: For Commercial and Industrial Loans, All Commercial Banks
+consumption.py: For Personal Consumption Expenditure
+exports_bop.py: For Exports of Goods and Services: Balance of Payments Basis
+govt_spending_construction.py: For Total Public Construction Spending: Total Construction in the United States
+govt_spending_fed_defence.py: For Federal Government: National Defense Consumption Expenditures and Gross Investment
+housing_unit_started.py: New Privately-Owned Housing Unit Started
+imports_bop.py: For Imports of Goods and Services: Balance of Payments Basis
+nondefense_captial_goods.py: For Manufacturers’ New Orders: Nondefense Capital Goods
 
 ### Benchmarks
+For these 2 benchmarks the idea is very simple, just fit the ARFT04 or take the historical mean.
+We do the evaluation of these data for our test data 2007 Q3 to 2019 Q4. So we just recursively fit new models and predict one step into the future and take the RMSE, MAE and DA.
+We then save the predictions to be use in the future
 arft04.py
 benchmark1.py
 
 ### Models
-midas_EN.py
 midas.py
-model1_EN.py
-model1.py
-Prophet.py
+model1.py: Bridge model
+Initially we start with model1 aka bridge and MIDAS. After getting the data from data_load.py we import the data from the functions over to models. For the 2 initial models, we analyse the VIF, correlation plot and condition numbers to check for multicollineartiy. Next, we do the evaluation of the test data based on our test data. You find above the variable given date which is essentially serves as a way to help the person to time travel. So in this case we can time travel back to our test date and save the predictions for our test data. After evaluation, we go back to the present to find how our model would perform now. We fit an OLS and try to find out more about the coefficients about the components and analyse the residuals. Only for our bridge model, we try to form a basic CI for our prediction but admittedly it is not complete. For more details, check out CI for bridge model.pdf to see our formula for homoskedastic errors. In the future however, we would recommend the use heteroskedastic errors as part of the formula.
+
 rf_bridge.py
 rf_midas.py
+Next we analyse our models. We follow the same method as the previous 2 models but the main difference was the choosing of the number of trees. To perform this CV, we adopt a similar method to our evaluation and CV. Given our test data, which is up to 2007 Q3, we hold out the last 30 observations and run recurive expanding window CV to find the number of trees that minimise RMSE. Then we evaluate and save predictions. We tried both ways of aggregation, both the way we aggregate for MIDAS and Bridge but decided found actually both have the same result so we decided to place more restrcitions for simplicity and use the Bridge aggregation method. 
+
+midas_EN.py
+model1_EN.py
+We tried to add a form of regularisation through ElasticNet for both of our models. We did the same as the normal bridge and MIDAS but with the same CV method as our RF to find the optimal alpha and l1_weight that minimise RMSE. However, in the end we decided not to use it due to marginal improvment and conflicting econometric theory on whether this is correct
+
+Prophet.py
+Lastly we tried out Prophet by Meta. As one of the more commonly used commerical software for time series prediction in the workplace, we wanted to dip our toes and try it out to see if it could have very substantial improvements due to its additive components. However we decided against publishing it in the end for our project as we arent very familiar with the econometric theory and whether its use would be suitable for nowcasting.
+
 
 ### Predictions
 arft04.py
@@ -77,5 +86,19 @@ rf_model_prediction.py
 ### Other files
 analysis_gdp.py: For initial analysis of GDP
 dm.py: To conduct DM test
-data_load.py: For compiling of data to be imported for our models
 download_test_data.py: To preload our test data
+
+data_load.py: For compiling of data to be imported for our models
+We start of by copying the functions from all of our regressor components to help forward fill the components. For each of the functions we allow a period parameter to help account for whether the user is choosing for the MIDAS or bridge model.
+
+Here we also include our code for the sahms rule from line 195.
+So for the aggregation of sahms indicator for bridge we decided to use an exponential loading aka M1 has a weight of .1, M2 has a weight of .3 and M3 has a weight of .6 So our Sahm's recession indicatoris a binary variable . We hope that by doing this kind of loading we help create more important on more recent months EG in our training data, we generally saw streaks where the Sahms indicator was 1 (ie recession) so if the value was 0 in the first month but 1 in the next 2 months we predict a recession is coming and want to put more penalisation. However if the first month is 1 and the next 2 months is 0 means the recession finishing so we wanna put less weight. This thinking holds true for the predicted value oso. Lets say i in M3 and only have data for M1. If M1 is 1, we assume a recession is still happening in the quarter and aggregate it by making all the unknown months 1. If M1 is 0 we assume recession is not happening and make the whole quarter 0.
+
+Next, we have our load data functions which we will use in our respective models. We first check if we have the dataset in our "database" if not we go about predicting. We compile each of the components including a lag of GDP using the same method as we would predict our components. Then we aggregate or compile based on Bridge or MIDAS and save our data to our data base for quick access and return the data to be used by the models
+
+### Data Storages
+To help our website speed up, we would preload the data in advance so that we dont need to generate the data all the time and can just read it.
+Predictions: Predictions generated by our models for DM test and evaluation
+test_data_bridge: Preloaded data for Bridge
+test_data_nohouse: Bridge data generated without housing starts
+test_data_midas: Preloaded data for MIDAS

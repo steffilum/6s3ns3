@@ -26,19 +26,19 @@ given_date = "2025-04-01"
 #     df, series = pickle.load(f)
 # print(df.columns)
 
-folder_path = 'Components/test_data_midas'
-new_path = 'Components/test_data_midas_nohouse'
+# folder_path = 'Components/test_data_midas'
+# new_path = 'Components/test_data_midas_nohouse'
 
-for filename in os.listdir(folder_path):
-    filepath = os.path.join(folder_path, filename)
-    with open(filepath, 'rb') as f:
-        df, series = pickle.load(f)
-        df = df.drop("Housing_Start_m1", axis = 1)
-        df = df.drop("Housing_Start_m2", axis = 1)
-        df = df.drop("Housing_Start_m3", axis = 1)
-    filepath = os.path.join(new_path, filename)
-    with open(filepath, 'wb') as f:
-        pickle.dump((df, series), f)
+# for filename in os.listdir(folder_path):
+#     filepath = os.path.join(folder_path, filename)
+#     with open(filepath, 'rb') as f:
+#         df, series = pickle.load(f)
+#         df = df.drop("Housing_Start_m1", axis = 1)
+#         df = df.drop("Housing_Start_m2", axis = 1)
+#         df = df.drop("Housing_Start_m3", axis = 1)
+#     filepath = os.path.join(new_path, filename)
+#     with open(filepath, 'wb') as f:
+#         pickle.dump((df, series), f)
 
 # with open('Components/test_data_bridge_nohouse/data_iteration_2025-04-01.pkl', 'rb') as f:
 #     df, series = pickle.load(f)
