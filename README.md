@@ -131,6 +131,7 @@ Here we have the predictions for our model for the test period with the test.csv
 
 ## Deployment & Access
 We host both the frontend and backend of our Dash application on the cloud using Render. The application is publicly accessible at: https://sixthsense.onrender.com
+
 However, since we are a bunch of broke university kids trying our best, we're unable to afford the paid tier in Render and thus the website may go to sleep after inactivity, which may cause delays up to 15 minutes. We appreciate your support and interest in our project! If you have any questions, feedback, or would like to sponsor us, feel free to reach out at: 6s3ns3sixthsense@gmail.com
 
 Otherwise, here is how we recommend you run our app on your local device: 
