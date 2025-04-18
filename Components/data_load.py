@@ -41,6 +41,8 @@ def quart_pct_chg_biz_equip(date = "2020-01-01", period = 'Q'):
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
 
+# takes in the given dates and return values up to the date if have if not predict
+#takes in given date and period, so 'Q' or 'M' for bridge or midas
 def quart_pct_chg_business_inventories(date = "2020-01-01", period = 'Q'):
     fred = Fred(api_key = os.getenv("API_KEY"))
     df = get_most_recent_series_of_date("BUSINV", date, fred)
@@ -151,7 +153,9 @@ def quart_pct_chg_housing_units_started(given_date = "2020-01-01", period = 'Q')
         quarterly_pct_chage = exp.resample('QS').sum()
         quarterly_pct_chage = np.log(quarterly_pct_chage)
         return quarterly_pct_chage
-    
+
+# takes in the given dates and return values up to the date if have if not predict
+#takes in given date and period, so 'Q' or 'M' for bridge or midas  
 def quart_pct_chg_imports(date = "2020-01-01", period = 'Q'):
     fred = Fred(api_key = os.getenv("API_KEY"))
     if date<"2010-05-01":
@@ -172,6 +176,8 @@ def quart_pct_chg_imports(date = "2020-01-01", period = 'Q'):
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
 
+# takes in the given dates and return values up to the date if have if not predict
+#takes in given date and period, so 'Q' or 'M' for bridge or midas
 def quart_pct_cap(date = "2020-01-01", period = 'Q'):
     fred = Fred(api_key = os.getenv("API_KEY"))
     if date<"2011-07-01":
@@ -192,6 +198,8 @@ def quart_pct_cap(date = "2020-01-01", period = 'Q'):
         quarterly_pct_chage = pct_chg_pred.resample('QS').sum()
         return quarterly_pct_chage
     
+# takes in the given dates and return values up to the date if have if not predict
+#takes in given date and period, so 'Q' or 'M' for bridge or midas
 def sahms(date = "2020-01-01", period = 'Q'):
     fred = Fred(api_key = os.getenv("API_KEY"))
     un = get_most_recent_series_of_date("UNRATE", date, fred)
@@ -214,7 +222,7 @@ def sahms(date = "2020-01-01", period = 'Q'):
         quarterly = weighted.resample('QS').last()
         return quarterly
 
-
+#data for bridge model
 def load_data_bridge(given_date = "2020-01-01"):
     root_dir = os.path.abspath(os.getcwd())
     file = os.path.join(root_dir, "Components", "test_data_bridge", f"data_iteration_{given_date}.pkl")
@@ -257,6 +265,7 @@ def load_data_bridge(given_date = "2020-01-01"):
         pickle.dump((compiled, df), f)
     return compiled, df
 
+# Data for bridge model without housing starts
 def load_data_bridge_nohouse(given_date = "2020-01-01"):
     file = f'Components/test_data_bridge_nohouse/data_iteration_{given_date}.pkl'
     if os.path.exists(file):
@@ -296,16 +305,19 @@ def load_data_bridge_nohouse(given_date = "2020-01-01"):
         pickle.dump((compiled, df), f)
     return compiled, df
 
+# RF data for data based on bridge data
 def load_data_rf_aggregated(given_date = "2020-01-01"):
     X, y = load_data_bridge(given_date) 
     print("RF agg data Loaded")   
     return X, y 
 
+# RF data for data based on MIDAS data
 def load_data_rf_monthly(given_date = "2020-01-01"):
     X, y = load_data_midas(given_date) 
     print("RF monthly data Loaded")   
     return X, y 
 
+# Data for our MIDAS model
 def load_data_midas(given_date = "2020-01-01"):
     root_dir = os.path.abspath(os.getcwd())    
     file = os.path.join(root_dir, "Components", "test_data_midas", f"data_iteration_{given_date}.pkl")

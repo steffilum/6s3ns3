@@ -13,10 +13,9 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 
 df.index = pd.to_datetime(df.index).to_period('Q')
 
-print(df.shape)
-
 pred = []
 
+# Evaluation of the models
 for index in range(1, 51):
     date = pd.to_datetime(given_date)
     new_date = date - pd.DateOffset(months=3*index)
@@ -27,12 +26,14 @@ for index in range(1, 51):
     model = AutoReg(train, lags = 4, trend = 'ct').fit()
     pred.append(model.predict(start = len(train), end = len(train)))
 
-# print(model.params)
-
 pred.reverse()
 pred = pd.concat(pred)
 pred.index = pred.index.to_timestamp()
 
 eval(test, pred, plot=True)
+
+# Looking at the parameters of ARFT04
+model = AutoReg(df, lags = 4, trend = "ct").fit()
+print(model.params)
 
 # pred.to_csv('Components/Predictions/arft04.csv')

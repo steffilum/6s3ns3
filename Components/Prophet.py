@@ -13,6 +13,7 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 
 pred = []
 
+# Evaluation of our data
 for index in range(1, 51):
     date = pd.to_datetime(given_date)
     new_date = date - pd.DateOffset(months=3*index)

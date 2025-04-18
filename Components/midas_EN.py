@@ -13,6 +13,7 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 
 # X, y = load_data_midas(given_date=given_date)
 
+# Looking at the VIF, corr plot and condition number for multicollinearity
 # vif_data = pd.DataFrame()
 # vif_data["Feature"] = X.columns
 # vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
@@ -33,6 +34,7 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 # # 30 chosen due to insufficient data
 # test, _ = train_test_split(test, train_size=30, shuffle=False)
 
+# CV
 # rmse = []
 # for alpha in [0.0001, 0.001, 0.01, 0.1]:
 #     for l1_ratio in [0.1, 0.25, 0.5, 0.75, .9]:
@@ -78,6 +80,7 @@ eval(pred, test)
 
 # pred.to_csv('Components/Predictions/midas_EN.csv')
 
+# Looking into the coefficients of the model
 # model = ElasticNet(alpha=.1, l1_ratio=.9)
 # model.fit(X.iloc[:-1, :], y)
 # coef_df = pd.DataFrame({

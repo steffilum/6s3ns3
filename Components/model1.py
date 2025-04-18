@@ -12,9 +12,10 @@ print(df)
 
 _, test = train_test_split(df, test_size=50, shuffle=False)
 
+# Using the data without housing starts due to changes multicollinearity
 X, y = load_data_bridge_nohouse(given_date=given_date)
-# X, _, y, _ = train_test_split(X.iloc[:-1, :], y, test_size=50, shuffle=False)
 
+# Looking at the VIF, corr plot and condition number for multicollinearity
 vif_data = pd.DataFrame()
 vif_data["Feature"] = X.columns
 vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
@@ -56,7 +57,7 @@ eval(pred, test)
 
 # pred.to_csv('Components/Predictions/model1.csv')
 
-
+# Looking at the models for coefficients
 X = sm.add_constant(X)  
 model = sm.OLS(y, X.iloc[:-1, :]).fit()
 print(model.summary())

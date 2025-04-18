@@ -6,6 +6,7 @@ get_date = "2007-12-01"
 df = get_most_recent_series_of_date("HOUST", get_date, fred)
 df = df[df.index<=pd.to_datetime("2007-06-01")]
 
+# taking log as per fred recommended transform
 pct_chg_housing_units_started = transform_series(df, 4).dropna()
 pct_chg_housing_units_started.plot()
 plt.show()
@@ -18,12 +19,14 @@ plt.show()
 model = ARIMA(pct_chg_housing_units_started, order=(3, 0, 16), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(25, .01))
 
+#Looking at the fitted values
 fig, ax = plt.subplots()
 ax.plot(model.fittedvalues, label = "fitted")
 ax.plot(pct_chg_housing_units_started, label = "actual")
 ax.legend(loc="upper left")
 plt.show()
 
+# Check for serial correlation in the errors
 plot_acf_pacf(model.resid)
 plt.plot(model.resid)
 plt.show()

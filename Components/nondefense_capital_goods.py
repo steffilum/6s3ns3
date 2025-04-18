@@ -2,13 +2,12 @@ from package_imports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
+# Since this data was only released FRED on 2011-06-24 we just took the data as of 2011-07-01
 given_date = "2011-07-01"
-
 df = get_most_recent_series_of_date("ANDENO", given_date, fred)
 df = df[df.index<=pd.to_datetime("2007-06-01")]
 
 pct_chg_nondefense_capital_goods = transform_series(df, 5).dropna()
-print(pct_chg_nondefense_capital_goods)
 pct_chg_nondefense_capital_goods.plot()
 plt.show()
 
@@ -17,16 +16,17 @@ plot_acf_pacf(pct_chg_nondefense_capital_goods)
 plt.show()
 
 # gridsearch chosen base on pcf and acf
-#seasonal order based on acf
 best_arma(pct_chg_nondefense_capital_goods, trend='c', test_size=20, start_p= 0, start_q=0, max_p=6, max_q=6)
 model = ARIMA(pct_chg_nondefense_capital_goods, order=(0, 0, 6), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(6+2, .01))
 
+#Looking at the fitted values
 fig, ax = plt.subplots()
 ax.plot(model.fittedvalues)
 ax.plot(pct_chg_nondefense_capital_goods)
 plt.show()
 
+# Check for serial correlation in the errors
 # plot_acf_pacf(model.resid)
 plt.plot(model.resid)
 plt.show()

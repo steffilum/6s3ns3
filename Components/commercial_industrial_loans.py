@@ -16,11 +16,12 @@ plot_acf_pacf(pct_chg_commercial_industrial_loans)
 plt.show()
 
 # best_arma(pct_chg_commercial_industrial_loans, trend='c', test_size=10, start_p= 0, start_q=10, max_p=5, max_q=12)
-# best arma: p= 2, q =1
+# best arma: p= 2, q =12
 
 model = ARIMA(pct_chg_commercial_industrial_loans, order=(2, 0, 12), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(2+1+12+2, .01))
 
+#Looking at the fitted
 fig, ax = plt.subplots()
 ax.plot(model.fittedvalues)
 ax.plot(pct_chg_commercial_industrial_loans)

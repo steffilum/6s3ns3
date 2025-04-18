@@ -18,6 +18,7 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 # test, _ = train_test_split(test, train_size=30, shuffle=False)
 # pred = np.zeros((18, 30))
 
+# CV
 # for index in range(1, 31):
 #     date = pd.to_datetime(given_date)
 #     new_date = date - pd.DateOffset(months=3*index)

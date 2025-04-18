@@ -14,6 +14,7 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 
 pred = []
 
+# Evaluation of the models
 for index in range(1, 51):
     date = pd.to_datetime(given_date)
     new_date = date - pd.DateOffset(months=3*index)
@@ -28,5 +29,6 @@ pred = pd.Series(pred, index = test.index)
 #evaluation
 eval(pred, test, plot=True)
 
+# Storing of prediction and ground truth
 # pred.to_csv('Components/Predictions/benchmark1.csv')
 # test.to_csv('Components/Predictions/test.csv')

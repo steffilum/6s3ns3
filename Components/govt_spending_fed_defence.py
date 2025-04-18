@@ -2,8 +2,8 @@ from package_imports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
-given_date = "2007-12-01"
 
+given_date = "2007-12-01"
 df = get_most_recent_series_of_date("FDEFX", given_date, fred)
 df = df[df.index<=pd.to_datetime("2007-06-01")]
 # print(df)
@@ -30,11 +30,13 @@ pct_chg_fed_defence = pct_chg_fed_defence[pct_chg_fed_defence.index >= pd.to_dat
 model = ARIMA(pct_chg_fed_defence, order=(2, 0, 3), trend = 'c', freq = 'QS')
 model = model.fit(start_params = np.full(2+3+1+1, .01))
 
+#Looking at the fitted values
 # fig, ax = plt.subplots()
 # ax.plot(model.fittedvalues)
 # ax.plot(pct_chg_fed_defence)
 # plt.show()
 
+# Check for serial correlation in the errors
 plot_acf_pacf(model.resid)
 plt.plot(model.resid)
 plt.show()

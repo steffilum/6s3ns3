@@ -2,6 +2,7 @@ from package_imports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
+# Since this data was only released FRED on 2007-12-14 we just took the data as of 2008-01-01
 given_date = "2008-01-01"
 df = get_most_recent_series_of_date("IPBUSEQ", given_date, fred)
 df = df[df.index<=pd.to_datetime("2007-06-01")]
@@ -10,22 +11,25 @@ pct_chg_business_equipment = transform_series(df, 5).dropna()
 pct_chg_business_equipment.plot()
 plt.show()
 
-print("ADF Test Result: ", adfuller(pct_chg_business_equipment))
+print("ADF Test Result: ", adfuller(pct_chg_business_equipment, regression= "c"))
 
 plot_acf_pacf(pct_chg_business_equipment)
 plt.show() 
 
-best_p, best_q = best_arma(pct_chg_business_equipment, max_p = 5, start_q=5, max_q = 8, test_size = 10, trend = "c")
+# CV for ARMA models
+# best_p, best_q = best_arma(pct_chg_business_equipment, max_p = 5, start_q=5, max_q = 8, test_size = 10, trend = "c")
 
 model = ARIMA(pct_chg_business_equipment, order=(5, 0, 8), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(20, .01))
 
+#Looking at the fitted values
 fig, ax = plt.subplots()
 ax.plot(model.fittedvalues, label = "fitted")
 ax.plot(pct_chg_business_equipment, label = "actual")
 ax.legend(loc="upper left")
 plt.show()
 
+# Check for serial correlation in the errors
 plot_acf_pacf(model.resid)
 plt.plot(model.resid)
 plt.show()

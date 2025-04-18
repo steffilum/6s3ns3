@@ -14,13 +14,14 @@ plt.show()
 print("ADF Test Result: ", adfuller(pct_chg_business_inventories, regression = 'c'))
 
 plot_acf_pacf(pct_chg_business_inventories)
-# plt.show()
 
+# CV for ARMA models
 # best_p, best_q = best_arma(pct_chg_business_inventories, max_p=7, start_q=3, max_q= 9, test_size = 10, trend = "c")
 
 model = ARIMA(pct_chg_business_inventories, order=(5, 0, 8), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(20, .01))
 
+#Looking at the fitted
 fig, ax = plt.subplots()
 ax.plot(model.fittedvalues, label = "fitted")
 ax.plot(pct_chg_business_inventories, label = "actual")

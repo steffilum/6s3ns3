@@ -13,6 +13,7 @@ _, test = train_test_split(df, test_size=50, shuffle=False)
 
 # X, y = load_data_midas(given_date=given_date)
 
+# Looking at the VIF, corr plot and condition number for multicollinearity
 # vif_data = pd.DataFrame()
 # vif_data["Feature"] = X.columns
 # vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
@@ -53,6 +54,7 @@ print(pred, test)
 
 # pred.to_csv('Components/Predictions/midas.csv')
 
+# Looking into the coefficients of the model
 # model = sm.OLS(y, X.iloc[:-1, :]).fit()
 # print(model.summary())
 # print(model.predict(X.iloc[:-1, :])[0])

@@ -2,8 +2,8 @@ from package_imports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
+# Since this data was only released FRED on 2010-04-13 we just took the data as of 2010-05-01
 given_date = "2010-05-01"
-
 df = get_most_recent_series_of_date("BOPTEXP", given_date, fred)
 df = df[df.index<=pd.to_datetime("2007-06-01")]
 
@@ -13,21 +13,23 @@ pct_chg_exports_bop.plot()
 plt.show()
 
 print("ADF Test Result: ", adfuller(pct_chg_exports_bop, regression="c"))
-print("ADF Test Result: ", adfuller(transform_series(pct_chg_exports_bop, 5).dropna(), regression="c"))
 plot_acf_pacf(pct_chg_exports_bop)
 plt.show()
 
+# CV for ARMA models
 # best_arma(pct_chg_exports_bop, trend='c', test_size=10, start_p= 0, start_q=0, max_p=5, max_q=5)
 # best arma, pcf, acf: p=5, q=5
 
 model = ARIMA(pct_chg_exports_bop, order=(5, 0, 5), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(5+5+1+1, .01))
 
+#Looking at the fitted values
 fig, ax = plt.subplots()
 ax.plot(model.fittedvalues)
 ax.plot(pct_chg_exports_bop)
 plt.show()
 
+# Check for serial correlation in the errors
 plot_acf_pacf(model.resid)
 plt.plot(model.resid)
 plt.show()

@@ -2,8 +2,8 @@ from package_imports import *
 
 fred = Fred(api_key = os.getenv("API_KEY"))
 
+# Since this data was only released FRED on 2011-07-01 we just took the data as of 2011-07-01
 given_date = "2011-07-01"
-
 df = get_most_recent_series_of_date("TLPBLCONS", given_date, fred)
 df = df[df.index<=pd.to_datetime("2007-06-01")]
 
@@ -13,7 +13,7 @@ pct_chg_govt_construction.plot()
 plt.show()
 
 print("ADF Test Result: ", adfuller(pct_chg_govt_construction, regression="c"))
-print("ADF Test Result: ", adfuller(transform_series(pct_chg_govt_construction, 5).dropna(), regression="c"))
+print("ADF Test Result: ", adfuller(transform_series(df, 6).dropna(), regression="c"))
 plot_acf_pacf(pct_chg_govt_construction)
 plt.show()
 
@@ -22,11 +22,13 @@ plt.show()
 model = ARIMA(pct_chg_govt_construction, order=(1, 0, 1), trend = 'c', freq = 'MS')
 model = model.fit(start_params = np.full(1+1+1+1, .01))
 
+#Looking at the fitted values
 fig, ax = plt.subplots()
 ax.plot(model.fittedvalues)
 ax.plot(pct_chg_govt_construction)
 plt.show()
 
+# Check for serial correlation in the errors
 plot_acf_pacf(model.resid)
 plt.plot(model.resid)
 plt.show()
