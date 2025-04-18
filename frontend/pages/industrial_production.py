@@ -56,7 +56,7 @@ iproduction_content = html.Div(
                         "position": "absolute",
                         "top": "10px",       
                         "right": "102px",     
-                        "zIndex": "1000",    # Ensures it sits on top
+                        "zIndex": "1000",    
                         "backgroundColor": "grey",
                         "color": "white",
                         "border": "none",
@@ -116,9 +116,9 @@ iproduction_content = html.Div(
                     style = {
                         "position": "absolute",
                         "top": "10px",
-                        "right": "-100px",  # Adjust as needed to move them further/closer to the right edge
+                        "right": "-100px", 
                         "zIndex": "1000",
-                        "display": "flex",      # Optional: to lay them out in a row
+                        "display": "flex",     
                         "gap": "20px" }
                 )
                 

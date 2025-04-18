@@ -19,7 +19,7 @@ data = response.json()
 
 articles = data.get("articles", [])
 
-# Optional: extract source name from nested dict
+# extract source name 
 for article in articles:
     if "source" in article and isinstance(article["source"], dict):
         article["source"] = article["source"].get("name")
@@ -60,7 +60,7 @@ def generate_card_scroll(df):
                 }
             )
             for _, row in df.iterrows()
-            if row["urlToImage"]  # skip if no image
+            if row["urlToImage"]  
         ]
     )
 

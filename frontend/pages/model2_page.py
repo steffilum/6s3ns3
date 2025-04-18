@@ -16,11 +16,6 @@ os.environ['SSL_CERT_FILE'] = certifi.where()
 # Register the Model 2 page
 dash.register_page(__name__, path="/ARFT04", name="ARFT04")
 
-# Sample data for the graph
-# years = [f"{year}Q{q}" for year in range(1950, 2026) for q in range(1, 5)]
-# values = [1000 * (1.03 ** (int(year.split('Q')[0]) - 1950)) for year in years]  # Simulated Real GDP growth
-
-# df = pd.DataFrame({"Year": years, "Real GDP": values})
 
 # Content for Model 2 page
 model2_content = html.Div(
@@ -175,15 +170,14 @@ def update_graph(year, month):
     if selected_year_int > current_year or (selected_year_int == current_year and selected_month_int > current_month_int):
         error_toast_msg = f"⚠ Please select a date on or before {current_month_abbr} {current_year}."
         forecast_title = "Forecast Unavailable"
-        # Return exactly 6 outputs:
-        # (graph figure, forecast children, forecast style, forecast title, error message, error is_open)
+        # Return 6 outputs:
         return (
-            dash.no_update,     # graph figure (or could be an empty figure)
+            dash.no_update,     # graph figure 
             "-",                # forecast children
             base_style,         # forecast style
             forecast_title,     # forecast title
             error_toast_msg,    # error toast children
-            True                # error toast is_open
+            True                
         )
 
     # If valid date, fetch data from backend

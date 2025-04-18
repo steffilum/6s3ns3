@@ -6,7 +6,7 @@ import os
 # Set working directory to current file location
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-# Reusable style for nav links and buttons (without inline color)
+# Reusable style for nav links and buttons 
 _nav_link_style = {
     "backgroundColor": "transparent",
     "border": "none",

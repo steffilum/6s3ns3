@@ -8,7 +8,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 
 from pages.news import df_articles, generate_card_scroll
 from shared.default_pagelayout import get_default_layout 
-# from integration.model1 import get_forecast, get_forecast_graph, monthyear, get_quarter
 from shared.myear_dropdown import myear_dropdown
 import json
 import requests

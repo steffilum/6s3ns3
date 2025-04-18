@@ -184,15 +184,15 @@ def update_graph(year, month):
     if selected_year_int > current_year or (selected_year_int == current_year and selected_month_int > current_month_int):
         error_toast_msg = f"⚠ Please select a date on or before {current_month_abbr} {current_year}."
         forecast_title = "Forecast Unavailable"
-        # Return exactly 6 outputs:
-        # (graph figure, forecast children, forecast style, forecast title, error message, error is_open)
+        # Return 6 outputs:
+    
         return (
             dash.no_update,     # graph figure (or could be an empty figure)
             "-",                # forecast children
             base_style,         # forecast style
             forecast_title,     # forecast title
             error_toast_msg,    # error toast children
-            True                # error toast is_open
+            True                
         )
 
     # If valid date, fetch data from backend
