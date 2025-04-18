@@ -24,6 +24,7 @@ This folder contains all the code responsible for retrieving respective economic
 
 
 ## Backend 
+![Backend Structure](image.png)
 Firstly, we created our custom package name package_imports for our backend import statements and custom functions that we use. View imports.py to see which packages have been imported and utils.py for which functions were created
 
 ### package_imports
