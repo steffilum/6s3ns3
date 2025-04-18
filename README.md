@@ -1,8 +1,28 @@
 # 6s3ns3
-DSE3101 project - Nowcasting
+## Project Overview: 
+Currently, economists and policymakers are facing challenges in receiving up-to-date information about Gross Domestic Product (GDP). As data on GDP is only available quarterly, there is a lag in which the GDP estimate of the quarter will be available. This lag, often up to 4 months, creates substantial challenges for timely decision making. Thus, 6se3nse is our one-stop solution for staying ahead of the economy. 6se3nse provides economists and policymakers with more timely estimates of quarterly GDP growth through monthly updated nowcast. For example, in early November, economists can access a nowcast for Quarter 4 (Q4), instead of waiting till late January for the official Q4 GDP release. In addition, users can stay abreast of the latest economic news from top financial sources and explore latest  economic data so users can focus on work that truly matters. 6se3nse leverages a Python and Flask framework backend with the Dash framework for its front-end interactive components.
 
-Dependent variable
+## Dependent variable:
 "GDP": "Gross Domestic Product", Quarterly
+
+## File Structure: 
+### FrontEnd
+We implemented the front-end web application using Dash, and all related code can be found in the frontend folder. The frontend folder contains the main app.py file used to run our Dash application, as well as a requirements.txt file that lists all the packages required for this project. Other subfolders are also included and will be explained in detail in the sections below.
+
+## assets
+### pictures
+This folder contains all the profile images of our team members, which are displayed on the About page of the application. 
+
+### meettheteam.py
+This file contains the code for implementation of our Meet the Team section of the About page of the application. 
+
+### react.css
+This file contains all the custom styling used throughout the web application. Styles are applied using unique className id to ensure consistent design across components.
+
+## data
+This folder contains all the code responsible for retrieving respective economic indicator data from FRED, which is displayed in the corresponding section of the web application. 
+
+
 
 ## Backend 
 Firstly, we created our custom package name package_imports for our backend import statements and custom functions that we use. View imports.py to see which packages have been imported and utils.py for which functions were created
