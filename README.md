@@ -6,10 +6,10 @@ Dependent variable:
 "GDP": "Gross Domestic Product", Quarterly
 
 ## File Structure: 
-### FrontEnd
+### FrontEnd:
 We implemented the front-end web application using Dash, and all related code can be found in the frontend folder. The frontend folder contains the main app.py file used to run our Dash application, as well as a requirements.txt file that lists all the packages required for this project. Other subfolders are also included and will be explained in detail in the sections below.
 
-### assets
+### assets:
 #### pictures
 This folder contains all the profile images of our team members, which are displayed on the About page of the application. 
 
