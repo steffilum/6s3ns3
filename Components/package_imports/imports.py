@@ -8,7 +8,6 @@ import statsmodels.api as sm
 import seaborn as sns
 import plotly
 import pickle
-import scipy
 
 from statsmodels.tsa.stattools import adfuller
 

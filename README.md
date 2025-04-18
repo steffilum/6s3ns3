@@ -39,5 +39,23 @@ eval: Gives RMSE, MAE and DA and plots the test and pred
 transform_series: transform series as recommended by FRED
 dm_test: Conducts DM test
 
-### utils.py
+### __init__.py
 loads env folder and set seeds and import custom functions and installs packages
+
+### Regressors
+business_equiment.py
+business_inventories.py
+commercial_industrial_loans.py
+consumption.py
+exports_bop.py
+govt_spending_construction.py
+govt_spending_fed_defence.py
+housing_unit_started.py
+imports_bop.py
+nondefense_captial_goods.py
+
+### Benchmarks
+arft04.py
+benchmark1.py
+
+### Models
