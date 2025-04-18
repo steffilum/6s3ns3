@@ -16,10 +16,12 @@ This folder contains all the profile images of our team members, which are displ
 This file contains the code for implementation of our Meet the Team section of the About page of the application. 
 #### react.css
 This file contains all the custom styling used throughout the web application. Styles are applied using unique className id to ensure consistent design across components.
-#### data
+
+### data: 
 This folder contains all the code responsible for retrieving respective economic indicator data from FRED, which is displayed in the corresponding section of the web application. 
 
-
+### pages: 
+This folder contains the code for all the individual pages of the web application. Each file is conveniently named according to the purpose or content of the corresponding page.
 
 
 
