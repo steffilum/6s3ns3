@@ -23,6 +23,9 @@ This folder contains all the code responsible for retrieving respective economic
 ### pages: 
 This folder contains the code for all the individual pages of the web application. Each file is conveniently named according to the purpose or content of the corresponding page.
 
+### shared: 
+This folder contains reusable components and layout elements that are used across multiple pages of the application. It includes the app's background styling, the top navigation bar, and the dropdown selectors for month and year.
+
 
 
 ## Backend 
