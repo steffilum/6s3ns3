@@ -154,7 +154,7 @@ We host both the frontend and backend of our Dash application on the cloud using
 However, since we are a bunch of broke university kids trying our best, we're unable to afford the paid tier in Render and thus the website may go to sleep after inactivity, which may cause delays up to 15 minutes. We appreciate your support and interest in our project! If you have any questions, feedback, or would like to sponsor us, feel free to reach out at: 6s3ns3sixthsense@gmail.com
 
 Otherwise, here is how we recommend you run our app on your local device: 
-1) Clone the integration branch into your local devices
+1) Clone the local_deployment branch into your local devices
 2) Make sure you have the necessary packages listed in our requirements.txt installed 
 3) Run backend_app.py
 4) Run app.py under frontend folder in a separate terminal
