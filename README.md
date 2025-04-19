@@ -30,8 +30,10 @@ This folder contains reusable components and layout elements that are used acros
 
 
 ## Backend 
-![Backend Structure](image.png)
-Firstly, we created our custom package name package_imports for our backend import statements and custom functions that we use. View imports.py to see which packages have been imported and utils.py for which functions were created
+
+![Backend Structure](https://github.com/user-attachments/assets/cabeb6be-c301-49cb-9162-49550a33b3e7)
+
+Firstly, we created our custom package name package_imports for our backend import statements and custom functions that we use. View **imports.py** to see which packages have been imported and **utils.py** for which functions were created. Secondly, **backend_app.py**, which can be found in the root directory, acts as a backend API endpoint that passes backend model predictions to the frontend. 
 
 ### package_imports
 This is our own custom package for the backend to help with the import of packages and to custom functions as well as initialisation of essential variables
@@ -103,11 +105,22 @@ Lastly we tried out Prophet by Meta. As one of the more commonly used commerical
 
 
 ### Predictions
+The following scripts are used to generate the model predictions for the graphs that will be shown on our frontend.
+
 #### arft04.py
+Takes in a given date, then uses the `load_data_bridge()` function from **data_load.py** to load training data available as of the given date. Runs a AR model with 4 lags and 'ct' trend on historic GDP values to generate a GDP forecast for the quarter of the given date.
+
 #### benchmark1.py
+Takes in a given date, then uses the `load_data_bridge()` function from **data_load.py** to load training data available as of the given date. Runs a prevailing mean model on historic GDP values to generate a GDP forecast for the quarter of the given date. 
+
 #### bridge_model_prediction.py
+Takes in a given date, then uses the `load_data_bridge()` function from **data_load.py** to load training data available as of the given date. Runs a bridge model on quarterly-aggregated regressor variables and historic GDP training data, to generate a GDP forecast for the regressor values in the quarter of the given date.
+
 #### midas_model_prediction.py
+Takes in a given date, then uses the `load_data_midas()` function from **data_load.py** to load training data available as of the given date. Runs a MIDAS model on monthly-aggregated regressor variables and historic GDP training data, to generate a GDP forecast for the regressor values in the quarter of the given date.  
+
 #### rf_model_prediction.py
+Takes in a given date, then uses the `load_data_bridge()` function from **data_load.py** to load training data available as of the given date. Runs a Random Forest Regressor model on quarterly-aggregated regressor variables and historic GDP training data, to generate a GDP forecast for the regressor values in the quarter of the given date.
 
 ### Other files
 #### analysis_gdp.py: For initial analysis of GDP
