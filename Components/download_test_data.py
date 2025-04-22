@@ -17,10 +17,18 @@ Feel free to change the code here to download the data you need
 #     X_train['Housing_Start_m2'] = X_train['Housing_Start_m2']/100
 #     X_train['Housing_Start_m3'] = X_train['Housing_Start_m3']/100   
 #     print(X_train['Housing_Start_m1']) 
+#     with open(f'Components/test_data_midas_nohouse/data_iteration_{new_date_str}.pkl', "wb") as f:
+#             pickle.dump((X_train, y_train), f)
+
+# # Loading of MIDAS data
+# for index in range(1, 49):
+#     date = pd.to_datetime(given_date)
+#     new_date = date - pd.DateOffset(months=3*index)
+#     new_date_str = new_date.strftime('%Y-%m-%d')
+#     X_train, y_train = load_data_midas(new_date_str) 
+#     print(X_train['Housing_Start_m1']) 
 #     with open(f'Components/test_data_midas/data_iteration_{new_date_str}.pkl', "wb") as f:
 #             pickle.dump((X_train, y_train), f)
-#             print("HI")
-
 
 # Loading of bridge data
 # for index in range(1, 304):
